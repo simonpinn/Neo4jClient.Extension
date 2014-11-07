@@ -13,12 +13,17 @@ namespace Neo4jClient.Extension.Cypher
     {
         private static readonly CypherTypeItemHelper CypherTypeItemHelper = new CypherTypeItemHelper();
         public static CypherExtensionContext DefaultExtensionContext = new CypherExtensionContext();
+        private static readonly Dictionary<Type, string> EntityLabelCache = new Dictionary<Type, string>();
 
         public static string EntityLabel<T>(this T entity)
         {
             var entityType = entity.GetType();
-            var label = entityType.GetCustomAttributes(typeof(CypherLabelAttribute),true).FirstOrDefault() as CypherLabelAttribute;
-            return label == null ? entityType.Name : label.Name;
+            if (!EntityLabelCache.ContainsKey(entityType))
+            {
+                var label = entityType.GetCustomAttributes(typeof (CypherLabelAttribute), true).FirstOrDefault() as CypherLabelAttribute;
+                EntityLabelCache.Add(entityType, label == null ? entityType.Name : label.Name);
+            }
+            return EntityLabelCache[entityType];
         }
 
         public static string ToCypherString<TEntity>(this TEntity entity, ICypherExtensionContext context, List<CypherProperty> useProperties, string paramKey)
@@ -128,6 +133,22 @@ namespace Neo4jClient.Extension.Cypher
             var camelCase = (context.JsonContractResolver is CamelCasePropertyNamesContractResolver);
             return camelCase ? string.Format("{0}{1}", value.Substring(0, 1).ToLowerInvariant(), value.Length > 1 ? value.Substring(1, value.Length - 1) : string.Empty)
                                 : value;
+        }
+
+        public static void ConfigProperties(CypherTypeItem type, List<CypherProperty> properties)
+        {
+            CypherTypeItemHelper.AddPropertyUsage(type, properties);
+        }
+        public static void ConfigLabel(Type type, string label)
+        {
+            if (EntityLabelCache.ContainsKey(type))
+            {
+                EntityLabelCache[type] = label;
+            }
+            else
+            {
+                EntityLabelCache.Add(type, label);
+            }
         }
     }
 }

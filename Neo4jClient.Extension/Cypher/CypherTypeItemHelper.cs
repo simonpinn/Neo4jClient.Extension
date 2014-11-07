@@ -40,5 +40,10 @@ namespace Neo4jClient.Extension.Cypher
         {
             return PropertiesForPurpose<TEntity, TAttr>(CypherExtension.DefaultExtensionContext,entity);
         }
+
+        public void AddPropertyUsage(CypherTypeItem type, List<CypherProperty> properties)
+        {
+            _typeProperties.AddOrUpdate(type, properties, (item, list) => properties);
+        }
     }
 }
