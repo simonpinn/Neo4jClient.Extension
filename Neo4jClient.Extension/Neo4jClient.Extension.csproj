@@ -68,6 +68,7 @@
     <Compile Include="Cypher\CypherProperty.cs" />
     <Compile Include="Cypher\CypherTypeItem.cs" />
     <Compile Include="Cypher\CypherTypeItemHelper.cs" />
+    <Compile Include="Cypher\FluentConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
