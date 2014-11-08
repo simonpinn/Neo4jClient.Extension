@@ -18,6 +18,30 @@ Any object can be provided to these two methods, the properties which are utilis
 * CypherMergeOnCreate Specifies that a property will be used in the On Create SET portion of a MERGE statement
 * CypherMergeOnMatch Specifies that a property will be used in the On Match SET portion of a MERGE statement
 
+FluentConfig
+=====================
+
+To allow unobtrusive usage the extension library with domain model projects which don't want a reference to Neo4j, a fluent config interface has been included, that way any class can be used with a repository which uses Neo4j.
+
+Given a class:
+
+public class SomeClass
+    {
+        public string SomeString { get; set; }
+        public int Foo { get; set; }
+        public bool Bar { get; set; }
+    }
+    
+It can be configured like so, this would be done once per application lifetime scope. 
+
+FluentConfig.Config()
+                .With<SomeClass>("myCypherLabel")
+                .Match(x => x.Bar)
+                .Merge(x => x.Bar)
+                .Merge(x => x.Foo)
+                .Merge(x => x.SomeString)
+                .Set()
+
 Example
 =====================
 
