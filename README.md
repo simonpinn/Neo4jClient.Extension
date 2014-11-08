@@ -17,3 +17,59 @@ Any object can be provided to these two methods, the properties which are utilis
 * CypherMerge Specifies that a property will be used in a MERGE statement
 * CypherMergeOnCreate Specifies that a property will be used in the On Create SET portion of a MERGE statement
 * CypherMergeOnMatch Specifies that a property will be used in the On Match SET portion of a MERGE statement
+
+Example
+=====================
+
+Given a model such as:
+
+    public class CypherModel
+    {
+        public CypherModel()
+        {
+            id = Guid.NewGuid();
+        }
+
+        [CypherMerge]
+        public Guid id { get; set; }
+
+        [CypherMergeOnCreate]
+        [CypherMatch]
+        public string firstName { get; set; }
+        
+        [CypherMergeOnCreate]
+        public DateTimeOffset dateOfBirth { get; set; }
+        
+        [CypherMergeOnCreate]
+        [CypherMergeOnMatch]
+        public bool isLegend { get; set; }
+        
+        [CypherMergeOnCreate]
+        public int answerToTheMeaningOfLifeAndEverything { get; set; }
+    }
+
+Instead of manually writing error prone Neo4jClient strings such as
+
+graphClient.Cypher
+    .Match("(cyphermodel:CypherModel {firstName:{cyphermodel}.firstName,isLegend:{cyphermodel}.isLegend})")
+    .WithParam("cyphermodel", cyphermodel)
+    
+We can just write
+
+graphClient.Cypher
+    .MatchEntity(cyphermodel)
+    
+This becomes more useful as we compose more complicated structures that take advantage of Merge OnCreate and Merge OnMatch such as, the following Cypher:
+
+MERGE (cyphermodel:CypherModel {id:{cyphermodel}.id})
+ON MATCH
+SET cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything
+ON CREATE
+SET cyphermodel.firstName={cyphermodel}.firstName,cyphermodel.dateOfBirth={cyphermodel}.dateOfBirth,cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything
+
+Is generated from:
+
+graphClient.Cypher
+    .MergeEntity(cyphermodel)
+
+A full list of examples can be found in the unit tests within the solution.
