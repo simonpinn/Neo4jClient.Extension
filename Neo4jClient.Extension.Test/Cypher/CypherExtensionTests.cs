@@ -391,8 +391,6 @@ namespace Neo4jClient.Extension.Test.Cypher
             Assert.AreEqual("MyName", result);
         }
 
-    
-
         private CypherModel CreateModel()
         {
             return new CypherModel
@@ -413,8 +411,6 @@ namespace Neo4jClient.Extension.Test.Cypher
             TeaSpoon,
             Unit
         }
-
-     
 
         [CypherLabel(Name = "COMPONENT_OF")]
         public class ComponentOf : BaseRelationship
