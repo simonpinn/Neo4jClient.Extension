@@ -90,10 +90,10 @@ namespace Neo4jClient.Extension.Cypher
             return returnValue;
         }
 
-        public ConfigWith<TN> With<TN>()
+        public ConfigWith<TN> With<TN>(string label=null)
         {
             Set();
-            return new ConfigWith<TN>(_context);
+            return new ConfigWith<TN>(_context, label);
         }  
     }
 }
