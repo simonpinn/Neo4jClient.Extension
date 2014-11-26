@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cypher\CypherExtensionTests.cs" />
+    <Compile Include="Cypher\CypherLabelAttributeTests.cs" />
     <Compile Include="Cypher\CypherTypeItemHelperTests.cs" />
     <Compile Include="Cypher\FluentConfigTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

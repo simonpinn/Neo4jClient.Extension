@@ -26,12 +26,17 @@ namespace Neo4jClient.Extension.Cypher
             return EntityLabelCache[entityType];
         }
 
+        public static string EntityParamKey<T>(this T entity, string paramKey = null)
+        {
+            return paramKey ?? entity.GetType().Name.ToLowerInvariant();
+        }
+
         public static string ToCypherString<TEntity>(this TEntity entity, ICypherExtensionContext context, List<CypherProperty> useProperties, string paramKey)
             where TEntity : class
         {
             //with the list of properties construct the string
             var label = entity.EntityLabel();
-            paramKey = paramKey ?? label.ToLowerInvariant();
+            paramKey = entity.EntityParamKey(paramKey);
             //Iterate properties, insert paramKey
             var properties = new Func<string>(() => string.Format("{{{0}}}",
                         string.Join(",",useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, paramKey)))));
@@ -54,7 +59,7 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
         {
-            paramKey = paramKey ?? entity.EntityLabel().ToLowerInvariant();
+            paramKey = entity.EntityParamKey(paramKey);
             var cql = string.Format("{0}({1}){2}", preCql, entity.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), paramKey, propertyOverride), postCql);
             //create a dynamic object for the type
             dynamic cutdown = entity.CreateDynamic(propertyOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity));
@@ -63,7 +68,7 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
         {
-            paramKey = paramKey ?? entity.EntityLabel().ToLowerInvariant();
+            paramKey = entity.EntityParamKey(paramKey);
             var cql = string.Format("{0}({1}){2}", preCql, entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), paramKey,mergeOverride), postCql);
             return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
