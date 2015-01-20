@@ -18,18 +18,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\build\Neo4jClient.Extension.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\build\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\build\Neo4jClient.Extension.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Neo4jClient">
@@ -56,12 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cypher\Attributes\CypherExtensionAttribute.cs" />
-    <Compile Include="Cypher\Attributes\CypherLabelAttribute.cs" />
-    <Compile Include="Cypher\Attributes\CypherMatchAttribute.cs" />
-    <Compile Include="Cypher\Attributes\CypherMergeAttribute.cs" />
-    <Compile Include="Cypher\Attributes\CypherMergeOnCreateAttribute.cs" />
-    <Compile Include="Cypher\Attributes\CypherMergeOnMatchAttribute.cs" />
     <Compile Include="Cypher\BaseRelationship.cs" />
     <Compile Include="Cypher\CypherExtension.cs" />
     <Compile Include="Cypher\CypherExtensionContext.cs" />
@@ -72,8 +68,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Neo4jClient.Extension.nuspec" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neo4jClient.Extension.Attributes\Neo4jClient.Extension.Cypher.Attributes.csproj">
+      <Project>{3d5a36e0-ac0b-452e-a417-baf117caa486}</Project>
+      <Name>Neo4jClient.Extension.Cypher.Attributes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

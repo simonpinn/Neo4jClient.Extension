@@ -72,6 +72,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Neo4jClient.Extension.Attributes\Neo4jClient.Extension.Cypher.Attributes.csproj">
+      <Project>{3d5a36e0-ac0b-452e-a417-baf117caa486}</Project>
+      <Name>Neo4jClient.Extension.Cypher.Attributes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neo4jClient.Extension\Neo4jClient.Extension.csproj">
       <Project>{41c65bed-56a6-4942-95d2-10e62f607c7f}</Project>
       <Name>Neo4jClient.Extension</Name>
