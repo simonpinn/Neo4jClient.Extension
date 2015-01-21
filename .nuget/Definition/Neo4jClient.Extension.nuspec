@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>Neo4jClient.Extension</id>
+		<version>0.1.0.3</version>
+		<title>Neo4jClient.Extension</title>
+		<authors>Simon Pinn</authors>
+		<owners>Simon Pinn</owners>
+		<licenseUrl>https://github.com/simonpinn/Neo4jClient.Extension/blob/master/LICENSE</licenseUrl>
+		<projectUrl>https://github.com/simonpinn/Neo4jClient.Extension</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Extending the awesome Neo4jClient</description>
+		<copyright>Copyright 2014</copyright>
+		<tags>Neo4j Neo4jClient GraphDb GraphData</tags>
+		<summary>Simplify and reduce magic strings when using the Neo4jClient, allows any object to be a data POCO</summary>
+		<releaseNotes>
+
+		</releaseNotes>
+		<language>en-US</language>
+		<dependencies>
+			<dependency id="Neo4jClient" version="1.0.0.658" />
+			<dependency id="Microsoft.Net.Http" />
+			<dependency id="Newtonsoft.Json" version="6.0.3" />
+			<dependency id="Neo4jClient.Extension.Cypher.Attributes" version="0.1.0.3"/>
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="..\..\build\**\Neo4jClient.Extension.dll" target="lib\net45" />
+		<file src="..\..\build\**\Neo4jClient.Extension.pdb" target="lib\net45" />
+	</files>
+</package>

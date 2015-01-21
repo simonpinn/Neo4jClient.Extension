@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension", "Neo4jClient.Extension\Neo4jClient.Extension.csproj", "{41C65BED-56A6-4942-95D2-10E62F607C7F}"
 EndProject
@@ -9,9 +9,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension.Test"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E4A266CF-BA5F-4403-B05A-4EECC86B3D32}"
 	ProjectSection(SolutionItems) = preProject
+		.nuget\Build All.ps1 = .nuget\Build All.ps1
+		.nuget\Clean All.ps1 = .nuget\Clean All.ps1
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+		.nuget\Push All.ps1 = .nuget\Push All.ps1
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension.Cypher.Attributes", "Neo4jClient.Extension.Attributes\Neo4jClient.Extension.Cypher.Attributes.csproj", "{3D5A36E0-AC0B-452E-A417-BAF117CAA486}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Definition", "Definition", "{9573E97E-61F2-48CE-BC61-8B015140D753}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\Definitions\Neo4jClient.Extension.Cypher.Attributes.nuspec = .nuget\Definitions\Neo4jClient.Extension.Cypher.Attributes.nuspec
+		.nuget\Definitions\Neo4jClient.Extension.nuspec = .nuget\Definitions\Neo4jClient.Extension.nuspec
 	EndProjectSection
 EndProject
 Global
@@ -28,8 +39,15 @@ Global
 		{066A5EBD-C612-40E2-8065-160FA9853503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{066A5EBD-C612-40E2-8065-160FA9853503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{066A5EBD-C612-40E2-8065-160FA9853503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D5A36E0-AC0B-452E-A417-BAF117CAA486}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D5A36E0-AC0B-452E-A417-BAF117CAA486}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D5A36E0-AC0B-452E-A417-BAF117CAA486}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D5A36E0-AC0B-452E-A417-BAF117CAA486}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9573E97E-61F2-48CE-BC61-8B015140D753} = {E4A266CF-BA5F-4403-B05A-4EECC86B3D32}
 	EndGlobalSection
 EndGlobal
