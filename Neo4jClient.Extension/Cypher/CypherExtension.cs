@@ -1,17 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Neo4jClient.Extension
-// Author           : Shawn Anderson
-// Created          : 01-19-2015
-//
-// Last Modified By : Shawn Anderson
-// Last Modified On : 01-19-2015
-// ***********************************************************************
-// <copyright file="CypherExtension.cs" company="">
-//     Copyright (c) . All rights reserved.
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,30 +9,16 @@ using Newtonsoft.Json.Serialization;
 
 namespace Neo4jClient.Extension.Cypher
 {
-	/// <summary>
-	/// Class CypherExtension.
-	/// </summary>
+
 	public static class CypherExtension
 	{
-		/// <summary>
-		/// The cypher type item helper
-		/// </summary>
+
 		private static readonly CypherTypeItemHelper CypherTypeItemHelper = new CypherTypeItemHelper();
-		/// <summary>
-		/// The default extension context
-		/// </summary>
+
 		public static CypherExtensionContext DefaultExtensionContext = new CypherExtensionContext();
-		/// <summary>
-		/// The entity label cache
-		/// </summary>
+
 		private static readonly Dictionary<Type, string> EntityLabelCache = new Dictionary<Type, string>();
 
-		/// <summary>
-		/// Entities the label.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <returns>System.String.</returns>
 		public static string EntityLabel<T>(this T entity)
 		{
 			var entityType = entity.GetType();
@@ -57,27 +30,11 @@ namespace Neo4jClient.Extension.Cypher
 			return EntityLabelCache[entityType];
 		}
 
-		/// <summary>
-		/// Entities the parameter key.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <param name="paramKey">The parameter key.</param>
-		/// <returns>System.String.</returns>
 		public static string EntityParamKey<T>(this T entity, string paramKey = null)
 		{
 			return paramKey ?? entity.GetType().Name.ToLowerInvariant();
 		}
 
-		/// <summary>
-		/// To the cypher string.
-		/// </summary>
-		/// <typeparam name="TEntity">The type of the t entity.</typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <param name="context">The context.</param>
-		/// <param name="useProperties">The use properties.</param>
-		/// <param name="paramKey">The parameter key.</param>
-		/// <returns>System.String.</returns>
 		public static string ToCypherString<TEntity>(this TEntity entity, ICypherExtensionContext context, List<CypherProperty> useProperties, string paramKey)
 			where TEntity : class
 		{
@@ -91,16 +48,6 @@ namespace Neo4jClient.Extension.Cypher
 			return string.Format("{0}:{1} {2}", paramKey, label, properties());
 		}
 
-		/// <summary>
-		/// To the cypher string.
-		/// </summary>
-		/// <typeparam name="TEntity">The type of the t entity.</typeparam>
-		/// <typeparam name="TAttr">The type of the t attribute.</typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <param name="context">The context.</param>
-		/// <param name="paramKey">The parameter key.</param>
-		/// <param name="useProperties">The use properties.</param>
-		/// <returns>System.String.</returns>
 		public static string ToCypherString<TEntity, TAttr>(this TEntity entity, ICypherExtensionContext context, string paramKey = null, List<CypherProperty> useProperties = null)
 			where TAttr : CypherExtensionAttribute
 			where TEntity : class
@@ -108,30 +55,12 @@ namespace Neo4jClient.Extension.Cypher
 			return entity.ToCypherString(context, useProperties?? CypherTypeItemHelper.PropertiesForPurpose<TEntity,TAttr>(entity), paramKey);
 		}
 
-		/// <summary>
-		/// Creates the dynamic.
-		/// </summary>
-		/// <typeparam name="TEntity">The type of the t entity.</typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <param name="properties">The properties.</param>
-		/// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
 		public static Dictionary<string, object> CreateDynamic<TEntity>(this TEntity entity, List<CypherProperty> properties) where TEntity : class
 		{
 			var type = entity.GetType();
 			return properties.Select(prop => new { Key = prop.JsonName, Value = type.GetProperty(prop.TypeName).GetValue(entity, null) }).ToDictionary(x => x.Key, x => x.Value);
 		}
 
-		/// <summary>
-		/// Matches the entity.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="query">The query.</param>
-		/// <param name="entity">The entity.</param>
-		/// <param name="paramKey">The parameter key.</param>
-		/// <param name="preCql">The pre CQL.</param>
-		/// <param name="postCql">The post CQL.</param>
-		/// <param name="propertyOverride">The property override.</param>
-		/// <returns>ICypherFluentQuery.</returns>
 		public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
 		{
 			paramKey = entity.EntityParamKey(paramKey);
@@ -141,19 +70,6 @@ namespace Neo4jClient.Extension.Cypher
 			return query.Match(cql).WithParam(paramKey, cutdown);
 		}
 
-		/// <summary>
-		/// Merges the entity.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="query">The query.</param>
-		/// <param name="entity">The entity.</param>
-		/// <param name="paramKey">The parameter key.</param>
-		/// <param name="mergeOverride">The merge override.</param>
-		/// <param name="onMatchOverride">The on match override.</param>
-		/// <param name="onCreateOverride">The on create override.</param>
-		/// <param name="preCql">The pre CQL.</param>
-		/// <param name="postCql">The post CQL.</param>
-		/// <returns>ICypherFluentQuery.</returns>
 		public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
 		{
 			paramKey = entity.EntityParamKey(paramKey);
@@ -161,16 +77,6 @@ namespace Neo4jClient.Extension.Cypher
 			return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
 		}
 
-		/// <summary>
-		/// Merges the relationship.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="query">The query.</param>
-		/// <param name="entity">The entity.</param>
-		/// <param name="mergeOverride">The merge override.</param>
-		/// <param name="onMatchOverride">The on match override.</param>
-		/// <param name="onCreateOverride">The on create override.</param>
-		/// <returns>ICypherFluentQuery.</returns>
 		public static ICypherFluentQuery MergeRelationship<T>(this ICypherFluentQuery query, T entity, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : BaseRelationship
 		{
 			//Eaxctly the same as a merge entity except the cql is different
@@ -178,18 +84,6 @@ namespace Neo4jClient.Extension.Cypher
 			return query.CommonMerge(entity, entity.Key, cql, mergeOverride, onMatchOverride, onCreateOverride);
 		}
 
-		/// <summary>
-		/// Commons the merge.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="query">The query.</param>
-		/// <param name="entity">The entity.</param>
-		/// <param name="key">The key.</param>
-		/// <param name="cql">The CQL.</param>
-		/// <param name="mergeOverride">The merge override.</param>
-		/// <param name="onMatchOverride">The on match override.</param>
-		/// <param name="onCreateOverride">The on create override.</param>
-		/// <returns>ICypherFluentQuery.</returns>
 		private static ICypherFluentQuery CommonMerge<T>(this ICypherFluentQuery query, T entity, string key, string cql, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : class
 		{
 			//A merge requires the properties of both merge, create and match in the cutdown object
@@ -216,27 +110,12 @@ namespace Neo4jClient.Extension.Cypher
 			return query.WithParam(key, cutdown);
 		}
 
-		/// <summary>
-		/// Uses the properties.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <param name="properties">The properties.</param>
-		/// <returns>List&lt;CypherProperty&gt;.</returns>
 		public static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
 			where T : class
 		{
 			return entity.UseProperties(DefaultExtensionContext, properties);
 		}
 
-		/// <summary>
-		/// Uses the properties.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="entity">The entity.</param>
-		/// <param name="context">The context.</param>
-		/// <param name="properties">The properties.</param>
-		/// <returns>List&lt;CypherProperty&gt;.</returns>
 		public static List<CypherProperty> UseProperties<T>(this T entity, CypherExtensionContext context, params Expression<Func<T, object>>[] properties)
 			where T : class
 		{
@@ -252,23 +131,12 @@ namespace Neo4jClient.Extension.Cypher
 			return new List<CypherProperty>();
 		}
 
-		/// <summary>
-		/// Gets the formatted debug text.
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <returns>System.String.</returns>
 		public static string GetFormattedDebugText(this ICypherFluentQuery query)
 		{
 			var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);
 			return regex.Replace(query.Query.DebugQueryText, "$1:");
 		}
 
-		/// <summary>
-		/// Applies the casing.
-		/// </summary>
-		/// <param name="value">The value.</param>
-		/// <param name="context">The context.</param>
-		/// <returns>System.String.</returns>
 		public static string ApplyCasing(this string value, ICypherExtensionContext context)
 		{
 			var camelCase = (context.JsonContractResolver is CamelCasePropertyNamesContractResolver);
@@ -276,20 +144,11 @@ namespace Neo4jClient.Extension.Cypher
 								: value;
 		}
 
-		/// <summary>
-		/// Configurations the properties.
-		/// </summary>
-		/// <param name="type">The type.</param>
-		/// <param name="properties">The properties.</param>
 		public static void ConfigProperties(CypherTypeItem type, List<CypherProperty> properties)
 		{
 			CypherTypeItemHelper.AddPropertyUsage(type, properties);
 		}
-		/// <summary>
-		/// Configurations the label.
-		/// </summary>
-		/// <param name="type">The type.</param>
-		/// <param name="label">The label.</param>
+
 		public static void ConfigLabel(Type type, string label)
 		{
 			if (EntityLabelCache.ContainsKey(type))
