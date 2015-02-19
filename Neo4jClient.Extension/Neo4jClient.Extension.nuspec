@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Neo4jClient.Extension</id>
-    <version>0.1.0.3</version>
+    <version>0.1.0.5</version>
     <title>Neo4jClient.Extension</title>
     <authors>Simon Pinn</authors>
     <owners>Simon Pinn</owners>
@@ -17,6 +17,7 @@
       <dependency id="Neo4jClient" version="1.0.0.658" />
       <dependency id="Microsoft.Net.Http" />
       <dependency id="Newtonsoft.Json" version="6.0.3" />
+      <dependency id="Neo4jClient.Extension.Attributes" version="0.1.0.0" />
     </dependencies>
   </metadata>
   <files>

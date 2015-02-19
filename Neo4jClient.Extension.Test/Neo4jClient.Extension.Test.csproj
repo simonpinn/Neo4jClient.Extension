@@ -72,6 +72,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Neo4jClient.Extension.Attributes\Neo4jClient.Extension.Attributes.csproj">
+      <Project>{6d2502f8-f491-45e6-abd8-2f7407926f5a}</Project>
+      <Name>Neo4jClient.Extension.Attributes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neo4jClient.Extension\Neo4jClient.Extension.csproj">
       <Project>{41c65bed-56a6-4942-95d2-10e62f607c7f}</Project>
       <Name>Neo4jClient.Extension</Name>
