@@ -2,6 +2,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 {
     public class Address
     {
+        public int Id { get; set; }
         public string Street { get; set; }
 
         public string Suburb { get; set; }
