@@ -1,7 +1,7 @@
 Neo4jClient.Extension
 =====================
 
-Extending the awesome of Neo4jClient
+Extending the awesome of [Neo4jClient](https://github.com/Readify/Neo4jClient)
 
 Merge and match nodes or relationships using objects instead of typing pseudo Cypher.
 
