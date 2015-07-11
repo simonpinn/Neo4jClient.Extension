@@ -65,7 +65,9 @@
     <Compile Include="Cypher\CypherExtensionTests.cs" />
     <Compile Include="Cypher\CypherLabelAttributeTests.cs" />
     <Compile Include="Cypher\CypherTypeItemHelperTests.cs" />
+    <Compile Include="Cypher\FluentConfigBaseTest.cs" />
     <Compile Include="Cypher\FluentConfigMergeTests.cs" />
+    <Compile Include="Cypher\FluentConfigUpdateTests.cs" />
     <Compile Include="TestData\Entities\Address.cs" />
     <Compile Include="TestData\Entities\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="TestData\SampleDataFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="TestData\TestDataDiagram.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
