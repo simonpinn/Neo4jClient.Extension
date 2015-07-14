@@ -73,7 +73,6 @@
     <Compile Include="TestData\Entities\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestData\Entities\Weapon.cs" />
-    <Compile Include="TestData\Entities\Inventory.cs" />
     <Compile Include="TestData\Relationships\HomeRelationship.cs" />
     <Compile Include="TestData\SampleDataFactory.cs" />
   </ItemGroup>

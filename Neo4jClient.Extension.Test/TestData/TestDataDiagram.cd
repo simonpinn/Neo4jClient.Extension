@@ -12,6 +12,7 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="HomeAddress" />
+      <Property Name="Sex" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Neo4jClient.Extension.Test.Cypher.Address">
@@ -24,5 +25,12 @@
       <FileName>TestData\Entities\Address.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Enum Name="Neo4jClient.Extension.Test.Cypher.Gender">
+    <Position X="1.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>TestData\Entities\Person.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
