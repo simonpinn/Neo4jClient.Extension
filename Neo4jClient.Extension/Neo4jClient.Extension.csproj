@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Neo4jClient">
-      <HintPath>..\packages\Neo4jClient.1.0.0.658\lib\net40\Neo4jClient.dll</HintPath>
+    <Reference Include="Neo4jClient, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Neo4jClient.1.1.0-Tx00005\lib\net40\Neo4jClient.dll</HintPath>
     </Reference>
     <Reference Include="Neo4jClient.Extension.Attributes">
       <HintPath>..\packages\Neo4jClient.Extension.Attributes.0.1.0.0\lib\net45\Neo4jClient.Extension.Attributes.dll</HintPath>
@@ -59,6 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionItems\Properties\AssemblyInfoGlobal.cs">
+      <Link>Properties\AssemblyInfoGlobal.cs</Link>
+    </Compile>
     <Compile Include="Cypher\BaseRelationship.cs" />
     <Compile Include="Cypher\CypherExtension.cs" />
     <Compile Include="Cypher\CypherExtensionContext.cs" />

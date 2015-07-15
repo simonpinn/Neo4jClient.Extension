@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Neo4jClient.Extension.Attributes</id>
-    <version>0.1.0.0</version>
+    <version>$version$</version>
     <title>Neo4jClient.Extension.Attributes</title>
     <authors>Simon Pinn</authors>
     <owners>Simon Pinn</owners>
