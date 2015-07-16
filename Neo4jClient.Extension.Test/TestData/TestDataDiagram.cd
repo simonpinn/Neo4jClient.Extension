@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Neo4jClient.Extension.Test.Cypher.Person">
+    <Position X="1.25" Y="1" Width="2" />
+    <Members>
+      <Method Name="Person" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIACAAAAAAAABEAEAAAAAAQAIAEAEAAAAAAEAAAAAAA=</HashCode>
+      <FileName>TestData\Entities\Person.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="HomeAddress" />
+      <Property Name="Sex" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Neo4jClient.Extension.Test.Cypher.Address">
+    <Position X="5" Y="1.25" Width="1.5" />
+    <Members>
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAgEAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>TestData\Entities\Address.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Neo4jClient.Extension.Test.Cypher.Gender">
+    <Position X="1.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>TestData\Entities\Person.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

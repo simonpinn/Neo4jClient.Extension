@@ -65,12 +65,19 @@
     <Compile Include="Cypher\CypherExtensionTests.cs" />
     <Compile Include="Cypher\CypherLabelAttributeTests.cs" />
     <Compile Include="Cypher\CypherTypeItemHelperTests.cs" />
-    <Compile Include="Cypher\FluentConfigTests.cs" />
-    <Compile Include="TestEntities\Address.cs" />
-    <Compile Include="TestEntities\Person.cs" />
+    <Compile Include="Cypher\FluentConfigBaseTest.cs" />
+    <Compile Include="Cypher\FluentConfigCreateTests.cs" />
+    <Compile Include="Cypher\FluentConfigMergeTests.cs" />
+    <Compile Include="Cypher\FluentConfigUpdateTests.cs" />
+    <Compile Include="TestData\Entities\Address.cs" />
+    <Compile Include="TestData\Entities\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestData\Entities\Weapon.cs" />
+    <Compile Include="TestData\Relationships\HomeRelationship.cs" />
+    <Compile Include="TestData\SampleDataFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="TestData\TestDataDiagram.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
