@@ -32,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Neo4jClient, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Neo4jClient.1.1.0-Tx00008\lib\net40\Neo4jClient.dll</HintPath>
-    </Reference>
     <Reference Include="Neo4jClient.Extension.Attributes">
       <HintPath>..\packages\Neo4jClient.Extension.Attributes.0.1.0.0\lib\net45\Neo4jClient.Extension.Attributes.dll</HintPath>
     </Reference>
@@ -77,6 +73,12 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\Neo4jClient\Neo4jClient\Neo4jClient.csproj">
+      <Project>{343b9889-6ddf-4474-a1ec-05508a652e5a}</Project>
+      <Name>Neo4jClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
