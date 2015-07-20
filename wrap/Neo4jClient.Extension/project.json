@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net45": {
+      "wrappedProject": "../../Neo4jClient.Extension/Neo4jClient.Extension.csproj",
+      "bin": {
+        "assembly": "../../Neo4jClient.Extension/obj/{configuration}/Neo4jClient.Extension.dll",
+        "pdb": "../../Neo4jClient.Extension/obj/{configuration}/Neo4jClient.Extension.pdb"
+      },
+      "dependencies": {
+        "Microsoft.Bcl": "1.1.9",
+        "Microsoft.Bcl.Build": "1.0.14",
+        "Microsoft.Net.Http": "2.2.28",
+        "Neo4jClient.Extension.Attributes": "0.1.0.0",
+        "Newtonsoft.Json": "6.0.3",
+        "Neo4jClient": "1.0.0-*"
+      }
+    }
+  }
+}
