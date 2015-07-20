@@ -62,7 +62,7 @@ SET address.suburb={
 
             //act
             var q = GetFluentQuery()
-                .MergeEntity(testPerson)
+                .MergeEntity(testPerson, "p")
                 .MergeEntity(testPerson.HomeAddress)
                 .MergeRelationship(homeAddressRelationship, homeAddressRelationship.UseProperties(r => r.DateEffective));
            

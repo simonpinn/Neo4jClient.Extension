@@ -21,5 +21,10 @@ namespace Neo4jClient.Extension.Cypher
         {
             return Type.GetHashCode() ^ AttributeType.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return string.Format("Type={0}, AttributeType={1}", Type.Name, AttributeType.Name);
+        }
     }
 }

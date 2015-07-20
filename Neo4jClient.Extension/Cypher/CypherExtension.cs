@@ -69,7 +69,9 @@ namespace Neo4jClient.Extension.Cypher
         public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
         {
             paramKey = entity.EntityParamKey(paramKey);
-            var cql = string.Format("{0}({1}){2}", preCql, entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), paramKey,mergeOverride), postCql);
+            var context = CypherExtensionContext.Create(query);
+            var cypher1= entity.ToCypherString<T, CypherMergeAttribute>(context, paramKey,mergeOverride);
+            var cql = string.Format("{0}({1}){2}", preCql, cypher1, postCql);
             return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
 
