@@ -1,4 +1,4 @@
 [submodule "lib/Neo4jClient"]
 	path = lib/Neo4jClient
-	url = git@github.com:neutmute/Neo4jClient.git
+	url = https://github.com/neutmute/Neo4jClient.git
 	branch = issue-14---T
