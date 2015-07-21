@@ -54,7 +54,7 @@ namespace Neo4jClient.Extension.Cypher
 
         public ConfigWith<T> Match<TP>(Expression<Func<T, TP>> property)
         {
-            return Config(property, typeof(CypherMatchAttribute)); ;
+            return Config(property, typeof(CypherMatchAttribute));
         }
 
         public ConfigWith<T> Merge<TP>(Expression<Func<T,TP>> property)
@@ -64,11 +64,17 @@ namespace Neo4jClient.Extension.Cypher
         
         public ConfigWith<T> MergeOnCreate<TP>(Expression<Func<T, TP>> property)
         {
-            return Config(property, typeof(CypherMergeOnCreateAttribute)); ;
+            return Config(property, typeof(CypherMergeOnCreateAttribute));
         }
+
         public ConfigWith<T> MergeOnMatch<TP>(Expression<Func<T, TP>> property)
         {
-            return Config(property, typeof(CypherMergeOnMatchAttribute)); ;
+            return Config(property, typeof(CypherMergeOnMatchAttribute));
+        }
+
+        public ConfigWith<T> MergeOnMatchOrCreate<TP>(Expression<Func<T, TP>> property)
+        {
+            return MergeOnMatch(property).MergeOnCreate(property);
         }
 
         public List<Tuple<CypherTypeItem, List<CypherProperty>>> Set()
