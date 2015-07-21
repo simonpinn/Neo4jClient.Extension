@@ -34,6 +34,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             .With<Person>("SecretAgent")
             .Match(x => x.Id)
             .Merge(x => x.Id)
+            .MergeOnCreate(p => p.Id)
             .MergeOnCreate(p => p.Title)
             .MergeOnCreate(p => p.Name)
             .MergeOnCreate(p => p.DateCreated)
@@ -52,15 +53,13 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             fluentConfig = FluentConfig.Config()
             .With<Address>()
-            .Match(a => a.Id)
-            .Merge(a => a.Id)
             .MergeOnCreate(a => a.Street)
             .MergeOnCreate(a => a.Suburb)
             .MergeOnMatch(a => a.Street)
             .MergeOnMatch(a => a.Suburb)
             .Set();
 
-            Assert.AreEqual(4, fluentConfig.Count);
+            Assert.LessOrEqual(2, fluentConfig.Count);
         }
     }
 }

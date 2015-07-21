@@ -12,6 +12,7 @@ namespace Neo4jClient.Extension.Test.Cypher
                 ,Name = "Sterling Archer"
                 ,Sex= Gender.Male
                 ,HomeAddress = GetWellKnownAddress(200)
+                ,WorkAddress = GetWellKnownAddress(59)
                 ,IsOperative =true
                 ,SerialNumber = 123456
                 ,SpendingAuthorisation = 100.23m
@@ -23,7 +24,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
         public static Address GetWellKnownAddress(int n)
         {
-            var address = new Address {Id = n, Street = n + " Isis Street", Suburb = "Fakeville"};
+            var address = new Address {Street = n + " Isis Street", Suburb = "Fakeville"};
             return address;
         }
     }

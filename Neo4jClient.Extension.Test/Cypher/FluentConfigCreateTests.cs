@@ -16,13 +16,17 @@ namespace Neo4jClient.Extension.Test.Cypher
         public void Create()
         {
             var agent = SampleDataFactory.GetWellKnownPerson(7);
-            
-            var q =  GetFluentQuery()
-                    .CreateEntity(agent, "a");
+
+            var q = GetFluentQuery()
+                .CreateEntity(agent, "a")
+                .CreateEntity(agent.HomeAddress, "ha")
+                .CreateEntity(agent.WorkAddress, "wa")
+                .Create("(a)-[rha:HOME_ADDRESS]->(ha)")
+                .Create("(a)-[wha:WORK_ADDRESS]->(wa)");
 
             //var q = GetFluentQuery().Create(address);
             var text = q.GetFormattedDebugText();
-            //Console.WriteLine(text);
+            Console.WriteLine(text);
 
             Assert.AreEqual(@"CREATE (a:SecretAgent {
   spendingAuthorisation: 100.23,
@@ -31,8 +35,19 @@ namespace Neo4jClient.Extension.Test.Cypher
   isOperative: true,
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   name: ""Sterling Archer"",
-  title: null
-})", text);
+  title: null,
+  id: 7
+})
+CREATE (ha:Address {
+  suburb: ""Fakeville"",
+  street: ""200 Isis Street""
+})
+CREATE (wa:Address {
+  suburb: ""Fakeville"",
+  street: ""59 Isis Street""
+})
+CREATE (a)-[rha:HOME_ADDRESS]->(ha)
+CREATE (a)-[wha:WORK_ADDRESS]->(wa)", text);
         }
     }
 }

@@ -22,30 +22,22 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MERGE (address:Address {id:{
-  suburb: ""Fakeville"",
-  street: ""7 Isis Street"",
-  id: 7
-}.id})
+            Assert.AreEqual(@"MERGE (address:Address {})
 ON MATCH
 SET address.suburb={
   suburb: ""Fakeville"",
-  street: ""7 Isis Street"",
-  id: 7
+  street: ""7 Isis Street""
 }.suburb,address.street={
   suburb: ""Fakeville"",
-  street: ""7 Isis Street"",
-  id: 7
+  street: ""7 Isis Street""
 }.street
 ON CREATE
 SET address.suburb={
   suburb: ""Fakeville"",
-  street: ""7 Isis Street"",
-  id: 7
+  street: ""7 Isis Street""
 }.suburb,address.street={
   suburb: ""Fakeville"",
-  street: ""7 Isis Street"",
-  id: 7
+  street: ""7 Isis Street""
 }.street", text);
         }
 
@@ -209,31 +201,32 @@ SET person.spendingAuthorisation={
   name: ""Sterling Archer"",
   title: null,
   id: 7
-}.title
-MERGE (address:Address {id:{
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street"",
-  id: 200
-}.id})
+}.title,person.id={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.id
+MERGE (address:Address {})
 ON MATCH
 SET address.suburb={
   suburb: ""Fakeville"",
-  street: ""200 Isis Street"",
-  id: 200
+  street: ""200 Isis Street""
 }.suburb,address.street={
   suburb: ""Fakeville"",
-  street: ""200 Isis Street"",
-  id: 200
+  street: ""200 Isis Street""
 }.street
 ON CREATE
 SET address.suburb={
   suburb: ""Fakeville"",
-  street: ""200 Isis Street"",
-  id: 200
+  street: ""200 Isis Street""
 }.suburb,address.street={
   suburb: ""Fakeville"",
-  street: ""200 Isis Street"",
-  id: 200
+  street: ""200 Isis Street""
 }.street
 MERGE (person)-[personaddress:HOME_ADDRESS {dateEffective:{
   dateEffective: ""2011-01-10T09:00:00+11:00""

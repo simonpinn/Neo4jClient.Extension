@@ -14,6 +14,9 @@ namespace Neo4jClient.Extension.Test.Cypher
     /// </summary>
     public class Person
     {
+        /// <summary>
+        /// Primary key seeded from else where
+        /// </summary>
         public int Id { get; set; }
         
         public string Name { get; set; }
@@ -21,8 +24,10 @@ namespace Neo4jClient.Extension.Test.Cypher
         public Gender Sex { get; set; }
 
         public string Title { get; set; }
-        
+
         public Address HomeAddress { get; set; }
+
+        public Address WorkAddress { get; set; }
 
         public bool IsOperative { get; set; }
 
@@ -35,6 +40,7 @@ namespace Neo4jClient.Extension.Test.Cypher
         public Person()
         {
             HomeAddress = new Address();
+            WorkAddress = new Address();
         }
 
         public override string ToString()
