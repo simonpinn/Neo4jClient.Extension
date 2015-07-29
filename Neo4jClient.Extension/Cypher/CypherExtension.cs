@@ -31,14 +31,18 @@ namespace Neo4jClient.Extension.Cypher
             return paramKey ?? entity.GetType().Name.ToLowerInvariant();
         }
 
-        public static string ToCypherString<TEntity>(this TEntity entity, ICypherExtensionContext context, List<CypherProperty> useProperties, string paramKey)
+        internal static string ToCypherString<TEntity>(this TEntity entity
+            , ICypherExtensionContext context
+            , List<CypherProperty> useProperties
+            , string paramKey)
             where TEntity : class
         {
             //with the list of properties construct the string
             var label = entity.EntityLabel();
             paramKey = entity.EntityParamKey(paramKey);
 
-            var jsonProperties = string.Join(",",useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, paramKey)));
+            var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMergeParamName(paramKey)));
+            var jsonProperties = string.Join(",", matchProperties);
             
             var braceWrappedProperties = AsWrappedVariable(jsonProperties);
 
@@ -48,7 +52,7 @@ namespace Neo4jClient.Extension.Cypher
 
         private static string GetMatchWithParam(string key, string label, string paramName)
         {
-            return GetMatchCypher(key, label, AsWrappedVariable(paramName));
+            return GetMatchCypher( key, label, AsWrappedVariable(paramName));
         }
 
         private static string GetMatchCypher(string key, string label, string variable)
@@ -106,7 +110,7 @@ namespace Neo4jClient.Extension.Cypher
         {
             paramKey = entity.EntityParamKey(paramKey);
             var context = CypherExtensionContext.Create(query);
-            var cypher1= entity.ToCypherString<T, CypherMergeAttribute>(context, paramKey,mergeOverride);
+            var cypher1= entity.ToCypherString<T, CypherMergeAttribute>(context, paramKey, mergeOverride);
             var cql = string.Format("{0}({1}){2}", preCql, cypher1, postCql);
             return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
@@ -133,6 +137,8 @@ namespace Neo4jClient.Extension.Cypher
             var compare = new CypherPropertyComparer();
             var propertyOverride = create.Union(match.Union(merge.Union(create, compare), compare), compare).ToList();
 
+            dynamic keyedObject = entity.CreateDynamic(merge);
+
             dynamic cutdown = entity.CreateDynamic(propertyOverride);
             var setOnAction = new Action<List<CypherProperty>,ICypherFluentQuery,  Action<ICypherFluentQuery, string>>((list,q, action) => {
                 var set = string.Join(",", list.Select(x => string.Format("{0}.{1}={{{0}}}.{1}", key, x.JsonName)));
@@ -147,7 +153,14 @@ namespace Neo4jClient.Extension.Cypher
             setOnAction(match, query, (q, s) => query = q.OnMatch().Set(s));
             setOnAction(create, query, (q, s) => query = q.OnCreate().Set(s));
 
-            return query.WithParam(key, cutdown);
+            query = query.WithParam(key, cutdown);
+            query = query.WithParam(GetMergeParamName(key), keyedObject);
+            return query;
+        }
+
+        private static string GetMergeParamName(string key)
+        {
+            return key + "MergeKey";
         }
 
         public static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
