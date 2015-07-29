@@ -12,6 +12,39 @@ namespace Neo4jClient.Extension.Test.Cypher
 {
     public class FluentConfigCreateTests : FluentConfigBaseTest
     {
+
+        [Test]
+        public void CreateWithUnusualType()
+        {
+
+            var weapon = SampleDataFactory.GetWellKnownWeapon(1);
+
+            var q = GetFluentQuery()
+                .CreateEntity(weapon, "w");
+
+            var text = q.GetFormattedDebugText();
+            Console.WriteLine(text);
+        }
+
+        [Test]
+        public void CreateWithNullValues()
+        {
+            var agent = SampleDataFactory.GetWellKnownPerson(7);
+
+            agent.HomeAddress.Suburb = null;
+
+            var q = GetFluentQuery()
+           .CreateEntity(agent, "a")
+           .CreateEntity(agent.HomeAddress, "ha")
+           .CreateEntity(agent.WorkAddress, "wa")
+           .Create("(a)-[rha:HOME_ADDRESS]->(ha)")
+           .Create("(a)-[wha:WORK_ADDRESS]->(wa)");
+
+
+            var text = q.GetFormattedDebugText();
+            Console.WriteLine(text);
+        }
+
         [Test]
         public void Create()
         {

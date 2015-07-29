@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
+using Neo4jClient.Extension.Test.TestData.Entities;
 using NUnit.Framework;
 
 namespace Neo4jClient.Extension.Test.Cypher
@@ -30,7 +31,7 @@ namespace Neo4jClient.Extension.Test.Cypher
         [SetUp]
         public void TestSetup()
         {
-            var fluentConfig = FluentConfig.Config()
+            FluentConfig.Config()
             .With<Person>("SecretAgent")
             .Match(x => x.Id)
             .Merge(x => x.Id)
@@ -44,13 +45,20 @@ namespace Neo4jClient.Extension.Test.Cypher
             .MergeOnMatchOrCreate(p => p.SpendingAuthorisation)
             .Set();
 
-            fluentConfig = FluentConfig.Config()
+            FluentConfig.Config()
             .With<Address>()
             .MergeOnMatchOrCreate(a => a.Street)
             .MergeOnMatchOrCreate(a => a.Suburb)
             .Set();
 
-            Assert.LessOrEqual(2, fluentConfig.Count);
+            FluentConfig.Config()
+                .With<Weapon>()
+                .Match(x => x.Id)
+                .Merge(x => x.Id)
+                .MergeOnMatchOrCreate(w => w.Name)
+                .MergeOnMatchOrCreate(w => w.BlastRadius)
+                .Set();
+
         }
     }
 }

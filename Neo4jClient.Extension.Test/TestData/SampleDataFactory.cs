@@ -1,4 +1,6 @@
 ﻿using System;
+using Neo4jClient.Extension.Test.TestData.Entities;
+using UnitsNet;
 
 namespace Neo4jClient.Extension.Test.Cypher
 {
@@ -26,6 +28,15 @@ namespace Neo4jClient.Extension.Test.Cypher
         {
             var address = new Address {Street = n + " Isis Street", Suburb = "Fakeville"};
             return address;
+        }
+
+        public static Weapon GetWellKnownWeapon(int n)
+        {
+            var weapon = new Weapon();
+            weapon.Id = n;
+            weapon.Name = "Grenade Launcher";
+            weapon.BlastRadius = Area.FromSquareMeters(20);
+            return weapon;
         }
     }
 }
