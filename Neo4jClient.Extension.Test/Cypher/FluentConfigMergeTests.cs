@@ -23,17 +23,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(text);
 
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation={
+SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -42,135 +34,7 @@ SET person.spendingAuthorisation={
   name: ""Sterling Archer"",
   title: null,
   id: 7
-}.spendingAuthorisation,person.serialNumber={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.serialNumber,person.sex={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.sex,person.isOperative={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.isOperative,person.dateCreated={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.dateCreated,person.name={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.name,person.title={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.title
-ON CREATE
-SET person.spendingAuthorisation={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.spendingAuthorisation,person.serialNumber={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.serialNumber,person.sex={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.sex,person.isOperative={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.isOperative,person.dateCreated={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.dateCreated,person.name={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.name,person.title={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.title,person.id={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.id", text);
+}", text);
         }
 
         [Test]
@@ -195,17 +59,9 @@ SET person.spendingAuthorisation={
 
             // assert
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation={
+SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -214,155 +70,24 @@ SET person.spendingAuthorisation={
   name: ""Sterling Archer"",
   title: null,
   id: 7
-}.spendingAuthorisation,person.serialNumber={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.serialNumber,person.sex={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.sex,person.isOperative={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.isOperative,person.dateCreated={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.dateCreated,person.name={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.name,person.title={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.title
-ON CREATE
-SET person.spendingAuthorisation={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.spendingAuthorisation,person.serialNumber={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.serialNumber,person.sex={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.sex,person.isOperative={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.isOperative,person.dateCreated={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.dateCreated,person.name={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.name,person.title={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.title,person.id={
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  name: ""Sterling Archer"",
-  title: null,
-  id: 7
-}.id
-MERGE (address:Address {})
-ON MATCH
-SET address.suburb={
+}
+MERGE (address:Address {suburb:{
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
-}.suburb,address.street={
+}.suburb,street:{
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
-}.street
-ON CREATE
-SET address.suburb={
+}.street})
+SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
-}.suburb,address.street={
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
-}.street
+}
 MERGE (person)-[personaddress:HOME_ADDRESS {dateEffective:{
   dateEffective: ""2011-01-10T09:00:00+11:00""
-}.dateEffective}]->(address)", text);
+}.dateEffective}]->(address)
+SET personaddress = {
+  dateEffective: ""2011-01-10T09:00:00+11:00""
+}", text);
         }
 
         [Test]

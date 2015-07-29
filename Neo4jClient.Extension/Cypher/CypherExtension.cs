@@ -141,20 +141,23 @@ namespace Neo4jClient.Extension.Cypher
 
             dynamic cutdown = entity.CreateDynamic(propertyOverride);
 
-            var configureCypherSet = new Action<List<CypherProperty>,ICypherFluentQuery,  Action<ICypherFluentQuery, string>>((properties, q, action) =>
-            {
-                var propertyCql = properties.Select(x => string.Format("{0}.{1}={{{0}}}.{1}", key, x.JsonName));
-                var set = string.Join(",", propertyCql);
-                if (!string.IsNullOrEmpty(set))
-                {
-                    action(q, set);
-                }
-            });
+            //var configureCypherSet = new Action<List<CypherProperty>,ICypherFluentQuery,  Action<ICypherFluentQuery, string>>((properties, q, action) =>
+            //{
+            //    var propertyCql = properties.Select(x => string.Format("{0}.{1}={{{0}}}.{1}", key, x.JsonName));
+            //    var set = string.Join(",", propertyCql);
+            //    if (!string.IsNullOrEmpty(set))
+            //    {
+            //        action(q, set);
+            //    }
+            //});
 
             query = query.Merge(cql);
 
-            configureCypherSet(matchProperties, query, (q, s) => query = q.OnMatch().Set(s));
-            configureCypherSet(createProperties, query, (q, s) => query = q.OnCreate().Set(s));
+            var setCql = string.Format("{0} = {{{1}}}", key, key);
+            query = query.Set(setCql);
+
+            //configureCypherSet(matchProperties, query, (q, s) => query = q.OnMatch().Set(s));
+            //configureCypherSet(createProperties, query, (q, s) => query = q.OnCreate().Set(s));
 
             query = query.WithParam(key, cutdown);
             query = query.WithParam(GetMergeParamName(key), keyedObject);
