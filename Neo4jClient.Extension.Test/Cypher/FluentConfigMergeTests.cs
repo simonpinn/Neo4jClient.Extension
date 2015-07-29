@@ -17,28 +17,160 @@ namespace Neo4jClient.Extension.Test.Cypher
         [Test]
         public void FormattedCypherOneDeep()
         {
-            var address = SampleDataFactory.GetWellKnownAddress(7);
-            var q = GetFluentQuery().MergeEntity(address);
+            var person = SampleDataFactory.GetWellKnownPerson(7);
+            var q = GetFluentQuery().MergeEntity(person);
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MERGE (address:Address {})
+            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.id})
 ON MATCH
-SET address.suburb={
-  suburb: ""Fakeville"",
-  street: ""7 Isis Street""
-}.suburb,address.street={
-  suburb: ""Fakeville"",
-  street: ""7 Isis Street""
-}.street
+SET person.spendingAuthorisation={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.spendingAuthorisation,person.serialNumber={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.serialNumber,person.sex={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.sex,person.isOperative={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.isOperative,person.dateCreated={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.dateCreated,person.name={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.name,person.title={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.title
 ON CREATE
-SET address.suburb={
-  suburb: ""Fakeville"",
-  street: ""7 Isis Street""
-}.suburb,address.street={
-  suburb: ""Fakeville"",
-  street: ""7 Isis Street""
-}.street", text);
+SET person.spendingAuthorisation={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.spendingAuthorisation,person.serialNumber={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.serialNumber,person.sex={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.sex,person.isOperative={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.isOperative,person.dateCreated={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.dateCreated,person.name={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.name,person.title={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.title,person.id={
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  name: ""Sterling Archer"",
+  title: null,
+  id: 7
+}.id", text);
         }
 
         [Test]
