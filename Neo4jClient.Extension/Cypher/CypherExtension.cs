@@ -132,16 +132,19 @@ namespace Neo4jClient.Extension.Cypher
         {
             //A merge requires the properties of both merge, create and match in the cutdown object
             var merge = mergeOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeAttribute>(entity);
-            var create = GetCreateProperties(entity, onCreateOverride);
-            var match = onMatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnMatchAttribute>(entity);
-            var compare = new CypherPropertyComparer();
-            var propertyOverride = create.Union(match.Union(merge.Union(create, compare), compare), compare).ToList();
+            var createProperties = GetCreateProperties(entity, onCreateOverride);
+            var matchProperties = onMatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnMatchAttribute>(entity);
+            var comparer = new CypherPropertyComparer();
+            var propertyOverride = createProperties.Union(matchProperties.Union(merge.Union(createProperties, comparer), comparer), comparer).ToList();
 
             dynamic keyedObject = entity.CreateDynamic(merge);
 
             dynamic cutdown = entity.CreateDynamic(propertyOverride);
-            var setOnAction = new Action<List<CypherProperty>,ICypherFluentQuery,  Action<ICypherFluentQuery, string>>((list,q, action) => {
-                var set = string.Join(",", list.Select(x => string.Format("{0}.{1}={{{0}}}.{1}", key, x.JsonName)));
+
+            var configureCypherSet = new Action<List<CypherProperty>,ICypherFluentQuery,  Action<ICypherFluentQuery, string>>((properties, q, action) =>
+            {
+                var propertyCql = properties.Select(x => string.Format("{0}.{1}={{{0}}}.{1}", key, x.JsonName));
+                var set = string.Join(",", propertyCql);
                 if (!string.IsNullOrEmpty(set))
                 {
                     action(q, set);
@@ -150,8 +153,8 @@ namespace Neo4jClient.Extension.Cypher
 
             query = query.Merge(cql);
 
-            setOnAction(match, query, (q, s) => query = q.OnMatch().Set(s));
-            setOnAction(create, query, (q, s) => query = q.OnCreate().Set(s));
+            configureCypherSet(matchProperties, query, (q, s) => query = q.OnMatch().Set(s));
+            configureCypherSet(createProperties, query, (q, s) => query = q.OnCreate().Set(s));
 
             query = query.WithParam(key, cutdown);
             query = query.WithParam(GetMergeParamName(key), keyedObject);
