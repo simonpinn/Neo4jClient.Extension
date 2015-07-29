@@ -13,6 +13,8 @@ namespace Neo4jClient.Extension.Test.Cypher
     public class FluentConfigCreateTests : FluentConfigBaseTest
     {
 
+
+
         [Test]
         public void CreateWithUnusualType()
         {
