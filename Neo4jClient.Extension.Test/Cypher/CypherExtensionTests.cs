@@ -63,7 +63,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodel}.id})\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id})\r\nRETURN cyphermodel", q.Query.QueryText);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {firstName:{cyphermodel}.firstName,isLegend:{cyphermodel}.isLegend})\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.AreEqual("MATCH (cyphermodel:CypherModel {firstName:{cyphermodelMergeKey}.firstName,isLegend:{cyphermodelMergeKey}.isLegend})\r\nRETURN cyphermodel", q.Query.QueryText);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (key:CypherModel {id:{key}.id})\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.AreEqual("MATCH (key:CypherModel {id:{keyMergeKey}.id})\r\nRETURN cyphermodel", q.Query.QueryText);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (a:Node)-->(cyphermodel:CypherModel {id:{cyphermodel}.id})\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.AreEqual("MATCH (a:Node)-->(cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id})\r\nRETURN cyphermodel", q.Query.QueryText);
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodel}.id})<--(a:Node)\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id})<--(a:Node)\r\nRETURN cyphermodel", q.Query.QueryText);
         }
 
         [Test]
@@ -192,10 +192,16 @@ namespace Neo4jClient.Extension.Test.Cypher
             //act
             var q = helper.Query.MergeEntity(model,"key");
 
-            Console.WriteLine(q.GetFormattedDebugText());
+            Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual("MERGE (key:CypherModel {id:{key}.id})\r\nON MATCH\r\nSET key.isLegend={key}.isLegend,key.answerToTheMeaningOfLifeAndEverything={key}.answerToTheMeaningOfLifeAndEverything\r\nON CREATE\r\nSET key.firstName={key}.firstName,key.dateOfBirth={key}.dateOfBirth,key.isLegend={key}.isLegend,key.answerToTheMeaningOfLifeAndEverything={key}.answerToTheMeaningOfLifeAndEverything", q.Query.QueryText);
+            Assert.AreEqual(@"MERGE (key:CypherModel {id:{keyMergeKey}.id})
+ON MATCH
+SET key.isLegend = {keyisLegend}
+ON MATCH
+SET key.answerToTheMeaningOfLifeAndEverything = {keyanswerToTheMeaningOfLifeAndEverything}
+ON CREATE
+SET key = {keyOnCreate}", q.Query.QueryText);
         }
 
         [Test]
@@ -224,10 +230,14 @@ namespace Neo4jClient.Extension.Test.Cypher
             //act
             var q = helper.Query.MergeEntity(model, onMatchOverride: model.UseProperties(x => x.firstName));
 
-            Console.WriteLine(q.GetFormattedDebugText());
+            Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual("MERGE (cyphermodel:CypherModel {id:{cyphermodel}.id})\r\nON MATCH\r\nSET cyphermodel.firstName={cyphermodel}.firstName\r\nON CREATE\r\nSET cyphermodel.firstName={cyphermodel}.firstName,cyphermodel.dateOfBirth={cyphermodel}.dateOfBirth,cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything", q.Query.QueryText);
+            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id})
+ON MATCH
+SET cyphermodel.firstName = {cyphermodelfirstName}
+ON CREATE
+SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
         }
 
         [Test]

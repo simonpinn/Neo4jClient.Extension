@@ -17,7 +17,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             var q = helper.Query.MergeEntity(model);
 
-            Assert.AreEqual("MERGE (multilabel:Multi:Label {id:{multilabel}.id})", q.Query.QueryText);
+            Assert.AreEqual("MERGE (multilabel:Multi:Label {id:{multilabelMergeKey}.id})", q.Query.QueryText);
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             var q = helper.Query.MergeEntity(model, "n");
 
-            Assert.AreEqual("MERGE (n:Multi:Label {id:{n}.id})", q.Query.QueryText);
+            Assert.AreEqual("MERGE (n:Multi:Label {id:{nMergeKey}.id})", q.Query.QueryText);
         }
 
         [Test]
