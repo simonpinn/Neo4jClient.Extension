@@ -1,3 +1,5 @@
+using System;
+
 namespace Neo4jClient.Extension.Test.Cypher
 {
     using Neo4jClient.Extension.Cypher;
@@ -37,7 +39,9 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             var q = helper.Query.MergeEntity(model);
 
-            Assert.AreEqual("MERGE (multilabelwithspace:Multi:`Space Label` {id:{multilabelwithspace}.id})", q.Query.QueryText);
+            var text = q.Query.QueryText;
+            Console.WriteLine(text);
+            Assert.AreEqual("MERGE (multilabelwithspace:Multi:`Space Label` {id:{multilabelwithspaceMergeKey}.id})", text);
         }
 
         public abstract class MultiBase

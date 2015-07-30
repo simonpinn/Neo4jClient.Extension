@@ -12,13 +12,9 @@ namespace Neo4jClient.Extension.Test.Cypher
 {
     public class FluentConfigCreateTests : FluentConfigBaseTest
     {
-
-
-
         [Test]
         public void CreateWithUnusualType()
         {
-
             var weapon = SampleDataFactory.GetWellKnownWeapon(1);
 
             var q = GetFluentQuery()
@@ -26,6 +22,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
+            // GetFormattedDebugText isn't honouring JsonConverter
         }
 
         [Test]

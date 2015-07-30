@@ -8,6 +8,7 @@ using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Test.CustomConverters;
 using Neo4jClient.Extension.Test.TestData.Entities;
+using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -47,9 +48,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             .Match(x => x.Id)
             .Merge(x => x.Id)
             .MergeOnCreate(p => p.Id)
+            .MergeOnCreate(p => p.DateCreated)
             .MergeOnMatchOrCreate(p => p.Title)
             .MergeOnMatchOrCreate(p => p.Name)
-            .MergeOnMatchOrCreate(p => p.DateCreated)
             .MergeOnMatchOrCreate(p => p.IsOperative)
             .MergeOnMatchOrCreate(p => p.Sex)
             .MergeOnMatchOrCreate(p => p.SerialNumber)
@@ -74,6 +75,10 @@ namespace Neo4jClient.Extension.Test.Cypher
                 .MergeOnMatchOrCreate(w => w.BlastRadius)
                 .Set();
 
+            FluentConfig.Config()
+                .With<HomeRelationship>()
+                .MergeOnMatchOrCreate(hr => hr.DateEffective)
+                .Set();
         }
     }
 }

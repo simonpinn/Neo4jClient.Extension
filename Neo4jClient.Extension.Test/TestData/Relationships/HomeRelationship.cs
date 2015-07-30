@@ -9,9 +9,10 @@ using Neo4jClient.Extension.Test.Cypher;
 
 namespace Neo4jClient.Extension.Test.TestEntities.Relationships
 {
-    [CypherLabel(Name = "HOME_ADDRESS")]
+    [CypherLabel(Name = LabelName)]
     public class HomeRelationship : BaseRelationship
     {
+        public const string LabelName = "HOME_ADDRESS";
         public HomeRelationship(string from = null, string to = null)
             : base(from, to)
         {

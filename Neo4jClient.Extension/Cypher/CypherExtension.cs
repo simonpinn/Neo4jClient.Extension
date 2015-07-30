@@ -78,8 +78,21 @@ namespace Neo4jClient.Extension.Cypher
         public static Dictionary<string, object> CreateDynamic<TEntity>(this TEntity entity, List<CypherProperty> properties) where TEntity : class
         {
             var type = entity.GetType();
-            return properties.Select(prop => new { Key = prop.JsonName, Value = type.GetProperty(prop.TypeName).GetValue(entity, null) }).ToDictionary(x => x.Key, x => x.Value);
-        } 
+            return properties.Select(
+                prop => new
+                {
+                    Key = prop.JsonName
+                    ,Value = GetValue(entity, prop, type)}
+                )
+                .ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        private static object GetValue<TEntity>(TEntity entity, CypherProperty property, Type entityTypeCache= null)
+        {
+            var entityType = entityTypeCache ?? entity.GetType();
+            var value = entityType.GetProperty(property.TypeName).GetValue(entity, null);
+            return value;
+        }
 
         public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
         {
@@ -128,40 +141,59 @@ namespace Neo4jClient.Extension.Cypher
             return properties;
         }
 
-        private static ICypherFluentQuery CommonMerge<T>(this ICypherFluentQuery query, T entity, string key, string cql, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : class
+        private static ICypherFluentQuery CommonMerge<T>(
+            this ICypherFluentQuery query
+            , T entity
+            , string key
+            , string mergeCql
+            , List<CypherProperty> mergeOverride = null
+            , List<CypherProperty> onMatchOverride = null
+            , List<CypherProperty> onCreateOverride = null) where T : class
         {
             //A merge requires the properties of both merge, create and match in the cutdown object
-            var merge = mergeOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeAttribute>(entity);
+            var mergeProperties = mergeOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeAttribute>(entity);
             var createProperties = GetCreateProperties(entity, onCreateOverride);
             var matchProperties = onMatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnMatchAttribute>(entity);
-            var comparer = new CypherPropertyComparer();
-            var propertyOverride = createProperties.Union(matchProperties.Union(merge.Union(createProperties, comparer), comparer), comparer).ToList();
 
-            dynamic keyedObject = entity.CreateDynamic(merge);
+            dynamic mergeObjectParam = entity.CreateDynamic(mergeProperties);
+            var mergeParamName = GetMergeParamName(key);
 
-            dynamic cutdown = entity.CreateDynamic(propertyOverride);
+            query = query.Merge(mergeCql);
+            query = query.WithParam(mergeParamName, mergeObjectParam);
 
-            //var configureCypherSet = new Action<List<CypherProperty>,ICypherFluentQuery,  Action<ICypherFluentQuery, string>>((properties, q, action) =>
-            //{
-            //    var propertyCql = properties.Select(x => string.Format("{0}.{1}={{{0}}}.{1}", key, x.JsonName));
-            //    var set = string.Join(",", propertyCql);
-            //    if (!string.IsNullOrEmpty(set))
-            //    {
-            //        action(q, set);
-            //    }
-            //});
+            if (matchProperties.Count > 0)
+            {
+                var entityType = entity.GetType();
+                foreach (var matchProperty in matchProperties)
+                {
+                    var propertyParam = key + matchProperty.JsonName;
+                    var propertyValue = GetValue(entity, matchProperty, entityType);
+                    query = query.OnMatch().Set(GetSetWithParamCql(key, matchProperty.JsonName, propertyParam));
+                    query = query.WithParam(propertyParam, propertyValue);
+                }
+            }
 
-            query = query.Merge(cql);
-
-            var setCql = string.Format("{0} = {{{1}}}", key, key);
-            query = query.Set(setCql);
-
-            //configureCypherSet(matchProperties, query, (q, s) => query = q.OnMatch().Set(s));
-            //configureCypherSet(createProperties, query, (q, s) => query = q.OnCreate().Set(s));
-
-            query = query.WithParam(key, cutdown);
-            query = query.WithParam(GetMergeParamName(key), keyedObject);
+            if (createProperties.Count > 0)
+            {
+                var createParamName = key + "OnCreate";
+                dynamic createObjectParam = entity.CreateDynamic(createProperties);
+                query = query.OnCreate().Set(GetSetWithParamCql(key, createParamName));
+                query = query.WithParam(createParamName, createObjectParam);
+            }
+            
             return query;
+        }
+
+        private static string GetSetWithParamCql(string alias, string paramName )
+        {
+            var cql = string.Format("{0} = {{{1}}}", alias, paramName);
+            return cql;
+        }
+
+        private static string GetSetWithParamCql(string alias, string property, string paramName)
+        {
+            var cql = GetSetWithParamCql(alias + "." + property, paramName);
+            return cql;
         }
 
         private static string GetMergeParamName(string key)

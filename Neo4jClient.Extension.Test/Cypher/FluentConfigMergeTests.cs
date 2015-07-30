@@ -15,6 +15,21 @@ namespace Neo4jClient.Extension.Test.Cypher
     public class FluentConfigMergeTests : FluentConfigBaseTest
     {
         [Test]
+        public void Fiddle()
+        {
+            var person = SampleDataFactory.GetWellKnownPerson(7);
+
+            var text = GetFluentQuery()
+                .Match("(p:Person)")
+                .Where((Person p) => p.Id == 7)
+                .Set("p.Age = {age}").WithParam("age", 25)
+                .Set("p.Name = {name}").WithParam("name", "foo")
+                .GetFormattedDebugText();
+
+            Console.WriteLine(text);
+        }
+
+        [Test]
         public void FormattedCypherOneDeep()
         {
             var person = SampleDataFactory.GetWellKnownPerson(7);
@@ -25,14 +40,27 @@ namespace Neo4jClient.Extension.Test.Cypher
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
+ON MATCH
+SET person.spendingAuthorisation = 100.23
+ON MATCH
+SET person.serialNumber = 123456
+ON MATCH
+SET person.sex = ""Male""
+ON MATCH
+SET person.isOperative = true
+ON MATCH
+SET person.name = ""Sterling Archer""
+ON MATCH
+SET person.title = null
+ON CREATE
 SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
   isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
   name: ""Sterling Archer"",
   title: null,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }", text);
         }
@@ -52,7 +80,7 @@ SET person = {
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
                 .MergeEntity(testPerson.HomeAddress)
-                .MergeRelationship(homeAddressRelationship, homeAddressRelationship.UseProperties(r => r.DateEffective));
+                .MergeRelationship(homeAddressRelationship);
            
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
@@ -61,14 +89,27 @@ SET person = {
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
+ON MATCH
+SET person.spendingAuthorisation = 100.23
+ON MATCH
+SET person.serialNumber = 123456
+ON MATCH
+SET person.sex = ""Male""
+ON MATCH
+SET person.isOperative = true
+ON MATCH
+SET person.name = ""Sterling Archer""
+ON MATCH
+SET person.title = null
+ON CREATE
 SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
   isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
   name: ""Sterling Archer"",
   title: null,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
 MERGE (address:Address {suburb:{
@@ -78,13 +119,19 @@ MERGE (address:Address {suburb:{
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }.street})
+ON MATCH
+SET address.suburb = ""Fakeville""
+ON MATCH
+SET address.street = ""200 Isis Street""
+ON CREATE
 SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
-MERGE (person)-[personaddress:HOME_ADDRESS {dateEffective:{
-  dateEffective: ""2011-01-10T09:00:00+11:00""
-}.dateEffective}]->(address)
+MERGE (person)-[personaddress:HOME_ADDRESS {}]->(address)
+ON MATCH
+SET personaddress.dateEffective = ""2011-01-10T09:00:00+11:00""
+ON CREATE
 SET personaddress = {
   dateEffective: ""2011-01-10T09:00:00+11:00""
 }", text);
@@ -100,7 +147,7 @@ SET personaddress = {
             Console.WriteLine(cypherKey);
 
             // assert
-            Assert.AreEqual(cypherKey, "pkey:SecretAgent {id:{pkey}.id}");
+            Assert.AreEqual("pkey:SecretAgent {id:{pkeyMergeKey}.id}", cypherKey);
         }
     }
 }
