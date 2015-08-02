@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Cypher.Attributes;
+using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using NUnit.Framework;
 
 namespace Neo4jClient.Extension.Test.Cypher
@@ -53,8 +54,8 @@ namespace Neo4jClient.Extension.Test.Cypher
                 .CreateEntity(agent, "a")
                 .CreateEntity(agent.HomeAddress, "ha")
                 .CreateEntity(agent.WorkAddress, "wa")
-                .Create("(a)-[rha:HOME_ADDRESS]->(ha)")
-                .Create("(a)-[wha:WORK_ADDRESS]->(wa)");
+                .CreateRelationship(new HomeAddressRelationship("a", "ha"))
+                .CreateRelationship(new WorkAddressRelationship("a", "wa"));
 
             //var q = GetFluentQuery().Create(address);
             var text = q.GetFormattedDebugText();
@@ -65,9 +66,9 @@ namespace Neo4jClient.Extension.Test.Cypher
   serialNumber: 123456,
   sex: ""Male"",
   isOperative: true,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
   name: ""Sterling Archer"",
   title: null,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 })
 CREATE (ha:Address {
@@ -78,8 +79,8 @@ CREATE (wa:Address {
   suburb: ""Fakeville"",
   street: ""59 Isis Street""
 })
-CREATE (a)-[rha:HOME_ADDRESS]->(ha)
-CREATE (a)-[wha:WORK_ADDRESS]->(wa)", text);
+CREATE (a)-[aha:HOME_ADDRESS]->(ha)
+CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
         }
     }
 }

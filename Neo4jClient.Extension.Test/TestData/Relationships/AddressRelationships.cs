@@ -10,10 +10,22 @@ using Neo4jClient.Extension.Test.Cypher;
 namespace Neo4jClient.Extension.Test.TestEntities.Relationships
 {
     [CypherLabel(Name = LabelName)]
-    public class HomeRelationship : BaseRelationship
+    public class HomeAddressRelationship : BaseRelationship
     {
         public const string LabelName = "HOME_ADDRESS";
-        public HomeRelationship(string from = null, string to = null)
+        public HomeAddressRelationship(string from = null, string to = null)
+            : base(from, to)
+        {
+        }
+
+        public DateTimeOffset DateEffective { get; set; }
+    }
+
+    [CypherLabel(Name = LabelName)]
+    public class WorkAddressRelationship : BaseRelationship
+    {
+        public const string LabelName = "WORK_ADDRESS";
+        public WorkAddressRelationship(string from = null, string to = null)
             : base(from, to)
         {
         }

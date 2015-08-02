@@ -71,7 +71,7 @@ SET person = {
             //setup
             var testPerson = SampleDataFactory.GetWellKnownPerson(7);
 
-            var homeAddressRelationship = new HomeRelationship("person", "address");
+            var homeAddressRelationship = new HomeAddressRelationship("person", "address");
 
             // perhaps this would be modelled on the address node but serves to show how to attach relationship property
             homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
