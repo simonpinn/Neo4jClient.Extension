@@ -26,23 +26,23 @@ namespace Neo4jClient.Extension.Test.Cypher
             // GetFormattedDebugText isn't honouring JsonConverter
         }
 
+        /// <summary>
+        /// work around exception somewhere in neo4jclent when creating null values even though cypher syntax is valid
+        /// </summary>
         [Test]
-        public void CreateWithNullValues()
+        public void CreateWithNullValuesSkipsTheNulls()
         {
             var agent = SampleDataFactory.GetWellKnownPerson(7);
 
             agent.HomeAddress.Suburb = null;
-
+            
             var q = GetFluentQuery()
-           .CreateEntity(agent, "a")
-           .CreateEntity(agent.HomeAddress, "ha")
-           .CreateEntity(agent.WorkAddress, "wa")
-           .Create("(a)-[rha:HOME_ADDRESS]->(ha)")
-           .Create("(a)-[wha:WORK_ADDRESS]->(wa)");
-
-
+                .CreateEntity(agent.HomeAddress);
+            
             var text = q.GetFormattedDebugText();
-            Console.WriteLine(text);
+            Assert.AreEqual(@"CREATE (address:Address {
+  street: ""200 Isis Street""
+})", text);
         }
 
         [Test]
@@ -67,7 +67,6 @@ namespace Neo4jClient.Extension.Test.Cypher
   sex: ""Male"",
   isOperative: true,
   name: ""Sterling Archer"",
-  title: null,
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 })

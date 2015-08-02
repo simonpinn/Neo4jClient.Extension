@@ -9,6 +9,16 @@ using Newtonsoft.Json.Serialization;
 
 namespace Neo4jClient.Extension.Cypher
 {
+    public class CreateDynamicOptions
+    {
+        public bool IgnoreNulls { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("IgnoreNulls={0}", IgnoreNulls);
+        }
+    }
+
     public static class CypherExtension
     {
         private static readonly CypherTypeItemHelper CypherTypeItemHelper = new CypherTypeItemHelper();
@@ -75,16 +85,30 @@ namespace Neo4jClient.Extension.Cypher
             return entity.ToCypherString(context, properties, paramKey);
         }
         
-        public static Dictionary<string, object> CreateDynamic<TEntity>(this TEntity entity, List<CypherProperty> properties) where TEntity : class
+        public static Dictionary<string, object> CreateDynamic<TEntity>(
+            this TEntity entity
+            , List<CypherProperty> properties
+            , CreateDynamicOptions options = null) where TEntity : class
         {
+            if (options == null)
+            {
+                options = new CreateDynamicOptions();
+            }
+
             var type = entity.GetType();
-            return properties.Select(
+            var propertiesForDict = properties.Select(
                 prop => new
                 {
                     Key = prop.JsonName
                     ,Value = GetValue(entity, prop, type)}
-                )
-                .ToDictionary(x => x.Key, x => x.Value);
+                ).ToList();
+
+            if (options.IgnoreNulls)
+            {
+                propertiesForDict.RemoveAll(p => p.Value == null);
+            }
+
+            return propertiesForDict.ToDictionary(x => x.Key, x => x.Value);
         }
 
         private static object GetValue<TEntity>(TEntity entity, CypherProperty property, Type entityTypeCache= null)
@@ -111,7 +135,9 @@ namespace Neo4jClient.Extension.Cypher
             var cql = string.Format("{0}({1}){2}", preCql, cypher2, postCql);
 
             var createProperties = GetCreateProperties(entity);
-            dynamic cutdownEntity = entity.CreateDynamic(createProperties);
+
+            var options = new CreateDynamicOptions {IgnoreNulls = true}; // working around some buug where null properties are blowing up. don't care on create.
+            dynamic cutdownEntity = entity.CreateDynamic(createProperties, options);
             
             query = query.Create(cql);
             query = query.WithParam(paramKey, cutdownEntity);
