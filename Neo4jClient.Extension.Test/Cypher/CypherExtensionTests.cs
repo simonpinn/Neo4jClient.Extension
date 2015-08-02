@@ -45,7 +45,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var result2 = model.ToCypherString<CypherModel, CypherMergeAttribute>(helper.CypherExtensionContext);
 
             //assert
-            Assert.AreEqual("cyphermodel:CypherModel {id:{cyphermodel}.id}", result);
+            Assert.AreEqual("cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id}", result);
             Assert.AreEqual(result,result2);
         }
 
@@ -179,7 +179,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (cyphermodel:CypherModel {id:{cyphermodel}.id})\r\nON MATCH\r\nSET cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything\r\nON CREATE\r\nSET cyphermodel.firstName={cyphermodel}.firstName,cyphermodel.dateOfBirth={cyphermodel}.dateOfBirth,cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything", q.Query.QueryText);
+            Assert.AreEqual("MERGE (cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id})\r\nON MATCH\r\nSET cyphermodel.isLegend = {cyphermodelisLegend}\r\nON MATCH\r\nSET cyphermodel.answerToTheMeaningOfLifeAndEverything = {cyphermodelanswerToTheMeaningOfLifeAndEverything}\r\nON CREATE\r\nSET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
         }
 
         [Test]
@@ -217,7 +217,7 @@ SET key = {keyOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (cyphermodel:CypherModel {firstName:{cyphermodel}.firstName})\r\nON MATCH\r\nSET cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything\r\nON CREATE\r\nSET cyphermodel.firstName={cyphermodel}.firstName,cyphermodel.dateOfBirth={cyphermodel}.dateOfBirth,cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything", q.Query.QueryText);
+            Assert.AreEqual("MERGE (cyphermodel:CypherModel {firstName:{cyphermodelMergeKey}.firstName})\r\nON MATCH\r\nSET cyphermodel.isLegend = {cyphermodelisLegend}\r\nON MATCH\r\nSET cyphermodel.answerToTheMeaningOfLifeAndEverything = {cyphermodelanswerToTheMeaningOfLifeAndEverything}\r\nON CREATE\r\nSET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
         }
 
         [Test]
@@ -253,7 +253,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (cyphermodel:CypherModel {id:{cyphermodel}.id})\r\nON MATCH\r\nSET cyphermodel.isLegend={cyphermodel}.isLegend,cyphermodel.answerToTheMeaningOfLifeAndEverything={cyphermodel}.answerToTheMeaningOfLifeAndEverything\r\nON CREATE\r\nSET cyphermodel.firstName={cyphermodel}.firstName", q.Query.QueryText);
+            Assert.AreEqual("MERGE (cyphermodel:CypherModel {id:{cyphermodelMergeKey}.id})\r\nON MATCH\r\nSET cyphermodel.isLegend = {cyphermodelisLegend}\r\nON MATCH\r\nSET cyphermodel.answerToTheMeaningOfLifeAndEverything = {cyphermodelanswerToTheMeaningOfLifeAndEverything}\r\nON CREATE\r\nSET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
         }
 
         [Test]
@@ -287,7 +287,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromto}.quantity,unitOfMeasure:{fromto}.unitOfMeasure,factor:{fromto}.factor,instructionText:{fromto}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity={fromto}.quantity,fromto.unitOfMeasure={fromto}.unitOfMeasure,fromto.factor={fromto}.factor,fromto.instructionText={fromto}.instructionText", q.Query.QueryText);
+            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromtoMergeKey}.quantity,unitOfMeasure:{fromtoMergeKey}.unitOfMeasure,factor:{fromtoMergeKey}.factor,instructionText:{fromtoMergeKey}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity = {fromtoquantity}\r\nON MATCH\r\nSET fromto.unitOfMeasure = {fromtounitOfMeasure}\r\nON MATCH\r\nSET fromto.factor = {fromtofactor}\r\nON MATCH\r\nSET fromto.instructionText = {fromtoinstructionText}", q.Query.QueryText);
         }
 
         [Test]
@@ -304,7 +304,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromto}.quantity,unitOfMeasure:{fromto}.unitOfMeasure,factor:{fromto}.factor,instructionText:{fromto}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity={fromto}.quantity,fromto.unitOfMeasure={fromto}.unitOfMeasure,fromto.factor={fromto}.factor,fromto.instructionText={fromto}.instructionText", q.Query.QueryText);
+            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromtoMergeKey}.quantity,unitOfMeasure:{fromtoMergeKey}.unitOfMeasure,factor:{fromtoMergeKey}.factor,instructionText:{fromtoMergeKey}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity = {fromtoquantity}\r\nON MATCH\r\nSET fromto.unitOfMeasure = {fromtounitOfMeasure}\r\nON MATCH\r\nSET fromto.factor = {fromtofactor}\r\nON MATCH\r\nSET fromto.instructionText = {fromtoinstructionText}", q.Query.QueryText);
         }
 
         [Test]
@@ -321,7 +321,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromto}.quantity}]->(to)\r\nON MATCH\r\nSET fromto.quantity={fromto}.quantity,fromto.unitOfMeasure={fromto}.unitOfMeasure,fromto.factor={fromto}.factor,fromto.instructionText={fromto}.instructionText", q.Query.QueryText);
+            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromtoMergeKey}.quantity}]->(to)\r\nON MATCH\r\nSET fromto.quantity = {fromtoquantity}\r\nON MATCH\r\nSET fromto.unitOfMeasure = {fromtounitOfMeasure}\r\nON MATCH\r\nSET fromto.factor = {fromtofactor}\r\nON MATCH\r\nSET fromto.instructionText = {fromtoinstructionText}", q.Query.QueryText);
         }
 
         [Test]
@@ -338,7 +338,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromto}.quantity,unitOfMeasure:{fromto}.unitOfMeasure,factor:{fromto}.factor,instructionText:{fromto}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity={fromto}.quantity", q.Query.QueryText);
+            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromtoMergeKey}.quantity,unitOfMeasure:{fromtoMergeKey}.unitOfMeasure,factor:{fromtoMergeKey}.factor,instructionText:{fromtoMergeKey}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity = {fromtoquantity}", q.Query.QueryText);
         }
 
         [Test]
@@ -355,7 +355,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromto}.quantity,unitOfMeasure:{fromto}.unitOfMeasure,factor:{fromto}.factor,instructionText:{fromto}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity={fromto}.quantity,fromto.unitOfMeasure={fromto}.unitOfMeasure,fromto.factor={fromto}.factor,fromto.instructionText={fromto}.instructionText\r\nON CREATE\r\nSET fromto.quantity={fromto}.quantity", q.Query.QueryText);
+            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {quantity:{fromtoMergeKey}.quantity,unitOfMeasure:{fromtoMergeKey}.unitOfMeasure,factor:{fromtoMergeKey}.factor,instructionText:{fromtoMergeKey}.instructionText}]->(to)\r\nON MATCH\r\nSET fromto.quantity = {fromtoquantity}\r\nON MATCH\r\nSET fromto.unitOfMeasure = {fromtounitOfMeasure}\r\nON MATCH\r\nSET fromto.factor = {fromtofactor}\r\nON MATCH\r\nSET fromto.instructionText = {fromtoinstructionText}\r\nON CREATE\r\nSET fromto = {fromtoOnCreate}", q.Query.QueryText);
         }
 
         [Test]
