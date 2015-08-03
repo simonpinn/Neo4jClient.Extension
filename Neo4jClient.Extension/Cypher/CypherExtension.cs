@@ -41,17 +41,17 @@ namespace Neo4jClient.Extension.Cypher
             return paramKey ?? entity.GetType().Name.ToLowerInvariant();
         }
 
-        internal static string ToCypherString<TEntity>(this TEntity entity
+        internal static string GetMatchCypher<TEntity>(this TEntity entity
             , ICypherExtensionContext context
             , List<CypherProperty> useProperties
             , string paramKey)
             where TEntity : class
         {
-            //with the list of properties construct the string
             var label = entity.EntityLabel();
             paramKey = entity.EntityParamKey(paramKey);
-
+            
             var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMergeParamName(paramKey)));
+
             var jsonProperties = string.Join(",", matchProperties);
             
             var braceWrappedProperties = AsWrappedVariable(jsonProperties);
@@ -82,7 +82,8 @@ namespace Neo4jClient.Extension.Cypher
             where TEntity : class
         {
             var properties = useProperties ?? CypherTypeItemHelper.PropertiesForPurpose<TEntity, TAttr>(entity);
-            return entity.ToCypherString(context, properties, paramKey);
+            
+            return entity.GetMatchCypher(context, properties, paramKey);
         }
         
         public static Dictionary<string, object> CreateDynamic<TEntity>(
@@ -121,10 +122,16 @@ namespace Neo4jClient.Extension.Cypher
         public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
         {
             paramKey = entity.EntityParamKey(paramKey);
-            var cql = string.Format("{0}({1}){2}", preCql, entity.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), paramKey, propertyOverride), postCql);
+            var matchCypher = entity.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), paramKey, propertyOverride);
+            var cql = string.Format("{0}({1}){2}", preCql, matchCypher, postCql);
             //create a dynamic object for the type
             dynamic cutdown = entity.CreateDynamic(propertyOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity));
-            return query.Match(cql).WithParam(paramKey, cutdown);
+
+            var matchKey = GetMergeParamName(paramKey);
+
+            return query
+                .Match(cql)
+                .WithParam(matchKey, cutdown);
         }
 
         public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class

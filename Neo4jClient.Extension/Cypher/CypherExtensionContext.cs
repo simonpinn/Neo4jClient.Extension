@@ -14,8 +14,7 @@ namespace Neo4jClient.Extension.Cypher
         {
             return new CypherExtensionContext()
             {
-                //TODO: Once other pull request is in for camel casing, pass whatever is set
-                //JsonContractResolver = query.Query.JsonContractResolver
+                JsonContractResolver = query.Query.JsonContractResolver
             };
         }
 

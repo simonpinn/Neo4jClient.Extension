@@ -79,6 +79,7 @@
     <Compile Include="Cypher\CypherTypeItemHelperTests.cs" />
     <Compile Include="Cypher\FluentConfigBaseTest.cs" />
     <Compile Include="Cypher\FluentConfigCreateTests.cs" />
+    <Compile Include="Cypher\FluentConfigMatchTests.cs" />
     <Compile Include="Cypher\FluentConfigMergeTests.cs" />
     <Compile Include="Cypher\FluentConfigUpdateTests.cs" />
     <Compile Include="TestData\Entities\Address.cs" />

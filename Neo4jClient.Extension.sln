@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension", "Neo4jClient.Extension\Neo4jClient.Extension.csproj", "{41C65BED-56A6-4942-95D2-10E62F607C7F}"
 EndProject
@@ -19,6 +19,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{6A06498F-C372-4F51-9C61-CD9032E01591}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient", "lib\Neo4jClient\Neo4jClient\Neo4jClient.csproj", "{343B9889-6DDF-4474-A1EC-05508A652E5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{12FEE675-BAC9-48E5-9C28-28ED67FFC9AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Properties", "Properties", "{4DF33B7D-5D06-4EBC-8569-2A1008683E2A}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionItems\Properties\AssemblyInfoGlobal.cs = SolutionItems\Properties\AssemblyInfoGlobal.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +55,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{343B9889-6DDF-4474-A1EC-05508A652E5A} = {6A06498F-C372-4F51-9C61-CD9032E01591}
+		{4DF33B7D-5D06-4EBC-8569-2A1008683E2A} = {12FEE675-BAC9-48E5-9C28-28ED67FFC9AE}
 	EndGlobalSection
 EndGlobal
