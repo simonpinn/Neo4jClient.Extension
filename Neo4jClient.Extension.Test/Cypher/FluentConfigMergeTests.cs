@@ -138,7 +138,7 @@ SET personaddress = {
         }
 
         [Test]
-        public void PrimaryKey()
+        public void MatchCypher()
         {
             var testPerson = SampleDataFactory.GetWellKnownPerson(7);
 
