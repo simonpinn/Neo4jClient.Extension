@@ -74,12 +74,6 @@ namespace Neo4jClient.Extension.Cypher
             return query.CommonMerge(entity, entity.Key, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
         
-        private static List<CypherProperty> GetCreateProperties<T>(T entity, List<CypherProperty> onCreateOverride = null) where T : class
-        {
-            var properties = onCreateOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnCreateAttribute>(entity);
-            return properties;
-        }
-
         private static ICypherFluentQuery CommonMerge<T>(
             this ICypherFluentQuery query
             , T entity
@@ -123,27 +117,6 @@ namespace Neo4jClient.Extension.Cypher
             return query;
         }
         
-        public static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
-            where T : class
-        {
-            return entity.UseProperties(DefaultExtensionContext, properties);
-        }
-
-        public static List<CypherProperty> UseProperties<T>(this T entity, CypherExtensionContext context, params Expression<Func<T, object>>[] properties)
-            where T : class
-        {
-            //Cache the T entity properties into a dictionary of strings
-            if (properties != null)
-            {
-                return properties.ToList().Where(x => x != null).Select(x =>
-                {
-                    var memberExpression = x.Body as MemberExpression ?? ((UnaryExpression) x.Body).Operand as MemberExpression;
-                    return memberExpression == null ? null : memberExpression.Member.Name;
-                }).Select(x => new CypherProperty {TypeName = x, JsonName = x.ApplyCasing(context)}).ToList();
-            }
-            return new List<CypherProperty>();
-        }
-
         public static string GetFormattedDebugText(this ICypherFluentQuery query)
         {
             var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);

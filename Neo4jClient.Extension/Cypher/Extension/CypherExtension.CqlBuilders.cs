@@ -84,8 +84,14 @@ namespace Neo4jClient.Extension.Cypher
         public static string ApplyCasing(this string value, ICypherExtensionContext context)
         {
             var useCamelCase = (context.JsonContractResolver is CamelCasePropertyNamesContractResolver);
-            return useCamelCase ? string.Format("{0}{1}", value.Substring(0, 1).ToLowerInvariant(), value.Length > 1 ? value.Substring(1, value.Length - 1) : string.Empty)
-                                : value;
+            if (useCamelCase)
+            {
+                return string.Format(
+                    "{0}{1}"
+                    , value.Substring(0, 1).ToLowerInvariant()
+                    , value.Length > 1 ? value.Substring(1, value.Length - 1) : string.Empty);
+            }
+            return value;
         }
     }
 }
