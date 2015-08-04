@@ -23,7 +23,7 @@ namespace Neo4jClient.Extension.Cypher
             //create a dynamic object for the type
             dynamic cutdown = entity.CreateDynamic(propertyOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity));
 
-            var matchKey = GetMergeParamName(paramKey);
+            var matchKey = GetMatchParamName(paramKey);
 
             return query
                 .Match(cql)
@@ -89,10 +89,10 @@ namespace Neo4jClient.Extension.Cypher
             var matchProperties = onMatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnMatchAttribute>(entity);
 
             dynamic mergeObjectParam = entity.CreateDynamic(mergeProperties);
-            var mergeParamName = GetMergeParamName(key);
+            var matchParamName = GetMatchParamName(key);
 
             query = query.Merge(mergeCql);
-            query = query.WithParam(mergeParamName, mergeObjectParam);
+            query = query.WithParam(matchParamName, mergeObjectParam);
 
             if (matchProperties.Count > 0)
             {

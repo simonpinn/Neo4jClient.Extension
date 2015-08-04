@@ -39,9 +39,9 @@ namespace Neo4jClient.Extension.Cypher
             return cql;
         }
 
-        private static string GetMergeParamName(string key)
+        private static string GetMatchParamName(string key)
         {
-            return key + "MergeKey";
+            return key + "MatchKey";
         }
         
         private static string GetRelationshipCql(string aliasFrom, string aliasRelationship, string aliasTo)
@@ -63,7 +63,7 @@ namespace Neo4jClient.Extension.Cypher
             var label = entity.EntityLabel();
             paramKey = entity.EntityParamKey(paramKey);
 
-            var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMergeParamName(paramKey)));
+            var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)));
 
             var jsonProperties = string.Join(",", matchProperties);
 

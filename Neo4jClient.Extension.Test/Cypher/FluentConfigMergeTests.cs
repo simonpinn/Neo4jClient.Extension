@@ -147,7 +147,7 @@ SET personaddress = {
             Console.WriteLine(cypherKey);
 
             // assert
-            Assert.AreEqual("pkey:SecretAgent {id:{pkeyMergeKey}.id}", cypherKey);
+            Assert.AreEqual("pkey:SecretAgent {id:{pkeyMatchKey}.id}", cypherKey);
         }
     }
 }
