@@ -35,8 +35,6 @@ namespace Neo4jClient.Extension.Test.CustomConverters
             }
 
             return null;
-            //throw new JsonSerializationException("Unexpected token type: " +
-            //                                     reader.TokenType.ToString());
         }
 
         public override void WriteJson(JsonWriter writer, object value,

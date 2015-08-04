@@ -66,11 +66,16 @@
       <Link>Properties\AssemblyInfoGlobal.cs</Link>
     </Compile>
     <Compile Include="Cypher\BaseRelationship.cs" />
-    <Compile Include="Cypher\CypherExtension.cs" />
+    <Compile Include="Cypher\Extension\CreateDynamicOptions.cs" />
+    <Compile Include="Cypher\Extension\CypherExtension.CqlBuilders.cs" />
+    <Compile Include="Cypher\Extension\CypherExtension.Fluent.cs" />
+    <Compile Include="Cypher\Extension\CypherExtension.Main.cs" />
+    <Compile Include="Cypher\Extension\CypherExtension.Dynamics.cs" />
     <Compile Include="Cypher\CypherExtensionContext.cs" />
     <Compile Include="Cypher\CypherProperty.cs" />
     <Compile Include="Cypher\CypherTypeItem.cs" />
     <Compile Include="Cypher\CypherTypeItemHelper.cs" />
+    <Compile Include="Cypher\Extension\CypherExtension.Entity.cs" />
     <Compile Include="Cypher\FluentConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

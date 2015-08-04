@@ -12,7 +12,7 @@ namespace Neo4jClient.Extension.Cypher
     {
         public static CypherExtensionContext Create(ICypherFluentQuery query)
         {
-            return new CypherExtensionContext()
+            return new CypherExtensionContext
             {
                 JsonContractResolver = query.Query.JsonContractResolver
             };

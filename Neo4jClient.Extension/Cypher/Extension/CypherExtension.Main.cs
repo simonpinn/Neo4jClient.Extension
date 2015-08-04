@@ -9,116 +9,12 @@ using Newtonsoft.Json.Serialization;
 
 namespace Neo4jClient.Extension.Cypher
 {
-    public class CreateDynamicOptions
-    {
-        public bool IgnoreNulls { get; set; }
-
-        public override string ToString()
-        {
-            return string.Format("IgnoreNulls={0}", IgnoreNulls);
-        }
-    }
-
-    public static class CypherExtension
+    public static partial class CypherExtension
     {
         private static readonly CypherTypeItemHelper CypherTypeItemHelper = new CypherTypeItemHelper();
         public static CypherExtensionContext DefaultExtensionContext = new CypherExtensionContext();
         private static readonly Dictionary<Type, string> EntityLabelCache = new Dictionary<Type, string>();
-
-        public static string EntityLabel<T>(this T entity)
-        {
-            var entityType = entity.GetType();
-            if (!EntityLabelCache.ContainsKey(entityType))
-            {
-                var label = entityType.GetCustomAttributes(typeof (CypherLabelAttribute), true).FirstOrDefault() as CypherLabelAttribute;
-                EntityLabelCache.Add(entityType, label == null ? entityType.Name : label.Name);
-            }
-            return EntityLabelCache[entityType];
-        }
-
-        public static string EntityParamKey<T>(this T entity, string paramKey = null)
-        {
-            return paramKey ?? entity.GetType().Name.ToLowerInvariant();
-        }
-
-        internal static string GetMatchCypher<TEntity>(this TEntity entity
-            , ICypherExtensionContext context
-            , List<CypherProperty> useProperties
-            , string paramKey)
-            where TEntity : class
-        {
-            var label = entity.EntityLabel();
-            paramKey = entity.EntityParamKey(paramKey);
-            
-            var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMergeParamName(paramKey)));
-
-            var jsonProperties = string.Join(",", matchProperties);
-            
-            var braceWrappedProperties = AsWrappedVariable(jsonProperties);
-
-            var cypher = GetMatchCypher(paramKey, label, braceWrappedProperties);
-            return cypher;
-        }
-
-        private static string GetMatchWithParam(string key, string label, string paramName)
-        {
-            return GetMatchCypher( key, label, AsWrappedVariable(paramName));
-        }
-
-        private static string GetMatchCypher(string key, string label, string variable)
-        {
-            var cypher = string.Format("{0}:{1} {2}", key, label, variable);
-            return cypher;
-        }
-
-        private static string AsWrappedVariable(string input)
-        {
-            var output = string.Format("{{{0}}}", input);
-            return output;
-        }
-
-        public static string ToCypherString<TEntity, TAttr>(this TEntity entity, ICypherExtensionContext context, string paramKey = null, List<CypherProperty> useProperties = null)
-            where TAttr : CypherExtensionAttribute
-            where TEntity : class
-        {
-            var properties = useProperties ?? CypherTypeItemHelper.PropertiesForPurpose<TEntity, TAttr>(entity);
-            
-            return entity.GetMatchCypher(context, properties, paramKey);
-        }
         
-        public static Dictionary<string, object> CreateDynamic<TEntity>(
-            this TEntity entity
-            , List<CypherProperty> properties
-            , CreateDynamicOptions options = null) where TEntity : class
-        {
-            if (options == null)
-            {
-                options = new CreateDynamicOptions();
-            }
-
-            var type = entity.GetType();
-            var propertiesForDict = properties.Select(
-                prop => new
-                {
-                    Key = prop.JsonName
-                    ,Value = GetValue(entity, prop, type)}
-                ).ToList();
-
-            if (options.IgnoreNulls)
-            {
-                propertiesForDict.RemoveAll(p => p.Value == null);
-            }
-
-            return propertiesForDict.ToDictionary(x => x.Key, x => x.Value);
-        }
-
-        private static object GetValue<TEntity>(TEntity entity, CypherProperty property, Type entityTypeCache= null)
-        {
-            var entityType = entityTypeCache ?? entity.GetType();
-            var value = entityType.GetProperty(property.TypeName).GetValue(entity, null);
-            return value;
-        }
-
         public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
         {
             paramKey = entity.EntityParamKey(paramKey);
@@ -177,17 +73,7 @@ namespace Neo4jClient.Extension.Cypher
 
             return query.CommonMerge(entity, entity.Key, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
-
-        private static string GetRelationshipCql(string aliasFrom, string aliasRelationship, string aliasTo)
-        {
-            var cql = string.Format("({0})-[{1}]->({2})"
-                , aliasFrom
-                , aliasRelationship
-                , aliasTo);
-
-            return cql;
-        }
-
+        
         private static List<CypherProperty> GetCreateProperties<T>(T entity, List<CypherProperty> onCreateOverride = null) where T : class
         {
             var properties = onCreateOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnCreateAttribute>(entity);
@@ -236,24 +122,7 @@ namespace Neo4jClient.Extension.Cypher
             
             return query;
         }
-
-        private static string GetSetWithParamCql(string alias, string paramName )
-        {
-            var cql = string.Format("{0} = {{{1}}}", alias, paramName);
-            return cql;
-        }
-
-        private static string GetSetWithParamCql(string alias, string property, string paramName)
-        {
-            var cql = GetSetWithParamCql(alias + "." + property, paramName);
-            return cql;
-        }
-
-        private static string GetMergeParamName(string key)
-        {
-            return key + "MergeKey";
-        }
-
+        
         public static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
             where T : class
         {
@@ -279,29 +148,6 @@ namespace Neo4jClient.Extension.Cypher
         {
             var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);
             return regex.Replace(query.Query.DebugQueryText, "$1:");
-        }
-
-        public static string ApplyCasing(this string value, ICypherExtensionContext context)
-        {
-            var camelCase = (context.JsonContractResolver is CamelCasePropertyNamesContractResolver);
-            return camelCase ? string.Format("{0}{1}", value.Substring(0, 1).ToLowerInvariant(), value.Length > 1 ? value.Substring(1, value.Length - 1) : string.Empty)
-                                : value;
-        }
-
-        public static void ConfigProperties(CypherTypeItem type, List<CypherProperty> properties)
-        {
-            CypherTypeItemHelper.AddPropertyUsage(type, properties);
-        }
-        public static void ConfigLabel(Type type, string label)
-        {
-            if (EntityLabelCache.ContainsKey(type))
-            {
-                EntityLabelCache[type] = label;
-            }
-            else
-            {
-                EntityLabelCache.Add(type, label);
-            }
         }
     }
 }

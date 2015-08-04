@@ -87,11 +87,11 @@ namespace Neo4jClient.Extension.Cypher
                     Type = typeof (T)
                 }, x.Select(y => y.Item2).Distinct(new CypherPropertyComparer()).ToList())).ToList();
         
-                returnValue.ForEach(x => CypherExtension.ConfigProperties(x.Item1, x.Item2));
+                returnValue.ForEach(x => CypherExtension.AddConfigProperties(x.Item1, x.Item2));
             //set the label
             if (!string.IsNullOrWhiteSpace(_label))
             {
-                CypherExtension.ConfigLabel(typeof (T), _label);
+                CypherExtension.SetConfigLabel(typeof (T), _label);
             }
             return returnValue;
         }
