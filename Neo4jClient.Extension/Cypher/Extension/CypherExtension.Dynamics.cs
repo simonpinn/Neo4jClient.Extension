@@ -8,7 +8,7 @@ namespace Neo4jClient.Extension.Cypher
 {
     public static partial class CypherExtension
     {
-        public static Dictionary<string, object> CreateDynamic<TEntity>(
+        private static Dictionary<string, object> CreateDynamic<TEntity>(
            this TEntity entity
            , List<CypherProperty> properties
            , CreateDynamicOptions options = null) where TEntity : class

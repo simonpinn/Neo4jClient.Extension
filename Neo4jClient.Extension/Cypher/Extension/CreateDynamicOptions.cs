@@ -1,6 +1,6 @@
 namespace Neo4jClient.Extension.Cypher
 {
-    public class CreateDynamicOptions
+    class CreateDynamicOptions
     {
         public bool IgnoreNulls { get; set; }
 

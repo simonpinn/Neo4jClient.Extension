@@ -75,8 +75,8 @@ namespace Neo4jClient.Extension.Cypher
             var cypher = GetMatchCypher(paramKey, label, parameterCypher);
             return cypher;
         }
-        
-        public static string ToCypherString<TEntity, TAttr>(this TEntity entity, ICypherExtensionContext context, string paramKey = null, List<CypherProperty> useProperties = null)
+
+        internal static string ToCypherString<TEntity, TAttr>(this TEntity entity, ICypherExtensionContext context, string paramKey = null, List<CypherProperty> useProperties = null)
             where TAttr : CypherExtensionAttribute
             where TEntity : class
         {
@@ -84,7 +84,7 @@ namespace Neo4jClient.Extension.Cypher
 
             return entity.GetMatchCypher(context, properties, paramKey);
         }
-        public static string ApplyCasing(this string value, ICypherExtensionContext context)
+        internal static string ApplyCasing(this string value, ICypherExtensionContext context)
         {
             var useCamelCase = (context.JsonContractResolver is CamelCasePropertyNamesContractResolver);
             if (useCamelCase)

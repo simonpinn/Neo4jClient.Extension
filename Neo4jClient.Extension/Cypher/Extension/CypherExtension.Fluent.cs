@@ -8,11 +8,11 @@ namespace Neo4jClient.Extension.Cypher
 {
     public static partial class CypherExtension
     {
-        public static void AddConfigProperties(CypherTypeItem type, List<CypherProperty> properties)
+        internal static void AddConfigProperties(CypherTypeItem type, List<CypherProperty> properties)
         {
             CypherTypeItemHelper.AddPropertyUsage(type, properties);
         }
-        public static void SetConfigLabel(Type type, string label)
+        internal static void SetConfigLabel(Type type, string label)
         {
             if (EntityLabelCache.ContainsKey(type))
             {

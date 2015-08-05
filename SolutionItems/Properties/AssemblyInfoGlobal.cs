@@ -11,5 +11,5 @@ using System.Runtime.InteropServices;
 #else
     [assembly: AssemblyConfiguration("Release")]
 #endif
-
+[assembly: InternalsVisibleTo("Neo4jClient.Extension.Test")]
 [assembly: ComVisible(false)]

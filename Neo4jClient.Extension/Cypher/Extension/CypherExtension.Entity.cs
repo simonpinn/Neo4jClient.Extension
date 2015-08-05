@@ -13,7 +13,7 @@ namespace Neo4jClient.Extension.Cypher
     /// </summary>
     public static partial class CypherExtension
     {
-        public static string EntityLabel<T>(this T entity)
+        internal static string EntityLabel<T>(this T entity)
         {
             var entityType = entity.GetType();
             if (!EntityLabelCache.ContainsKey(entityType))
@@ -24,19 +24,19 @@ namespace Neo4jClient.Extension.Cypher
             return EntityLabelCache[entityType];
         }
 
-        public static string EntityParamKey<T>(this T entity, string paramKey = null)
+        internal static string EntityParamKey<T>(this T entity, string paramKey = null)
         {
             return paramKey ?? entity.GetType().Name.ToLowerInvariant();
         }
 
 
-        public static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
+        internal static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
             where T : class
         {
             return entity.UseProperties(DefaultExtensionContext, properties);
         }
 
-        public static List<CypherProperty> UseProperties<T>(this T entity, CypherExtensionContext context, params Expression<Func<T, object>>[] properties)
+        internal static List<CypherProperty> UseProperties<T>(this T entity, CypherExtensionContext context, params Expression<Func<T, object>>[] properties)
             where T : class
         {
             //Cache the T entity properties into a dictionary of strings
