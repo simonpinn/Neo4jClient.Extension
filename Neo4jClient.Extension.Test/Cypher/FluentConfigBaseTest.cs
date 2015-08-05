@@ -77,6 +77,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             FluentConfig.Config()
                 .With<HomeAddressRelationship>()
+                .Match(ha => ha.DateEffective)
                 .MergeOnMatchOrCreate(hr => hr.DateEffective)
                 .Set();
         }

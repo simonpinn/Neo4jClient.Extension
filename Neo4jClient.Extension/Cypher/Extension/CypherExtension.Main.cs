@@ -59,7 +59,7 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity) where T : BaseRelationship
         {
-            var relationshipSegment = entity.Key + ":" + entity.EntityLabel();//need this if creating propertites:  entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), entity.Key);
+            var relationshipSegment = GetAliasLabelCql(entity.Key, entity.EntityLabel()); //need this if creating propertites:  entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), entity.Key);
             var cql = GetRelationshipCql(entity.FromKey, relationshipSegment, entity.ToKey);
             return query.Create(cql);
         }
@@ -67,13 +67,25 @@ namespace Neo4jClient.Extension.Cypher
         public static ICypherFluentQuery MergeRelationship<T>(this ICypherFluentQuery query, T entity, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : BaseRelationship
         {
             //Eaxctly the same as a merge entity except the cql is different
-            var cql = GetRelationshipCql(entity.FromKey
+            var cql = GetRelationshipCql(
+                entity.FromKey
                 , entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), entity.Key, mergeOverride)
                 , entity.ToKey);
 
             return query.CommonMerge(entity, entity.Key, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
-        
+
+        public static ICypherFluentQuery MatchRelationship<T>(this ICypherFluentQuery query, T relationship, List<CypherProperty> matchOverride = null) where T : BaseRelationship
+        {
+            var matchProperties = matchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(relationship);
+            var cql = GetRelationshipCql(
+                relationship.FromKey
+                , relationship.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), relationship.Key, matchProperties)
+                , relationship.ToKey);
+
+            return query.Match(cql);
+        }
+
         private static ICypherFluentQuery CommonMerge<T>(
             this ICypherFluentQuery query
             , T entity

@@ -125,7 +125,7 @@ SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
-MERGE (person)-[personaddress:HOME_ADDRESS {}]->(address)
+MERGE (person)-[personaddress:HOME_ADDRESS]->(address)
 ON MATCH
 SET personaddress.dateEffective = ""2011-01-10T09:00:00+11:00""
 ON CREATE

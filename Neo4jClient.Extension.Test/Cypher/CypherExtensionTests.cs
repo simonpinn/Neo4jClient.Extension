@@ -160,7 +160,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (a:Node)-->(key:CypherModel {})<--(b:Node)
+            Assert.AreEqual(@"MATCH (a:Node)-->(key:CypherModel)<--(b:Node)
 RETURN cyphermodel", q.GetFormattedDebugText());
         }
 
@@ -174,7 +174,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             var result = helper.Query.MatchEntity(new CypherModel(), propertyOverride: new List<CypherProperty>());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {})", result.GetFormattedDebugText());
+            Assert.AreEqual("MATCH (cyphermodel:CypherModel)", result.GetFormattedDebugText());
         }
 
         [Test]
@@ -293,7 +293,7 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (a:Node)-->(key:CypherModel {})<--(b:Node)", q.GetFormattedDebugText());
+            Assert.AreEqual("MERGE (a:Node)-->(key:CypherModel)<--(b:Node)", q.GetFormattedDebugText());
         }
 
 
@@ -456,7 +456,7 @@ SET fromto = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF {}]->(to)", q.GetFormattedDebugText());
+            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF]->(to)", q.GetFormattedDebugText());
         }
 
         [Test]

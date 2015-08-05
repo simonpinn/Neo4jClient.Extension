@@ -13,7 +13,13 @@ namespace Neo4jClient.Extension.Test.TestEntities.Relationships
     public class HomeAddressRelationship : BaseRelationship
     {
         public const string LabelName = "HOME_ADDRESS";
-        public HomeAddressRelationship(string from = null, string to = null)
+        public HomeAddressRelationship(DateTimeOffset effective, string from = "agent", string to = "address")
+            : base(from, to)
+        {
+            DateEffective = effective;
+        }
+
+        public HomeAddressRelationship(string from = "agent", string to = "address")
             : base(from, to)
         {
         }

@@ -17,8 +17,13 @@ namespace Neo4jClient.Extension.Cypher
 
         private static string GetMatchCypher(string key, string label, string variable)
         {
-            var cypher = string.Format("{0}:{1} {2}", key, label, variable);
+            var cypher = string.Format("{0} {1}", GetAliasLabelCql(key, label), variable).TrimEnd();
             return cypher;
+        }
+
+        private static string GetAliasLabelCql(string alias, string label)
+        {
+            return string.Format("{0}:{1}", alias, label);
         }
 
         private static string AsWrappedVariable(string input)
@@ -44,11 +49,11 @@ namespace Neo4jClient.Extension.Cypher
             return key + "MatchKey";
         }
         
-        private static string GetRelationshipCql(string aliasFrom, string aliasRelationship, string aliasTo)
+        private static string GetRelationshipCql(string aliasFrom, string relationshipSegment, string aliasTo)
         {
             var cql = string.Format("({0})-[{1}]->({2})"
                 , aliasFrom
-                , aliasRelationship
+                , relationshipSegment
                 , aliasTo);
 
             return cql;
@@ -65,13 +70,7 @@ namespace Neo4jClient.Extension.Cypher
 
             var matchParamKey = GetMatchParamName(paramKey);
 
-            //var dynamic = entity.CreateDynamic(useProperties)
-
-            //var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, ));
-
-            //var jsonProperties = string.Join(",", matchProperties);
-
-            var parameterCypher = AsWrappedVariable(matchParamKey);
+            var parameterCypher = useProperties.Count == 0 ? string.Empty : AsWrappedVariable(matchParamKey);
 
             var cypher = GetMatchCypher(paramKey, label, parameterCypher);
             return cypher;

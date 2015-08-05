@@ -49,12 +49,13 @@ namespace Neo4jClient.Extension.Test.Cypher
         public void Create()
         {
             var agent = SampleDataFactory.GetWellKnownPerson(7);
+            var homeRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "a", "ha");
 
             var q = GetFluentQuery()
                 .CreateEntity(agent, "a")
                 .CreateEntity(agent.HomeAddress, "ha")
                 .CreateEntity(agent.WorkAddress, "wa")
-                .CreateRelationship(new HomeAddressRelationship("a", "ha"))
+                .CreateRelationship(homeRelationship)
                 .CreateRelationship(new WorkAddressRelationship("a", "wa"));
 
             //var q = GetFluentQuery().Create(address);
