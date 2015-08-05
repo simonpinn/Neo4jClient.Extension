@@ -63,13 +63,17 @@ namespace Neo4jClient.Extension.Cypher
             var label = entity.EntityLabel();
             paramKey = entity.EntityParamKey(paramKey);
 
-            var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)));
+            var matchParamKey = GetMatchParamName(paramKey);
 
-            var jsonProperties = string.Join(",", matchProperties);
+            //var dynamic = entity.CreateDynamic(useProperties)
 
-            var braceWrappedProperties = AsWrappedVariable(jsonProperties);
+            //var matchProperties = useProperties.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, ));
 
-            var cypher = GetMatchCypher(paramKey, label, braceWrappedProperties);
+            //var jsonProperties = string.Join(",", matchProperties);
+
+            var parameterCypher = AsWrappedVariable(matchParamKey);
+
+            var cypher = GetMatchCypher(paramKey, label, parameterCypher);
             return cypher;
         }
         

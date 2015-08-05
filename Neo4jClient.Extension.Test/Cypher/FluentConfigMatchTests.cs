@@ -24,7 +24,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual("MATCH (person:SecretAgent {id:{\r\n  id: 7\r\n}.id})", text);
+            Assert.AreEqual(@"MATCH (person:SecretAgent {
+  id: 7
+})", text);
         }
         
     }

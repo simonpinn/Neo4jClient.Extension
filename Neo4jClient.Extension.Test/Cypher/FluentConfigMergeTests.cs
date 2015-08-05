@@ -37,9 +37,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
+            Assert.AreEqual(@"MERGE (person:SecretAgent {
   id: 7
-}.id})
+})
 ON MATCH
 SET person.spendingAuthorisation = 100.23
 ON MATCH
@@ -86,9 +86,9 @@ SET person = {
             Console.WriteLine(text);
 
             // assert
-            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
+            Assert.AreEqual(@"MERGE (person:SecretAgent {
   id: 7
-}.id})
+})
 ON MATCH
 SET person.spendingAuthorisation = 100.23
 ON MATCH
@@ -112,13 +112,10 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (address:Address {suburb:{
+MERGE (address:Address {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
-}.suburb,street:{
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
-}.street})
+})
 ON MATCH
 SET address.suburb = ""Fakeville""
 ON MATCH
@@ -147,7 +144,7 @@ SET personaddress = {
             Console.WriteLine(cypherKey);
 
             // assert
-            Assert.AreEqual("pkey:SecretAgent {id:{pkeyMatchKey}.id}", cypherKey);
+            Assert.AreEqual("pkey:SecretAgent {pkeyMatchKey}", cypherKey);
         }
     }
 }

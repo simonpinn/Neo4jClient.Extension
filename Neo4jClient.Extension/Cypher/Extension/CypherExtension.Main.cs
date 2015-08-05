@@ -119,6 +119,7 @@ namespace Neo4jClient.Extension.Cypher
         
         public static string GetFormattedDebugText(this ICypherFluentQuery query)
         {
+            // write once, read never!
             var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);
             return regex.Replace(query.Query.DebugQueryText, "$1:");
         }
