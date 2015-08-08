@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Neo4jClient.Cypher;
+using Neo4jClient.Extension.Test.CustomConverters;
 using Neo4jClient.Extension.Test.Data;
 using Neo4jClient.Transactions;
+using NUnit.Framework;
 
 namespace Neo4jClient.Extension.Test.Integration
 {
@@ -17,15 +19,27 @@ namespace Neo4jClient.Extension.Test.Integration
 
         protected ICypherFluentQuery CypherQuery { get { return GraphClient.Cypher; } }
 
-        public IntegrationTest()
+        [SetUp]
+        public void Setup()
         {
-            
+            CypherQuery.Match("(n)")
+                .OptionalMatch("(n)-[r]-()")
+                .Delete("n, r")
+                .ExecuteWithoutResults();
+        }
+
+        protected Func<ICypherFluentQuery> RealQueryFactory
+        {
+            get { return () => CypherQuery; }
         }
 
         static IntegrationTest()
         {
             var connectionString = ConfigurationManager.AppSettings["Neo4jConnectionString"];
             GraphClient  =new GraphClient(new Uri(connectionString));
+
+            GraphClient.JsonConverters.Add(new AreaJsonConverter());
+
             GraphClient.Connect();
 
             NeoConfig.ConfigureModel();

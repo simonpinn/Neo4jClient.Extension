@@ -13,14 +13,34 @@ namespace Neo4jClient.Extension.Test.Cypher
 {
     public class FluentConfigCreateTests : FluentConfigBaseTest
     {
-        [Test]
-        public void CreateWithUnusualType()
+        public FluentConfigCreateTests()
+        {
+            
+        }
+
+        /// <summary>
+        /// Ctor for Integration tests to use
+        /// </summary>
+        public FluentConfigCreateTests(Func<ICypherFluentQuery> seedQueryFactory)
+        {
+            UseQueryFactory(seedQueryFactory);
+        }
+
+       
+        public ICypherFluentQuery CreateWithUnusualTypeAct()
         {
             var weapon = SampleDataFactory.GetWellKnownWeapon(1);
 
             var q = GetFluentQuery()
                 .CreateEntity(weapon, "w");
+            
+            return q;
+        }
 
+        [Test]
+        public void CreateWithUnusualType()
+        {
+            var q = CreateWithUnusualTypeAct();
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
             // GetFormattedDebugText isn't honouring JsonConverter
@@ -45,18 +65,11 @@ namespace Neo4jClient.Extension.Test.Cypher
 })", text);
         }
 
-        [Test]
-        public void Create()
-        {
-            var agent = SampleDataFactory.GetWellKnownPerson(7);
-            var homeRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "a", "ha");
 
-            var q = GetFluentQuery()
-                .CreateEntity(agent, "a")
-                .CreateEntity(agent.HomeAddress, "ha")
-                .CreateEntity(agent.WorkAddress, "wa")
-                .CreateRelationship(homeRelationship)
-                .CreateRelationship(new WorkAddressRelationship("a", "wa"));
+        [Test]
+        public void CreateComplex()
+        {
+            var q = CreateComplexAct();
 
             //var q = GetFluentQuery().Create(address);
             var text = q.GetFormattedDebugText();
@@ -81,6 +94,21 @@ CREATE (wa:Address {
 })
 CREATE (a)-[aha:HOME_ADDRESS]->(ha)
 CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
+        }
+        
+        public ICypherFluentQuery CreateComplexAct()
+        {
+            var agent = SampleDataFactory.GetWellKnownPerson(7);
+            var homeRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "a", "ha");
+
+            var q = GetFluentQuery()
+                .CreateEntity(agent, "a")
+                .CreateEntity(agent.HomeAddress, "ha")
+                .CreateEntity(agent.WorkAddress, "wa")
+                .CreateRelationship(homeRelationship)
+                .CreateRelationship(new WorkAddressRelationship("a", "wa"));
+            
+            return q;
         }
     }
 }

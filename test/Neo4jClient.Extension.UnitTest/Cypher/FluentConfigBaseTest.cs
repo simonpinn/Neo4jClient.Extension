@@ -20,7 +20,28 @@ namespace Neo4jClient.Extension.Test.Cypher
     {
         protected List<JsonConverter> JsonConverters { get; private set; }
 
-        public IGraphClient GetMockCypherClient()
+        private Func<ICypherFluentQuery> _seedQueryFactory;
+
+        protected FluentConfigBaseTest()
+        {
+            UseMockQueryFactory();
+        }
+
+        protected void UseQueryFactory(Func<ICypherFluentQuery> queryFactory)
+        {
+            _seedQueryFactory = queryFactory;
+        }
+
+        [SetUp]
+        public void TestSetup()
+        {
+            JsonConverters = GraphClient.DefaultJsonConverters.ToList();
+            JsonConverters.Add(new AreaJsonConverter());
+
+            NeoConfig.ConfigureModel();
+        }
+
+        protected IGraphClient GetMockCypherClient()
         {
             var moqGraphClient = new Mock<IGraphClient>();
             var mockRawClient = moqGraphClient.As<IRawGraphClient>();
@@ -31,20 +52,19 @@ namespace Neo4jClient.Extension.Test.Cypher
             return mockRawClient.Object;
         }
 
-        public ICypherFluentQuery GetFluentQuery()
+        protected ICypherFluentQuery GetFluentQuery()
         {
-            var cypherClient = GetMockCypherClient();
-            return new CypherFluentQuery(cypherClient);
+            return _seedQueryFactory();
         }
 
-
-        [SetUp]
-        public void TestSetup()
+        private void UseMockQueryFactory()
         {
-            JsonConverters = GraphClient.DefaultJsonConverters.ToList();
-            JsonConverters.Add(new AreaJsonConverter());
-
-            NeoConfig.ConfigureModel();
+            _seedQueryFactory = () =>
+            {
+                var cypherClient = GetMockCypherClient();
+                return new CypherFluentQuery(cypherClient);
+            };
         }
+
     }
 }

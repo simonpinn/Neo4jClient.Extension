@@ -12,12 +12,30 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
     public class MergeTests : IntegrationTest
     {
         [Test]
-        public void MergePerson()
+        public void OneDeep()
         {
-            var person = SampleDataFactory.GetWellKnownPerson(1);
+            // create
+            new FluentConfigMergeTests(RealQueryFactory)
+                .OneDeepAct()
+                .ExecuteWithoutResults();
 
-            CypherQuery
-                .MergeEntity(person)
+            // merge
+            new FluentConfigMergeTests(RealQueryFactory)
+                .OneDeepAct()
+                .ExecuteWithoutResults();
+        }
+
+        [Test]
+        public void TwoDeep()
+        {
+            // create
+            new FluentConfigMergeTests(RealQueryFactory)
+                .TwoDeepAct()
+                .ExecuteWithoutResults();
+
+            // merge
+            new FluentConfigMergeTests(RealQueryFactory)
+                .TwoDeepAct()
                 .ExecuteWithoutResults();
         }
     }

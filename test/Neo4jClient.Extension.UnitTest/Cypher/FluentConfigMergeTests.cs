@@ -14,6 +14,18 @@ namespace Neo4jClient.Extension.Test.Cypher
 {
     public class FluentConfigMergeTests : FluentConfigBaseTest
     {
+        public FluentConfigMergeTests()
+        {
+        }
+
+        /// <summary>
+        /// Ctor for Integration tests to use
+        /// </summary>
+        public FluentConfigMergeTests(Func<ICypherFluentQuery> seedQueryFactory)
+        {
+            UseQueryFactory(seedQueryFactory);
+        }
+
         [Test]
         public void Fiddle()
         {
@@ -29,11 +41,11 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(text);
         }
 
+
         [Test]
-        public void FormattedCypherOneDeep()
+        public void OneDeep()
         {
-            var person = SampleDataFactory.GetWellKnownPerson(7);
-            var q = GetFluentQuery().MergeEntity(person);
+            var q = OneDeepAct();
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
@@ -64,24 +76,19 @@ SET person = {
   id: 7
 }", text);
         }
+        
+        public ICypherFluentQuery OneDeepAct()
+        {
+            var person = SampleDataFactory.GetWellKnownPerson(7);
+            var q = GetFluentQuery()
+                        .MergeEntity(person);
+            return q;
+        }
 
         [Test]
-        public void FormattedCypherTwoDeep()
+        public void TwoDeep()
         {
-            //setup
-            var testPerson = SampleDataFactory.GetWellKnownPerson(7);
-
-            var homeAddressRelationship = new HomeAddressRelationship("person", "address");
-
-            // perhaps this would be modelled on the address node but serves to show how to attach relationship property
-            homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
-
-            //act
-            var q = GetFluentQuery()
-                .MergeEntity(testPerson)
-                .MergeEntity(testPerson.HomeAddress)
-                .MergeRelationship(homeAddressRelationship);
-           
+            var q = TwoDeepAct();
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
@@ -135,6 +142,26 @@ ON CREATE
 SET personaddress = {
   dateEffective: ""2011-01-10T09:00:00+11:00""
 }", text);
+        }
+
+        
+        public ICypherFluentQuery TwoDeepAct()
+        {
+            //setup
+            var testPerson = SampleDataFactory.GetWellKnownPerson(7);
+
+            var homeAddressRelationship = new HomeAddressRelationship("person", "address");
+
+            // perhaps this would be modelled on the address node but serves to show how to attach relationship property
+            homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
+
+            //act
+            var q = GetFluentQuery()
+                .MergeEntity(testPerson)
+                .MergeEntity(testPerson.HomeAddress)
+                .MergeRelationship(homeAddressRelationship);
+
+            return q;
         }
 
         [Test]
