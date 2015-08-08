@@ -44,7 +44,7 @@ A relationship might be setup like this:
                 .MergeOnMatchOrCreate(hr => hr.DateEffective)
                 .Set();
 
-The address entity undergoes a similar setup - see the [unit tests](https://github.com/simonpinn/Neo4jClient.Extension/blob/master/Neo4jClient.Extension.Test/Cypher/FluentConfigBaseTest.cs) for the complete setup.
+The address entity undergoes a similar setup - see the [unit tests](https://github.com/simonpinn/Neo4jClient.Extension/blob/master/src/Neo4jClient.Extension.Test.Common/Neo/NeoConfig.cs) for the complete setup.
 
 ##Fluent Config Usage##
 Now that our model is configured, creating a weapon is as simple as:
@@ -118,3 +118,14 @@ Below is an example model decorated with the above attributes
 Yes, we think you should use the Fluent Config too.
 
 A full list of examples can be found in the unit tests within the solution.
+
+
+## Packaging ##
+In the `\_package` folder there are a set of scripts. Edit the `SolutionItems\Properties\AssemblyInfoGlobal.cs` to set the build number and then:
+
+* `build.cmd` build the solution
+* `package-d.cmd` build prerelease package
+* `package-r.cmd` build release package
+* `usemyget.cmd` or `usenuget.cmd` to set the package destination
+* `setapikey.cmd` sets the api key for above destination
+* `publish.cmd` publish the package 
