@@ -25,9 +25,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {
+            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
   id: 7
-})", text);
+}.id})", text);
         }
 
         [Test] 
@@ -53,7 +53,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {agenthomeAddressMatchKey}]->(homeAddress)", text);
+            Assert.AreEqual(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)", text);
         }
     }
 }

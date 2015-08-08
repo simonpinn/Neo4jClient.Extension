@@ -68,11 +68,16 @@ namespace Neo4jClient.Extension.Cypher
             var label = entity.EntityLabel();
             paramKey = entity.EntityParamKey(paramKey);
 
-            var matchParamKey = GetMatchParamName(paramKey);
+            var matchProperties = useProperties
+                .Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)))
+                .ToList();
 
-            var parameterCypher = useProperties.Count == 0 ? string.Empty : AsWrappedVariable(matchParamKey);
+            var jsonProperties = string.Join(",", matchProperties);
+
+            var parameterCypher = matchProperties.Count == 0 ? string.Empty : AsWrappedVariable(jsonProperties);
 
             var cypher = GetMatchCypher(paramKey, label, parameterCypher);
+
             return cypher;
         }
 
