@@ -11,7 +11,7 @@ GOTO :EOF
 echo .
 echo Processing file %1 ...
 echo .
-..\.nuget\nuget.exe push %1 -source https://www.myget.org/F/neo4jclient-extension-tx/api/v2/package"
+..\.nuget\nuget.exe push %1 -source %neo4jx-nuget%
 echo .
 echo                       ...complete!
 GOTO :EOF
