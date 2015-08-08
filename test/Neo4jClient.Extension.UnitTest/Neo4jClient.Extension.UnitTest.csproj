@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neo4jClient.Extension.Test</RootNamespace>
     <AssemblyName>Neo4jClient.Extension.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -82,16 +83,9 @@
     <Compile Include="Cypher\FluentConfigMatchTests.cs" />
     <Compile Include="Cypher\FluentConfigMergeTests.cs" />
     <Compile Include="Cypher\FluentConfigUpdateTests.cs" />
-    <Compile Include="TestData\Entities\Address.cs" />
-    <Compile Include="TestData\Entities\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestData\Entities\Weapon.cs" />
-    <Compile Include="TestData\Relationships\AddressRelationships.cs" />
-    <Compile Include="TestData\Relationships\CheckedOutRelationship.cs" />
-    <Compile Include="TestData\SampleDataFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestData\TestDataDiagram.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +96,10 @@
     <ProjectReference Include="..\..\src\Neo4jClient.Extension\Neo4jClient.Extension.csproj">
       <Project>{41c65bed-56a6-4942-95d2-10e62f607c7f}</Project>
       <Name>Neo4jClient.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neo4jClient.Extension.Test.Common\Neo4jClient.Extension.Test.Common.csproj">
+      <Project>{b7c14349-6bec-44d1-ab33-b82ad85899aa}</Project>
+      <Name>Neo4jClient.Extension.Test.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
