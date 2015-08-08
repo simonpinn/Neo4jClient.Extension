@@ -59,7 +59,8 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity) where T : BaseRelationship
         {
-            var relationshipSegment = GetAliasLabelCql(entity.Key, entity.EntityLabel()); //need this if creating propertites:  entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), entity.Key);
+            //bug: isn't creating properties 
+            var relationshipSegment = GetAliasLabelCql(entity.Key, entity.EntityLabel()); 
             var cql = GetRelationshipCql(entity.FromKey, relationshipSegment, entity.ToKey);
             return query.Create(cql);
         }
