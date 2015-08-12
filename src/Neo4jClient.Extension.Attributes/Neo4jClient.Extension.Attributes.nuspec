@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Neo4jClient.Extension.Attributes</id>
+    <version>$version$</version>
+    <title>Neo4jClient.Extension.Attributes</title>
+    <authors>Simon Pinn</authors>
+    <owners>Simon Pinn</owners>
+    <licenseUrl>https://github.com/simonpinn/Neo4jClient.Extension/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/simonpinn/Neo4jClient.Extension</projectUrl>    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Extending the awesome Neo4jClient, provides just the attributes required by Neo4jClient.Extension to allow class libraries to remove dependency on Neo4jClient</description>    
+    <copyright>Copyright 2015</copyright>
+    <tags>Neo4j Neo4jClient GraphDb GraphData</tags>
+    <summary>Simplify and reduce magic strings when using the Neo4jClient, allows any object to be a data POCO</summary>
+  </metadata>
+</package>
