@@ -46,6 +46,23 @@ namespace Neo4jClient.Extension.Test.Cypher
 OPTIONAL MATCH (ha:Address)", text);
         }
 
+        [Test]
+        public void OptionalMatchRelationship()
+        {
+            var person = SampleDataFactory.GetWellKnownPerson(7);
+            var homeAddressRelationship = new HomeAddressRelationship();
+            var q = GetFluentQuery()
+                .MatchEntity(person)
+                .OptionalMatchRelationship(homeAddressRelationship, MatchRelationshipOptions.Create().WithNoProperties());
+            var text = q.GetFormattedDebugText();
+            Console.WriteLine(text);
+
+            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+  id: 7
+}.id})
+OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
+        }
+
         [Test] 
         public void MatchRelationshipSimple()
         {

@@ -14,11 +14,11 @@ namespace Neo4jClient.Extension.Cypher
 
         public string PostCql { get; set; }
 
-        public List<CypherProperty> PropertyOverride { get; set; }
+        public List<CypherProperty> MatchOverride { get; set; }
 
         public MatchOptions()
         {
-            PropertyOverride = null;
+            MatchOverride = null;
         }
 
         public static MatchOptions Create(string identifier)
@@ -31,7 +31,7 @@ namespace Neo4jClient.Extension.Cypher
     {
         public static MatchOptions WithProperties(this MatchOptions target, List<CypherProperty> propertyOverride)
         {
-            target.PropertyOverride = propertyOverride;
+            target.MatchOverride = propertyOverride;
             return target;
         }
 

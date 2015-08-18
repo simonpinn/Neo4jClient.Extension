@@ -19,7 +19,7 @@ namespace Neo4jClient.Extension.Test.TestEntities.Relationships
             DateEffective = effective;
         }
 
-        public HomeAddressRelationship(string from = "agent", string to = "address")
+        public HomeAddressRelationship(string from = "person", string to = "address")
             : base(from, to)
         {
         }
