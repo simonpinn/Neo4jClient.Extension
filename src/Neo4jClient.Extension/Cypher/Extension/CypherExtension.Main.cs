@@ -15,20 +15,47 @@ namespace Neo4jClient.Extension.Cypher
         public static CypherExtensionContext DefaultExtensionContext = new CypherExtensionContext();
         private static readonly Dictionary<Type, string> EntityLabelCache = new Dictionary<Type, string>();
         
-        public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
+        public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, string identifier = null, string preCql = "", string postCql = "", List<CypherProperty> propertyOverride = null) where T : class
         {
-            paramKey = entity.EntityParamKey(paramKey);
-            var matchCypher = entity.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), paramKey, propertyOverride);
-            var cql = string.Format("{0}({1}){2}", preCql, matchCypher, postCql);
-            //create a dynamic object for the type
-            dynamic cutdown = entity.CreateDynamic(propertyOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity));
-
-            var matchKey = GetMatchParamName(paramKey);
-
-            return query
-                .Match(cql)
-                .WithParam(matchKey, cutdown);
+            var options = new MatchOptions
+            {
+                Identifier = identifier,
+                PreCql = preCql,
+                PostCql = postCql,
+                PropertyOverride = propertyOverride
+            };
+            return MatchEntity(query, entity, options);
         }
+
+        public static ICypherFluentQuery MatchEntity<T>(this ICypherFluentQuery query, T entity, MatchOptions options)
+            where T : class
+        {
+            return MatchWorker(query, entity, options, (q, s) => q.Match(s));
+        }
+
+        public static ICypherFluentQuery OptionalMatchEntity<T>(this ICypherFluentQuery query, T entity, MatchOptions options= null)
+           where T : class
+        {
+            if (options == null)
+            {
+                options = new MatchOptions();
+            }
+            return MatchWorker(query, entity, options, (q, s) => q.OptionalMatch(s));
+        }
+
+        private static ICypherFluentQuery MatchWorker<T>(this ICypherFluentQuery query, T entity, MatchOptions options, Func<ICypherFluentQuery, string, ICypherFluentQuery> matchFunction) where T : class
+        {
+            var identifier = entity.EntityParamKey(options.Identifier);
+            var matchCypher = entity.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), identifier, options.PropertyOverride);
+            var cql = string.Format("{0}({1}){2}", options.PreCql, matchCypher, options.PostCql);
+            dynamic cutdown = entity.CreateDynamic(options.PropertyOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity));
+
+            var matchKey = GetMatchParamName(identifier);
+
+            return matchFunction(query,cql)
+                    .WithParam(matchKey, cutdown);
+        }
+
 
         public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class
         {
