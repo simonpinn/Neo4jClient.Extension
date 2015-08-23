@@ -44,7 +44,7 @@ A relationship might be setup like this:
                 .MergeOnMatchOrCreate(hr => hr.DateEffective)
                 .Set();
 
-The address entity undergoes a similar setup - see the [unit tests](https://github.com/simonpinn/Neo4jClient.Extension/blob/master/src/Neo4jClient.Extension.Test.Common/Neo/NeoConfig.cs) for the complete setup.
+The address entity undergoes a similar setup - see the [unit tests](https://github.com/simonpinn/Neo4jClient.Extension/blob/master/test/Neo4jClient.Extension.Test.Common/Neo/NeoConfig.cs) for the complete setup.
 
 ##Fluent Config Usage##
 Now that our model is configured, creating a weapon is as simple as:

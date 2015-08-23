@@ -77,6 +77,8 @@
     <Compile Include="Cypher\CypherTypeItemHelper.cs" />
     <Compile Include="Cypher\Extension\CypherExtension.Entity.cs" />
     <Compile Include="Cypher\FluentConfig.cs" />
+    <Compile Include="Cypher\MatchOptions.cs" />
+    <Compile Include="Cypher\MatchRelationshipOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
