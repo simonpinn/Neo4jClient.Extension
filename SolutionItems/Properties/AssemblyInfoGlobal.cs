@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 
 
 [assembly: AssemblyCopyright("Copyright © 2014")]
-[assembly: AssemblyVersion("0.1.3.1")]
+[assembly: AssemblyVersion("0.1.3.3")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
-[assembly: AssemblyInformationalVersion("0.1.3.2-beta")]    // trigger pre release package
+[assembly: AssemblyInformationalVersion("0.1.3.3-beta")]    // trigger pre release package
 #else
     [assembly: AssemblyConfiguration("Release")]
 #endif
