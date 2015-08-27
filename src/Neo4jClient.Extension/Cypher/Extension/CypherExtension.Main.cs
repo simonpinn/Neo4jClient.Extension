@@ -100,7 +100,7 @@ namespace Neo4jClient.Extension.Cypher
                 pattern = GetRelationshipCql(
                 options.MergeViaRelationship.FromKey
                 , relationshipSegment
-                , options.MergeViaRelationshipLabel ? string.Concat(options.MergeViaRelationship.ToKey, ":", entity.EntityLabel()) : options.MergeViaRelationship.ToKey);
+                , options.UseToLabel ? string.Concat(options.MergeViaRelationship.ToKey, ":", entity.EntityLabel()) : options.MergeViaRelationship.ToKey);
                 cql = string.Format("{0}{1}{2}", options.PreCql, pattern, options.PostCql);
             }
             else

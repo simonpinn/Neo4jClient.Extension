@@ -22,7 +22,7 @@ namespace Neo4jClient.Extension.Cypher
 
         public BaseRelationship MergeViaRelationship { get; set; }
 
-        public bool MergeViaRelationshipLabel { get; set; }
+        public bool UseToLabel { get; set; }
 
         public static MergeOptions Create(string paramKey)
         {
@@ -56,9 +56,9 @@ namespace Neo4jClient.Extension.Cypher
             return target;
         }
 
-        public static MergeOptions WithLabel(this MergeOptions target, bool useLabel)
+        public static MergeOptions UseToLabel(this MergeOptions target, bool useToLabel)
         {
-            target.MergeViaRelationshipLabel = useLabel;
+            target.UseToLabel = useToLabel;
             return target;
         }
     }
