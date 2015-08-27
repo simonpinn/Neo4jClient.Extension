@@ -192,7 +192,11 @@ namespace Neo4jClient.Extension.Cypher
             var matchParamName = GetMatchParamName(key);
 
             query = query.Merge(mergeCql);
-            query = query.WithParam(matchParamName, mergeObjectParam);
+
+            if (!query.Query.QueryParameters.ContainsKey(matchParamName))
+            {
+                query = query.WithParam(matchParamName, mergeObjectParam);
+            }
 
             if (matchProperties.Count > 0)
             {
@@ -202,7 +206,10 @@ namespace Neo4jClient.Extension.Cypher
                     var propertyParam = key + matchProperty.JsonName;
                     var propertyValue = GetValue(entity, matchProperty, entityType);
                     query = query.OnMatch().Set(GetSetWithParamCql(key, matchProperty.JsonName, propertyParam));
-                    query = query.WithParam(propertyParam, propertyValue);
+                    if (!query.Query.QueryParameters.ContainsKey(propertyParam))
+                    {
+                        query = query.WithParam(propertyParam, propertyValue);
+                    }
                 }
             }
 
@@ -211,7 +218,10 @@ namespace Neo4jClient.Extension.Cypher
                 var createParamName = key + "OnCreate";
                 dynamic createObjectParam = entity.CreateDynamic(createProperties);
                 query = query.OnCreate().Set(GetSetWithParamCql(key, createParamName));
-                query = query.WithParam(createParamName, createObjectParam);
+                if (!query.Query.QueryParameters.ContainsKey(createParamName))
+               {
+                    query = query.WithParam(createParamName, createObjectParam);
+               }
             }
             
             return query;

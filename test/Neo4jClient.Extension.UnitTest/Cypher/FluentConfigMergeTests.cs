@@ -201,15 +201,15 @@ SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
-MERGE (person)-[:WORK_ADDRESS]->(work)
+MERGE (person)-[:WORK_ADDRESS]->(address)
 ON MATCH
-SET work.suburb = ""Fakeville""
+SET address.suburb = ""Fakeville""
 ON MATCH
-SET work.street = ""59 Isis Street""
+SET address.street = ""200 Isis Street""
 ON CREATE
-SET work = {
+SET address = {
   suburb: ""Fakeville"",
-  street: ""59 Isis Street""
+  street: ""200 Isis Street""
 }", text);
 
         }
@@ -220,7 +220,7 @@ SET work = {
             var testPerson = SampleDataFactory.GetWellKnownPerson(7);
 
             var homeAddressRelationship = new HomeAddressRelationship("person", "address");
-            var workAddressRelationship = new WorkAddressRelationship("person", "work");
+            var workAddressRelationship = new WorkAddressRelationship("person", "address");
 
             // perhaps this would be modelled on the address node but serves to show how to attach relationship property
             homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
@@ -231,7 +231,7 @@ SET work = {
                 .MergeEntity(testPerson.HomeAddress,
                     new MergeOptions {MergeViaRelationship = homeAddressRelationship, ParamKey = "address", UseToLabel = true})
                 .MergeEntity(testPerson.WorkAddress,
-                    new MergeOptions {MergeViaRelationship = workAddressRelationship, ParamKey = "work", UseToLabel = false});
+                    new MergeOptions {MergeViaRelationship = workAddressRelationship, ParamKey = "address", UseToLabel = false});
 
             return q;
         }
