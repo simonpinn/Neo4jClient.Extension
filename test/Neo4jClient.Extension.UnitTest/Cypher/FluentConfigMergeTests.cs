@@ -119,7 +119,7 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(address)
+MERGE (person)-[:HOME_ADDRESS]->(address:Address)
 ON MATCH
 SET address.suburb = ""Fakeville""
 ON MATCH
@@ -152,7 +152,7 @@ SET personaddress = {
             //act
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
-                .MergeEntity(testPerson.HomeAddress, MergeOptions.Create("address").WithRelationship(homeAddressRelationship))
+                .MergeEntity(testPerson.HomeAddress, MergeOptions.Create("address").WithRelationship(homeAddressRelationship).WithLabel(true))
                 .MergeRelationship(homeAddressRelationship);
 
             return q;
@@ -191,7 +191,7 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(address)
+MERGE (person)-[:HOME_ADDRESS]->(address:Address)
 ON MATCH
 SET address.suburb = ""Fakeville""
 ON MATCH
@@ -200,6 +200,16 @@ ON CREATE
 SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
+}
+MERGE (person)-[:WORK_ADDRESS]->(work)
+ON MATCH
+SET work.suburb = ""Fakeville""
+ON MATCH
+SET work.street = ""59 Isis Street""
+ON CREATE
+SET work = {
+  suburb: ""Fakeville"",
+  street: ""59 Isis Street""
 }", text);
 
         }
@@ -210,6 +220,7 @@ SET address = {
             var testPerson = SampleDataFactory.GetWellKnownPerson(7);
 
             var homeAddressRelationship = new HomeAddressRelationship("person", "address");
+            var workAddressRelationship = new WorkAddressRelationship("person", "work");
 
             // perhaps this would be modelled on the address node but serves to show how to attach relationship property
             homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
@@ -218,7 +229,9 @@ SET address = {
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
                 .MergeEntity(testPerson.HomeAddress,
-                    new MergeOptions { MergeViaRelationship = homeAddressRelationship, ParamKey = "address"});
+                    new MergeOptions {MergeViaRelationship = homeAddressRelationship, ParamKey = "address", MergeViaRelationshipLabel = true})
+                .MergeEntity(testPerson.WorkAddress,
+                    new MergeOptions {MergeViaRelationship = workAddressRelationship, ParamKey = "work", MergeViaRelationshipLabel = false});
 
             return q;
         }
