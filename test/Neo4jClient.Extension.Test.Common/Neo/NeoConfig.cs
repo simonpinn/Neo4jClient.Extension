@@ -30,10 +30,10 @@ namespace Neo4jClient.Extension.Test.Data
 
             FluentConfig.Config()
                 .With<Address>()
-                .Match(x => x.Street)
-                .Match(x => x.Suburb)
-                .Merge(x => x.Street)
-                .Merge(x => x.Suburb)
+                //.Match(x => x.Street)
+                //.Match(x => x.Suburb)
+                //.Merge(x => x.Street)
+                //.Merge(x => x.Suburb)
                 .MergeOnMatchOrCreate(a => a.Street)
                 .MergeOnMatchOrCreate(a => a.Suburb)
                 .Set();

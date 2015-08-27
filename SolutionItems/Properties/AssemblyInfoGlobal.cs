@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.1.3.1")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
-[assembly: AssemblyInformationalVersion("0.1.3.1-beta")]    // trigger pre release package
+[assembly: AssemblyInformationalVersion("0.1.3.2-beta")]    // trigger pre release package
 #else
     [assembly: AssemblyConfiguration("Release")]
 #endif

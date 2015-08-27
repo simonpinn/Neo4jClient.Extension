@@ -77,11 +77,40 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
         {
-            paramKey = entity.EntityParamKey(paramKey);
+            var options = new MergeOptions
+            {
+                ParamKey = entity.EntityParamKey(paramKey),
+                PreCql = preCql,
+                PostCql = postCql,
+                MergeOverride = mergeOverride,
+                OnCreateOverride = onCreateOverride,
+                OnMatchOverride = onMatchOverride
+            };
+            return MergeEntity(query, entity, options);
+        }
+
+        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, MergeOptions options) where T : class
+        {
             var context = CypherExtensionContext.Create(query);
-            var cypher1= entity.ToCypherString<T, CypherMergeAttribute>(context, paramKey, mergeOverride);
-            var cql = string.Format("{0}({1}){2}", preCql, cypher1, postCql);
-            return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
+            string pattern = string.Empty;
+            string cql = string.Empty;
+            if (options.MergeViaRelationship != null)
+            {
+                var relationshipSegment = GetAliasLabelCql(string.Empty, options.MergeViaRelationship.EntityLabel()); 
+                pattern = GetRelationshipCql(
+                options.MergeViaRelationship.FromKey
+                , relationshipSegment
+                , string.Concat(options.MergeViaRelationship.ToKey, ":", entity.EntityLabel()));
+                cql = string.Format("{0}{1}{2}", options.PreCql, pattern, options.PostCql);
+            }
+            else
+            {
+                pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, options.ParamKey, options.MergeOverride);
+                cql = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
+            }
+
+            //var cql = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
+            return query.CommonMerge(entity, options.ParamKey, cql, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
         }
 
         public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity) where T : BaseRelationship

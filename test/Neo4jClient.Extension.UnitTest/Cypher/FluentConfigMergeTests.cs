@@ -119,13 +119,7 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (address:Address {suburb:{
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
-}.suburb,street:{
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
-}.street})
+MERGE (person)-[:HOME_ADDRESS]->(address:Address)
 ON MATCH
 SET address.suburb = ""Fakeville""
 ON MATCH
@@ -158,8 +152,73 @@ SET personaddress = {
             //act
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
-                .MergeEntity(testPerson.HomeAddress)
+                .MergeEntity(testPerson.HomeAddress, MergeOptions.Create("address").WithRelationship(homeAddressRelationship))
                 .MergeRelationship(homeAddressRelationship);
+
+            return q;
+        }
+
+        [Test]
+        public void OneDeepMergeByRelationship()
+        {
+            var q = OneDeepMergeByRelationshipAct();
+            var text = q.GetFormattedDebugText();
+            Console.WriteLine(text);
+
+            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
+  id: 7
+}.id})
+ON MATCH
+SET person.spendingAuthorisation = 100.23
+ON MATCH
+SET person.serialNumber = 123456
+ON MATCH
+SET person.sex = ""Male""
+ON MATCH
+SET person.isOperative = true
+ON MATCH
+SET person.name = ""Sterling Archer""
+ON MATCH
+SET person.title = null
+ON CREATE
+SET person = {
+  spendingAuthorisation: 100.23,
+  serialNumber: 123456,
+  sex: ""Male"",
+  isOperative: true,
+  name: ""Sterling Archer"",
+  title: null,
+  dateCreated: ""2015-07-11T08:00:00+10:00"",
+  id: 7
+}
+MERGE (person)-[:HOME_ADDRESS]->(address:Address)
+ON MATCH
+SET address.suburb = ""Fakeville""
+ON MATCH
+SET address.street = ""200 Isis Street""
+ON CREATE
+SET address = {
+  suburb: ""Fakeville"",
+  street: ""200 Isis Street""
+}", text);
+
+        }
+
+        public ICypherFluentQuery OneDeepMergeByRelationshipAct()
+        {
+            //setup
+            var testPerson = SampleDataFactory.GetWellKnownPerson(7);
+
+            var homeAddressRelationship = new HomeAddressRelationship("person", "address");
+
+            // perhaps this would be modelled on the address node but serves to show how to attach relationship property
+            homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
+
+            //act
+            var q = GetFluentQuery()
+                .MergeEntity(testPerson)
+                .MergeEntity(testPerson.HomeAddress,
+                    new MergeOptions { MergeViaRelationship = homeAddressRelationship, ParamKey = "address"});
 
             return q;
         }

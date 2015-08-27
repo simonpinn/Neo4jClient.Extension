@@ -79,6 +79,7 @@
     <Compile Include="Cypher\FluentConfig.cs" />
     <Compile Include="Cypher\MatchOptions.cs" />
     <Compile Include="Cypher\MatchRelationshipOptions.cs" />
+    <Compile Include="Cypher\MergeOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
