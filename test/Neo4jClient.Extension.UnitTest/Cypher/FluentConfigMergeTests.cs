@@ -119,7 +119,7 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(address:Address)
+MERGE (person)-[:HOME_ADDRESS]->(address)
 ON MATCH
 SET address.suburb = ""Fakeville""
 ON MATCH
@@ -191,7 +191,7 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(address:Address)
+MERGE (person)-[:HOME_ADDRESS]->(address)
 ON MATCH
 SET address.suburb = ""Fakeville""
 ON MATCH
