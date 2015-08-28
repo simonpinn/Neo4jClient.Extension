@@ -229,7 +229,7 @@ SET address = {
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
                 .MergeEntity(testPerson.HomeAddress,
-                    new MergeOptions {MergeViaRelationship = homeAddressRelationship, ParamKey = "address", UseToLabel = true})
+                    new MergeOptions {MergeViaRelationship = homeAddressRelationship, ParamKey = "address"})
                 .MergeEntity(testPerson.WorkAddress,
                     new MergeOptions {MergeViaRelationship = workAddressRelationship, ParamKey = "address", UseToLabel = false});
 

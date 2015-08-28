@@ -31,6 +31,7 @@ namespace Neo4jClient.Extension.Cypher
         }
         public MergeOptions()
         {
+            UseToLabel = true;
             MergeOverride = null;
             OnMatchOverride = null;
             OnCreateOverride = null;
