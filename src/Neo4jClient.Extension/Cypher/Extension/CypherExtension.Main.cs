@@ -75,11 +75,11 @@ namespace Neo4jClient.Extension.Cypher
             return query;
         }
 
-        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
+        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string identifier = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
         {
             var options = new MergeOptions
             {
-                ParamKey = entity.EntityParamKey(paramKey),
+                Identifier = entity.EntityParamKey(identifier),
                 PreCql = preCql,
                 PostCql = postCql,
                 MergeOverride = mergeOverride,
@@ -92,25 +92,27 @@ namespace Neo4jClient.Extension.Cypher
         public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, MergeOptions options) where T : class
         {
             var context = CypherExtensionContext.Create(query);
-            string pattern = string.Empty;
-            string cql = string.Empty;
+            string pattern;
+            string wrappedPattern;
+
             if (options.MergeViaRelationship != null)
             {
                 var relationshipSegment = GetAliasLabelCql(string.Empty, options.MergeViaRelationship.EntityLabel()); 
+
                 pattern = GetRelationshipCql(
-                options.MergeViaRelationship.FromKey
-                , relationshipSegment
-                , options.UseToLabel ? string.Concat(options.MergeViaRelationship.ToKey, ":", entity.EntityLabel()) : options.MergeViaRelationship.ToKey);
-                cql = string.Format("{0}{1}{2}", options.PreCql, pattern, options.PostCql);
+                    options.MergeViaRelationship.FromKey
+                    , relationshipSegment
+                    , GetAliasLabelCql(options.MergeViaRelationship.ToKey, entity.EntityLabel()));
+
+                wrappedPattern = string.Format("{0}{1}{2}", options.PreCql, pattern, options.PostCql);
             }
             else
             {
-                pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, options.ParamKey, options.MergeOverride);
-                cql = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
+                pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, options.Identifier, options.MergeOverride);
+                wrappedPattern = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
             }
 
-            //var cql = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
-            return query.CommonMerge(entity, options.ParamKey, cql, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
+            return query.CommonMerge(entity, options.Identifier, wrappedPattern, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
         }
 
         public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity) where T : BaseRelationship
@@ -178,7 +180,7 @@ namespace Neo4jClient.Extension.Cypher
             this ICypherFluentQuery query
             , T entity
             , string key
-            , string mergeCql
+            , string mergePattern
             , List<CypherProperty> mergeOverride = null
             , List<CypherProperty> onMatchOverride = null
             , List<CypherProperty> onCreateOverride = null) where T : class
@@ -191,7 +193,7 @@ namespace Neo4jClient.Extension.Cypher
             dynamic mergeObjectParam = entity.CreateDynamic(mergeProperties);
             var matchParamName = GetMatchParamName(key);
 
-            query = query.Merge(mergeCql);
+            query = query.Merge(mergePattern);
 
             if (!query.Query.QueryParameters.ContainsKey(matchParamName))
             {
@@ -229,9 +231,16 @@ namespace Neo4jClient.Extension.Cypher
         
         public static string GetFormattedDebugText(this ICypherFluentQuery query)
         {
-            // write once, read never!
+            return GetFormattedCypher(query.Query.DebugQueryText);
+        }
+
+        public static string GetFormattedCypher(string cypherText)
+        {
             var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);
-            return regex.Replace(query.Query.DebugQueryText, "$1:");
+            var s = regex.Replace(cypherText, "$1:");
+            s = s.Replace("ON MATCH\r\nSET", "ON MATCH SET");   // this is more readable
+            s = s.Replace("ON CREATE\r\nSET", "ON CREATE SET");
+            return s;
         }
     }
 }
