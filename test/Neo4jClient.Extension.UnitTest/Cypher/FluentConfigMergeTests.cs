@@ -25,23 +25,7 @@ namespace Neo4jClient.Extension.Test.Cypher
         {
             UseQueryFactory(seedQueryFactory);
         }
-
-        [Test]
-        public void Fiddle()
-        {
-            var person = SampleDataFactory.GetWellKnownPerson(7);
-
-            var text = GetFluentQuery()
-                .Match("(p:Person)")
-                .Where((Person p) => p.Id == 7)
-                .Set("p.Age = {age}").WithParam("age", 25)
-                .Set("p.Name = {name}").WithParam("name", "foo")
-                .GetFormattedDebugText();
-
-            Console.WriteLine(text);
-        }
-
-
+        
         [Test]
         public void OneDeep()
         {
@@ -52,20 +36,13 @@ namespace Neo4jClient.Extension.Test.Cypher
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation = 100.23
-ON MATCH
-SET person.serialNumber = 123456
-ON MATCH
-SET person.sex = ""Male""
-ON MATCH
-SET person.isOperative = true
-ON MATCH
-SET person.name = ""Sterling Archer""
-ON MATCH
-SET person.title = null
-ON CREATE
-SET person = {
+ON MATCH SET person.spendingAuthorisation = 100.23
+ON MATCH SET person.serialNumber = 123456
+ON MATCH SET person.sex = ""Male""
+ON MATCH SET person.isOperative = true
+ON MATCH SET person.name = ""Sterling Archer""
+ON MATCH SET person.title = null
+ON CREATE SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -96,20 +73,13 @@ SET person = {
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation = 100.23
-ON MATCH
-SET person.serialNumber = 123456
-ON MATCH
-SET person.sex = ""Male""
-ON MATCH
-SET person.isOperative = true
-ON MATCH
-SET person.name = ""Sterling Archer""
-ON MATCH
-SET person.title = null
-ON CREATE
-SET person = {
+ON MATCH SET person.spendingAuthorisation = 100.23
+ON MATCH SET person.serialNumber = 123456
+ON MATCH SET person.sex = ""Male""
+ON MATCH SET person.isOperative = true
+ON MATCH SET person.name = ""Sterling Archer""
+ON MATCH SET person.title = null
+ON CREATE SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -120,20 +90,15 @@ SET person = {
   id: 7
 }
 MERGE (person)-[:HOME_ADDRESS]->(address:Address)
-ON MATCH
-SET address.suburb = ""Fakeville""
-ON MATCH
-SET address.street = ""200 Isis Street""
-ON CREATE
-SET address = {
+ON MATCH SET address.suburb = ""Fakeville""
+ON MATCH SET address.street = ""200 Isis Street""
+ON CREATE SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
 MERGE (person)-[personaddress:HOME_ADDRESS]->(address)
-ON MATCH
-SET personaddress.dateEffective = ""2011-01-10T09:00:00+11:00""
-ON CREATE
-SET personaddress = {
+ON MATCH SET personaddress.dateEffective = ""2011-01-10T09:00:00+11:00""
+ON CREATE SET personaddress = {
   dateEffective: ""2011-01-10T09:00:00+11:00""
 }", text);
         }
@@ -144,7 +109,7 @@ SET personaddress = {
             //setup
             var testPerson = SampleDataFactory.GetWellKnownPerson(7);
 
-            var homeAddressRelationship = new HomeAddressRelationship("person", "address");
+            var homeAddressRelationship = new HomeAddressRelationship();
 
             // perhaps this would be modelled on the address node but serves to show how to attach relationship property
             homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
@@ -152,7 +117,7 @@ SET personaddress = {
             //act
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
-                .MergeEntity(testPerson.HomeAddress, MergeOptions.Create("address").WithRelationship(homeAddressRelationship).UseToLabel(true))
+                .MergeEntity(testPerson.HomeAddress, MergeOptions.ViaRelationship(homeAddressRelationship))
                 .MergeRelationship(homeAddressRelationship);
 
             return q;
@@ -168,20 +133,13 @@ SET personaddress = {
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation = 100.23
-ON MATCH
-SET person.serialNumber = 123456
-ON MATCH
-SET person.sex = ""Male""
-ON MATCH
-SET person.isOperative = true
-ON MATCH
-SET person.name = ""Sterling Archer""
-ON MATCH
-SET person.title = null
-ON CREATE
-SET person = {
+ON MATCH SET person.spendingAuthorisation = 100.23
+ON MATCH SET person.serialNumber = 123456
+ON MATCH SET person.sex = ""Male""
+ON MATCH SET person.isOperative = true
+ON MATCH SET person.name = ""Sterling Archer""
+ON MATCH SET person.title = null
+ON CREATE SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -191,25 +149,19 @@ SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(address:Address)
-ON MATCH
-SET address.suburb = ""Fakeville""
-ON MATCH
-SET address.street = ""200 Isis Street""
-ON CREATE
-SET address = {
+MERGE (person)-[:HOME_ADDRESS]->(homeAddress:Address)
+ON MATCH SET homeAddress.suburb = ""Fakeville""
+ON MATCH SET homeAddress.street = ""200 Isis Street""
+ON CREATE SET homeAddress = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
-MERGE (person)-[:WORK_ADDRESS]->(address)
-ON MATCH
-SET address.suburb = ""Fakeville""
-ON MATCH
-SET address.street = ""200 Isis Street""
-ON CREATE
-SET address = {
+MERGE (person)-[:WORK_ADDRESS]->(workAddress:Address)
+ON MATCH SET workAddress.suburb = ""Fakeville""
+ON MATCH SET workAddress.street = ""59 Isis Street""
+ON CREATE SET workAddress = {
   suburb: ""Fakeville"",
-  street: ""200 Isis Street""
+  street: ""59 Isis Street""
 }", text);
 
         }
@@ -219,8 +171,8 @@ SET address = {
             //setup
             var testPerson = SampleDataFactory.GetWellKnownPerson(7);
 
-            var homeAddressRelationship = new HomeAddressRelationship("person", "address");
-            var workAddressRelationship = new WorkAddressRelationship("person", "address");
+            var homeAddressRelationship = new HomeAddressRelationship("person", "homeAddress");
+            var workAddressRelationship = new WorkAddressRelationship("person", "workAddress");
 
             // perhaps this would be modelled on the address node but serves to show how to attach relationship property
             homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
@@ -228,10 +180,8 @@ SET address = {
             //act
             var q = GetFluentQuery()
                 .MergeEntity(testPerson)
-                .MergeEntity(testPerson.HomeAddress,
-                    new MergeOptions {MergeViaRelationship = homeAddressRelationship, ParamKey = "address"})
-                .MergeEntity(testPerson.WorkAddress,
-                    new MergeOptions {MergeViaRelationship = workAddressRelationship, ParamKey = "address", UseToLabel = false});
+                .MergeEntity(testPerson.HomeAddress, MergeOptions.ViaRelationship(homeAddressRelationship))
+                .MergeEntity(testPerson.WorkAddress, MergeOptions.ViaRelationship(workAddressRelationship));
 
             return q;
         }
