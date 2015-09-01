@@ -93,7 +93,6 @@ namespace Neo4jClient.Extension.Cypher
         {
             var context = CypherExtensionContext.Create(query);
             string pattern;
-            string wrappedPattern;
 
             if (options.MergeViaRelationship != null)
             {
@@ -103,15 +102,12 @@ namespace Neo4jClient.Extension.Cypher
                     options.MergeViaRelationship.FromKey
                     , relationshipSegment
                     , GetAliasLabelCql(options.MergeViaRelationship.ToKey, entity.EntityLabel()));
-
-                wrappedPattern = string.Format("{0}{1}{2}", options.PreCql, pattern, options.PostCql);
             }
             else
             {
                 pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, options.Identifier, options.MergeOverride);
-                wrappedPattern = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
             }
-
+            var wrappedPattern = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
             return query.CommonMerge(entity, options.Identifier, wrappedPattern, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
         }
 
