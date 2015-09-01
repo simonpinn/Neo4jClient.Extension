@@ -89,7 +89,7 @@ ON CREATE SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(address:Address)
+MERGE ((person)-[:HOME_ADDRESS]->(address:Address))
 ON MATCH SET address.suburb = ""Fakeville""
 ON MATCH SET address.street = ""200 Isis Street""
 ON CREATE SET address = {
@@ -149,14 +149,14 @@ ON CREATE SET person = {
   dateCreated: ""2015-07-11T08:00:00+10:00"",
   id: 7
 }
-MERGE (person)-[:HOME_ADDRESS]->(homeAddress:Address)
+MERGE ((person)-[:HOME_ADDRESS]->(homeAddress:Address))
 ON MATCH SET homeAddress.suburb = ""Fakeville""
 ON MATCH SET homeAddress.street = ""200 Isis Street""
 ON CREATE SET homeAddress = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
-MERGE (person)-[:WORK_ADDRESS]->(workAddress:Address)
+MERGE ((person)-[:WORK_ADDRESS]->(workAddress:Address))
 ON MATCH SET workAddress.suburb = ""Fakeville""
 ON MATCH SET workAddress.street = ""59 Isis Street""
 ON CREATE SET workAddress = {
