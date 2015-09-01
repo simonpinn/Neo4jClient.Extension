@@ -92,8 +92,10 @@ CREATE (wa:Address {
   suburb: ""Fakeville"",
   street: ""59 Isis Street""
 })
-CREATE (a)-[aha:HOME_ADDRESS]->(ha)
-CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
+CREATE (a)-[homeaddressrelationship:HOME_ADDRESS {
+  dateEffective: ""2015-08-05T12:00:00+10:00""
+}]->(ha)
+CREATE (a)-[workaddressrelationship:WORK_ADDRESS]->(wa)", text);
         }
         
         public ICypherFluentQuery CreateComplexAct()
