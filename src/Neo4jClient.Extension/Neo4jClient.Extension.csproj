@@ -65,6 +65,7 @@
     <Compile Include="..\..\SolutionItems\Properties\AssemblyInfoGlobal.cs">
       <Link>Properties\AssemblyInfoGlobal.cs</Link>
     </Compile>
+    <Compile Include="Options\CreateOptions.cs" />
     <Compile Include="Cypher\BaseRelationship.cs" />
     <Compile Include="Cypher\Extension\CreateDynamicOptions.cs" />
     <Compile Include="Cypher\Extension\CypherExtension.CqlBuilders.cs" />
@@ -77,8 +78,9 @@
     <Compile Include="Cypher\CypherTypeItemHelper.cs" />
     <Compile Include="Cypher\Extension\CypherExtension.Entity.cs" />
     <Compile Include="Cypher\FluentConfig.cs" />
-    <Compile Include="Cypher\MatchOptions.cs" />
-    <Compile Include="Cypher\MatchRelationshipOptions.cs" />
+    <Compile Include="Options\IOptions.cs" />
+    <Compile Include="Options\MatchOptions.cs" />
+    <Compile Include="Options\MatchRelationshipOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,8 @@ namespace Neo4jClient.Extension.Cypher
                 var label = entityType.GetCustomAttributes(typeof(CypherLabelAttribute), true).FirstOrDefault() as CypherLabelAttribute;
                 EntityLabelCache.Add(entityType, label == null ? entityType.Name : label.Name);
             }
-            return EntityLabelCache[entityType];
+            var output = EntityLabelCache[entityType];
+            return output;
         }
 
         internal static string EntityParamKey<T>(this T entity, string paramKey = null)

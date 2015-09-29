@@ -51,6 +51,10 @@ namespace Neo4jClient.Extension.Test.Data
                 .Match(ha => ha.DateEffective)
                 .MergeOnMatchOrCreate(hr => hr.DateEffective)
                 .Set();
+
+            FluentConfig.Config()
+               .With<WorkAddressRelationship>()
+               .Set();
         }
     }
 }
