@@ -56,37 +56,73 @@ namespace Neo4jClient.Extension.Cypher
                     .WithParam(matchKey, cutdown);
         }
 
-
-        public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class
+        public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, string identifier = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class
         {
-            paramKey = entity.EntityParamKey(paramKey);
-           
-            var cypher2 = GetMatchWithParam(paramKey, entity.EntityLabel(), paramKey);
-            var cql = string.Format("{0}({1}){2}", preCql, cypher2, postCql);
+            var options = new CreateOptions();
 
-            var createProperties = GetCreateProperties(entity);
+            options.PostCql = postCql;
+            options.PreCql = preCql;
+            options.Identifier = identifier;
+            options.CreateOverride = onCreateOverride;
 
-            var options = new CreateDynamicOptions {IgnoreNulls = true}; // working around some buug where null properties are blowing up. don't care on create.
-            dynamic cutdownEntity = entity.CreateDynamic(createProperties, options);
-            
-            query = query.Create(cql);
-            query = query.WithParam(paramKey, cutdownEntity);
+            return CreateEntity(query, entity, options);
+        }
+
+        public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, CreateOptions options) where T : class
+        {
+            Func<string, string> getFinalCql = intermediateCql => WithPrePostWrap(intermediateCql, options);
+
+            query = CommonCreate(query, entity, options, getFinalCql);
 
             return query;
         }
 
-        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string identifier = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null,string preCql = "", string postCql = "") where T : class
+        public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity, CreateOptions options = null) where T : BaseRelationship
         {
-            var options = new MergeOptions
+            Func<string, string> getFinalCql = intermediateCql => GetRelationshipCql(entity.FromKey, intermediateCql, entity.ToKey);
+
+            query = CommonCreate(query, entity, options, getFinalCql);
+
+            return query;
+        }
+        
+        private static ICypherFluentQuery CommonCreate<T>(
+            this ICypherFluentQuery query
+            , T entity
+            , CreateOptions options
+            , Func<string, string> getFinalCql) where T : class
+        {
+            if (options == null)
             {
-                Identifier = entity.EntityParamKey(identifier),
-                PreCql = preCql,
-                PostCql = postCql,
-                MergeOverride = mergeOverride,
-                OnCreateOverride = onCreateOverride,
-                OnMatchOverride = onMatchOverride
-            };
-            return MergeEntity(query, entity, options);
+                options = new CreateOptions();
+            }
+
+            var createProperties = GetCreateProperties(entity);
+            var identifier = entity.EntityParamKey(options.Identifier);
+            var intermediateCreateCql = GetMatchWithParam(identifier, entity.EntityLabel(), createProperties.Count > 0 ? identifier : "");
+
+            var createCql = getFinalCql(intermediateCreateCql);
+
+            var dynamicOptions = new CreateDynamicOptions { IgnoreNulls = true }; // working around some buug where null properties are blowing up. don't care on create.
+            var cutdownEntity = entity.CreateDynamic(createProperties, dynamicOptions);
+
+            query = query.Create(createCql);
+
+            if (createProperties.Count > 0)
+            {
+                query = query.WithParam(identifier, cutdownEntity);
+            }
+
+            return query;
+        }
+
+        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class
+        {
+            paramKey = entity.EntityParamKey(paramKey);
+            var context = CypherExtensionContext.Create(query);
+            var cypher1 = entity.ToCypherString<T, CypherMergeAttribute>(context, paramKey, mergeOverride);
+            var cql = string.Format("{0}({1}){2}", preCql, cypher1, postCql);
+            return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
 
         public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, MergeOptions options) where T : class
@@ -96,7 +132,7 @@ namespace Neo4jClient.Extension.Cypher
 
             if (options.MergeViaRelationship != null)
             {
-                var relationshipSegment = GetAliasLabelCql(string.Empty, options.MergeViaRelationship.EntityLabel()); 
+                var relationshipSegment = GetAliasLabelCql(string.Empty, options.MergeViaRelationship.EntityLabel());
 
                 pattern = GetRelationshipCql(
                     options.MergeViaRelationship.FromKey
@@ -109,14 +145,6 @@ namespace Neo4jClient.Extension.Cypher
             }
             var wrappedPattern = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
             return query.CommonMerge(entity, options.Identifier, wrappedPattern, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
-        }
-
-        public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity) where T : BaseRelationship
-        {
-            //bug: isn't creating properties 
-            var relationshipSegment = GetAliasLabelCql(entity.Key, entity.EntityLabel()); 
-            var cql = GetRelationshipCql(entity.FromKey, relationshipSegment, entity.ToKey);
-            return query.Create(cql);
         }
 
         public static ICypherFluentQuery MergeRelationship<T>(this ICypherFluentQuery query, T entity, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : BaseRelationship
@@ -176,7 +204,7 @@ namespace Neo4jClient.Extension.Cypher
             this ICypherFluentQuery query
             , T entity
             , string key
-            , string mergePattern
+            , string mergeCql
             , List<CypherProperty> mergeOverride = null
             , List<CypherProperty> onMatchOverride = null
             , List<CypherProperty> onCreateOverride = null) where T : class
@@ -189,12 +217,8 @@ namespace Neo4jClient.Extension.Cypher
             dynamic mergeObjectParam = entity.CreateDynamic(mergeProperties);
             var matchParamName = GetMatchParamName(key);
 
-            query = query.Merge(mergePattern);
-
-            if (!query.Query.QueryParameters.ContainsKey(matchParamName))
-            {
-                query = query.WithParam(matchParamName, mergeObjectParam);
-            }
+            query = query.Merge(mergeCql);
+            query = query.WithParam(matchParamName, mergeObjectParam);
 
             if (matchProperties.Count > 0)
             {
@@ -204,10 +228,7 @@ namespace Neo4jClient.Extension.Cypher
                     var propertyParam = key + matchProperty.JsonName;
                     var propertyValue = GetValue(entity, matchProperty, entityType);
                     query = query.OnMatch().Set(GetSetWithParamCql(key, matchProperty.JsonName, propertyParam));
-                    if (!query.Query.QueryParameters.ContainsKey(propertyParam))
-                    {
-                        query = query.WithParam(propertyParam, propertyValue);
-                    }
+                    query = query.WithParam(propertyParam, propertyValue);
                 }
             }
 
@@ -216,10 +237,7 @@ namespace Neo4jClient.Extension.Cypher
                 var createParamName = key + "OnCreate";
                 dynamic createObjectParam = entity.CreateDynamic(createProperties);
                 query = query.OnCreate().Set(GetSetWithParamCql(key, createParamName));
-                if (!query.Query.QueryParameters.ContainsKey(createParamName))
-               {
-                    query = query.WithParam(createParamName, createObjectParam);
-               }
+                query = query.WithParam(createParamName, createObjectParam);
             }
             
             return query;
@@ -227,16 +245,9 @@ namespace Neo4jClient.Extension.Cypher
         
         public static string GetFormattedDebugText(this ICypherFluentQuery query)
         {
-            return GetFormattedCypher(query.Query.DebugQueryText);
-        }
-
-        public static string GetFormattedCypher(string cypherText)
-        {
+            // write once, read never!
             var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);
-            var s = regex.Replace(cypherText, "$1:");
-            s = s.Replace("ON MATCH\r\nSET", "ON MATCH SET");   // this is more readable
-            s = s.Replace("ON CREATE\r\nSET", "ON CREATE SET");
-            return s;
+            return regex.Replace(query.Query.DebugQueryText, "$1:");
         }
     }
 }

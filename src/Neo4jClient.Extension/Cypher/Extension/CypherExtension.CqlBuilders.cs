@@ -12,7 +12,7 @@ namespace Neo4jClient.Extension.Cypher
     {
         private static string GetMatchWithParam(string key, string label, string paramName)
         {
-            return GetMatchCypher(key, label, AsWrappedVariable(paramName));
+            return GetMatchCypher(key, label, string.IsNullOrEmpty(paramName) ? "" : AsWrappedVariable(paramName));
         }
 
         private static string GetMatchCypher(string key, string label, string variable)
@@ -31,7 +31,12 @@ namespace Neo4jClient.Extension.Cypher
             var output = string.Format("{{{0}}}", input);
             return output;
         }
-        
+        private static string WithPrePostWrap(string innerCypher, IOptionsBase options)
+        {
+            var output = string.Format("{0}({1}){2}", options.PreCql, innerCypher, options.PostCql);
+            return output;
+        }
+
         private static string GetSetWithParamCql(string alias, string paramName)
         {
             var cql = string.Format("{0} = {{{1}}}", alias, paramName);

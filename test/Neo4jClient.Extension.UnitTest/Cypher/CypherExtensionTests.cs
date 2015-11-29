@@ -200,9 +200,12 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
-ON MATCH SET cyphermodel.isLegend = false
-ON MATCH SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
-ON CREATE SET cyphermodel = {
+ON MATCH
+SET cyphermodel.isLegend = false
+ON MATCH
+SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
+ON CREATE
+SET cyphermodel = {
   firstName: ""Foo"",
   dateOfBirth: ""1981-04-01T00:00:00+10:00"",
   isLegend: false,
@@ -226,9 +229,12 @@ ON CREATE SET cyphermodel = {
             Assert.AreEqual(@"MERGE (key:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
-ON MATCH SET key.isLegend = false
-ON MATCH SET key.answerToTheMeaningOfLifeAndEverything = 42
-ON CREATE SET key = {
+ON MATCH
+SET key.isLegend = false
+ON MATCH
+SET key.answerToTheMeaningOfLifeAndEverything = 42
+ON CREATE
+SET key = {
   firstName: ""Foo"",
   dateOfBirth: ""1981-04-01T00:00:00+10:00"",
   isLegend: false,
@@ -252,9 +258,12 @@ ON CREATE SET key = {
             Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {firstName:{
   firstName: ""Foo""
 }.firstName})
-ON MATCH SET cyphermodel.isLegend = false
-ON MATCH SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
-ON CREATE SET cyphermodel = {
+ON MATCH
+SET cyphermodel.isLegend = false
+ON MATCH
+SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
+ON CREATE
+SET cyphermodel = {
   firstName: ""Foo"",
   dateOfBirth: ""1981-04-01T00:00:00+10:00"",
   isLegend: false,
@@ -298,9 +307,12 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
-ON MATCH SET cyphermodel.isLegend = false
-ON MATCH SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
-ON CREATE SET cyphermodel = {
+ON MATCH
+SET cyphermodel.isLegend = false
+ON MATCH
+SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
+ON CREATE
+SET cyphermodel = {
   firstName: ""Foo""
 }", q.GetFormattedDebugText());
         }
@@ -357,10 +369,14 @@ ON CREATE SET cyphermodel = {
   factor: 0,
   instructionText: """"
 }.instructionText}]->(to)
-ON MATCH SET fromto.quantity = 0.0
-ON MATCH SET fromto.unitOfMeasure = ""Gram""
-ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH
+SET fromto.quantity = 0.0
+ON MATCH
+SET fromto.unitOfMeasure = ""Gram""
+ON MATCH
+SET fromto.factor = 0
+ON MATCH
+SET fromto.instructionText = """"", q.GetFormattedDebugText());
         }
 
         [Test]
@@ -398,10 +414,14 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
   factor: 0,
   instructionText: """"
 }.instructionText}]->(to)
-ON MATCH SET fromto.quantity = 0.0
-ON MATCH SET fromto.unitOfMeasure = ""Gram""
-ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH
+SET fromto.quantity = 0.0
+ON MATCH
+SET fromto.unitOfMeasure = ""Gram""
+ON MATCH
+SET fromto.factor = 0
+ON MATCH
+SET fromto.instructionText = """"", q.GetFormattedDebugText());
         }
 
         [Test]
@@ -421,10 +441,14 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0
 }.quantity}]->(to)
-ON MATCH SET fromto.quantity = 0.0
-ON MATCH SET fromto.unitOfMeasure = ""Gram""
-ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH
+SET fromto.quantity = 0.0
+ON MATCH
+SET fromto.unitOfMeasure = ""Gram""
+ON MATCH
+SET fromto.factor = 0
+ON MATCH
+SET fromto.instructionText = """"", q.GetFormattedDebugText());
         }
 
         [Test]
@@ -462,7 +486,8 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
   factor: 0,
   instructionText: """"
 }.instructionText}]->(to)
-ON MATCH SET fromto.quantity = 0.0", q.GetFormattedDebugText());
+ON MATCH
+SET fromto.quantity = 0.0", q.GetFormattedDebugText());
         }
 
         [Test]
@@ -500,11 +525,16 @@ ON MATCH SET fromto.quantity = 0.0", q.GetFormattedDebugText());
   factor: 0,
   instructionText: """"
 }.instructionText}]->(to)
-ON MATCH SET fromto.quantity = 0.0
-ON MATCH SET fromto.unitOfMeasure = ""Gram""
-ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"
-ON CREATE SET fromto = {
+ON MATCH
+SET fromto.quantity = 0.0
+ON MATCH
+SET fromto.unitOfMeasure = ""Gram""
+ON MATCH
+SET fromto.factor = 0
+ON MATCH
+SET fromto.instructionText = """"
+ON CREATE
+SET fromto = {
   quantity: 0.0
 }", q.GetFormattedDebugText());
         }

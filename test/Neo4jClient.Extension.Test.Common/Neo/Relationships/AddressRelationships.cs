@@ -35,7 +35,5 @@ namespace Neo4jClient.Extension.Test.TestEntities.Relationships
             : base(from, to)
         {
         }
-
-        public DateTimeOffset DateEffective { get; set; }
     }
 }
