@@ -1,1 +1,0 @@
-set neo4jx-nuget=https://www.myget.org/F/neo4jclient-extension-tx/api/v2/package
