@@ -115,10 +115,10 @@ SET address = {
 }
 MERGE (person)-[personaddress:HOME_ADDRESS]->(address)
 ON MATCH
-SET personaddress.dateEffective = ""2011-01-10T09:00:00+11:00""
+SET personaddress.dateEffective = ""2011-01-10T08:00:00+03:00""
 ON CREATE
 SET personaddress = {
-  dateEffective: ""2011-01-10T09:00:00+11:00""
+  dateEffective: ""2011-01-10T08:00:00+03:00""
 }", text);
         }
 
@@ -131,7 +131,7 @@ SET personaddress = {
             var homeAddressRelationship = new HomeAddressRelationship();
 
             // perhaps this would be modelled on the address node but serves to show how to attach relationship property
-            homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
+            homeAddressRelationship.DateEffective = DateTimeOffset.Parse("2011-01-10T08:00:00+03:00");
 
             //act
             var q = GetFluentQuery()
