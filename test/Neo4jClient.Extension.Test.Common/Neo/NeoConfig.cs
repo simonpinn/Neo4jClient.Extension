@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Neo4jClient.Extension.Cypher;
+﻿using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Test.Cypher;
 using Neo4jClient.Extension.Test.TestData.Entities;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
@@ -30,10 +25,6 @@ namespace Neo4jClient.Extension.Test.Data
 
             FluentConfig.Config()
                 .With<Address>()
-                .Match(x => x.Street)
-                .Match(x => x.Suburb)
-                .Merge(x => x.Street)
-                .Merge(x => x.Suburb)
                 .MergeOnMatchOrCreate(a => a.Street)
                 .MergeOnMatchOrCreate(a => a.Suburb)
                 .Set();

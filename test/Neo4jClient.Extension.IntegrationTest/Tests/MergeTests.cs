@@ -38,5 +38,14 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
                 .TwoDeepAct()
                 .ExecuteWithoutResults();
         }
+
+         [Test]
+        public void OneDeepMergeByRelationship()
+        {
+            new FluentConfigMergeTests(RealQueryFactory)
+                .OneDeepMergeByRelationshipAct()
+                .ExecuteWithoutResults();
+        }
+        
     }
 }

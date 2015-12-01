@@ -65,6 +65,7 @@
     <Compile Include="..\..\SolutionItems\Properties\AssemblyInfoGlobal.cs">
       <Link>Properties\AssemblyInfoGlobal.cs</Link>
     </Compile>
+    <Compile Include="Cypher\MergeOptions.cs" />
     <Compile Include="Options\CreateOptions.cs" />
     <Compile Include="Cypher\BaseRelationship.cs" />
     <Compile Include="Cypher\Extension\CreateDynamicOptions.cs" />

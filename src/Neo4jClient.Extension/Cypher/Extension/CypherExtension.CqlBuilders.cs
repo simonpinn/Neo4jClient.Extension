@@ -54,12 +54,12 @@ namespace Neo4jClient.Extension.Cypher
             return key + "MatchKey";
         }
         
-        private static string GetRelationshipCql(string aliasFrom, string relationshipSegment, string aliasTo)
+        private static string GetRelationshipCql(string identifierFrom, string relationshipSegment, string identifierTo)
         {
             var cql = string.Format("({0})-[{1}]->({2})"
-                , aliasFrom
+                , identifierFrom
                 , relationshipSegment
-                , aliasTo);
+                , identifierTo);
 
             return cql;
         }

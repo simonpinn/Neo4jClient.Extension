@@ -125,6 +125,28 @@ namespace Neo4jClient.Extension.Cypher
             return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
         }
 
+        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, MergeOptions options) where T : class
+        {
+            var context = CypherExtensionContext.Create(query);
+            string pattern;
+
+            if (options.MergeViaRelationship != null)
+            {
+                var relationshipSegment = GetAliasLabelCql(string.Empty, options.MergeViaRelationship.EntityLabel());
+
+                pattern = GetRelationshipCql(
+                    options.MergeViaRelationship.FromKey
+                    , relationshipSegment
+                    , GetAliasLabelCql(options.MergeViaRelationship.ToKey, entity.EntityLabel()));
+            }
+            else
+            {
+                pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, options.Identifier, options.MergeOverride);
+            }
+            var wrappedPattern = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
+            return query.CommonMerge(entity, options.Identifier, wrappedPattern, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
+        }
+
         public static ICypherFluentQuery MergeRelationship<T>(this ICypherFluentQuery query, T entity, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : BaseRelationship
         {
             //Eaxctly the same as a merge entity except the cql is different
