@@ -93,7 +93,7 @@ CREATE (wa:Address {
   street: ""59 Isis Street""
 })
 CREATE (a)-[homeaddressrelationship:HOME_ADDRESS {
-  dateEffective: ""2015-08-05T12:00:00+10:00""
+  dateEffective: ""2015-08-05T12:00:00+00:00""
 }]->(ha)
 CREATE (a)-[workaddressrelationship:WORK_ADDRESS]->(wa)", text);
         }
@@ -101,7 +101,7 @@ CREATE (a)-[workaddressrelationship:WORK_ADDRESS]->(wa)", text);
         public ICypherFluentQuery CreateComplexAct()
         {
             var agent = SampleDataFactory.GetWellKnownPerson(7);
-            var homeRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "a", "ha");
+            var homeRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00+00:00"), "a", "ha");
 
             var q = GetFluentQuery()
                 .CreateEntity(agent, "a")

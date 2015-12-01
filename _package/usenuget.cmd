@@ -1,1 +1,0 @@
-set neo4jx-nuget=https://nuget.org/api/v2/

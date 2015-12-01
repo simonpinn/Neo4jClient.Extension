@@ -207,7 +207,7 @@ SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
 ON CREATE
 SET cyphermodel = {
   firstName: ""Foo"",
-  dateOfBirth: ""1981-04-01T00:00:00+10:00"",
+  dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
 }", q.GetFormattedDebugText());
@@ -236,7 +236,7 @@ SET key.answerToTheMeaningOfLifeAndEverything = 42
 ON CREATE
 SET key = {
   firstName: ""Foo"",
-  dateOfBirth: ""1981-04-01T00:00:00+10:00"",
+  dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
 }", q.GetFormattedDebugText());
@@ -265,7 +265,7 @@ SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
 ON CREATE
 SET cyphermodel = {
   firstName: ""Foo"",
-  dateOfBirth: ""1981-04-01T00:00:00+10:00"",
+  dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
 }", q.GetFormattedDebugText());
@@ -586,7 +586,7 @@ SET fromto = {
         {
             var model = new CypherModel
             {
-                dateOfBirth = new DateTime(1981, 4, 1),
+                dateOfBirth = new DateTimeOffset(1981, 4, 1, 0, 0 , 0, TimeSpan.Zero),
                 answerToTheMeaningOfLifeAndEverything = 42,
                 firstName = "Foo",
                 isLegend = false

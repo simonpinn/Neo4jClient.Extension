@@ -2,6 +2,8 @@
 
 Extending the awesome of [Neo4jClient](https://github.com/Readify/Neo4jClient)
 
+![Version](https://img.shields.io/nuget/v/Neo4jClient.Extension.svg)
+
 Merge, match and create nodes or relationships using objects instead of typing pseudo Cypher.
 
 Reduces mistakes and simplifies composition of queries. As well as some more advanced features, the following key extension methods are provided:
@@ -121,11 +123,11 @@ A full list of examples can be found in the unit tests within the solution.
 
 
 ## Packaging ##
-In the `\_package` folder there are a set of scripts. Edit the `SolutionItems\Properties\AssemblyInfoGlobal.cs` to set the build number and then:
+`build.ps1` is designed for [myget](http://www.myget.org/) compatibility. 
 
-* `build.cmd` build the solution
-* `package-d.cmd` build prerelease package
-* `package-r.cmd` build release package
-* `usemyget.cmd` or `usenuget.cmd` to set the package destination
-* `setapikey.cmd` sets the api key for above destination
-* `publish.cmd` publish the package 
+The script can be run locally via `powershell -f build.ps1`. By default, it expects an environment variable named `packageVersion`.
+
+Some default parameters may be overridden, for example:
+`powershell -f build.ps1 -configuration debug -sourceUrl https://github.com/your-username/Neo4jClient.Extension -packageVersion 5.0.0.1` 
+
+Nuget packages are written to `./_output`
