@@ -81,6 +81,12 @@ namespace Neo4jClient.Extension.Cypher
         {
             Func<string, string> getFinalCql = intermediateCql => GetRelationshipCql(entity.FromKey, intermediateCql, entity.ToKey);
 
+            if (options == null)
+            {
+                options = new CreateOptions();
+                options.Identifier = entity.Key;
+            }
+
             query = CommonCreate(query, entity, options, getFinalCql);
 
             return query;
