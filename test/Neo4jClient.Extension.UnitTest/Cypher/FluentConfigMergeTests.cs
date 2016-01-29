@@ -36,20 +36,13 @@ namespace Neo4jClient.Extension.Test.Cypher
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation = 100.23
-ON MATCH
-SET person.serialNumber = 123456
-ON MATCH
-SET person.sex = ""Male""
-ON MATCH
-SET person.isOperative = true
-ON MATCH
-SET person.name = ""Sterling Archer""
-ON MATCH
-SET person.title = null
-ON CREATE
-SET person = {
+ON MATCH SET person.spendingAuthorisation = 100.23
+ON MATCH SET person.serialNumber = 123456
+ON MATCH SET person.sex = ""Male""
+ON MATCH SET person.isOperative = true
+ON MATCH SET person.name = ""Sterling Archer""
+ON MATCH SET person.title = null
+ON CREATE SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -80,20 +73,13 @@ SET person = {
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation = 100.23
-ON MATCH
-SET person.serialNumber = 123456
-ON MATCH
-SET person.sex = ""Male""
-ON MATCH
-SET person.isOperative = true
-ON MATCH
-SET person.name = ""Sterling Archer""
-ON MATCH
-SET person.title = null
-ON CREATE
-SET person = {
+ON MATCH SET person.spendingAuthorisation = 100.23
+ON MATCH SET person.serialNumber = 123456
+ON MATCH SET person.sex = ""Male""
+ON MATCH SET person.isOperative = true
+ON MATCH SET person.name = ""Sterling Archer""
+ON MATCH SET person.title = null
+ON CREATE SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -104,20 +90,15 @@ SET person = {
   id: 7
 }
 MERGE ((person)-[:HOME_ADDRESS]->(address:Address))
-ON MATCH
-SET address.suburb = ""Fakeville""
-ON MATCH
-SET address.street = ""200 Isis Street""
-ON CREATE
-SET address = {
+ON MATCH SET address.suburb = ""Fakeville""
+ON MATCH SET address.street = ""200 Isis Street""
+ON CREATE SET address = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
 MERGE (person)-[personaddress:HOME_ADDRESS]->(address)
-ON MATCH
-SET personaddress.dateEffective = ""2011-01-10T08:00:00+03:00""
-ON CREATE
-SET personaddress = {
+ON MATCH SET personaddress.dateEffective = ""2011-01-10T08:00:00+03:00""
+ON CREATE SET personaddress = {
   dateEffective: ""2011-01-10T08:00:00+03:00""
 }", text);
         }
@@ -152,20 +133,13 @@ SET personaddress = {
             Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
   id: 7
 }.id})
-ON MATCH
-SET person.spendingAuthorisation = 100.23
-ON MATCH
-SET person.serialNumber = 123456
-ON MATCH
-SET person.sex = ""Male""
-ON MATCH
-SET person.isOperative = true
-ON MATCH
-SET person.name = ""Sterling Archer""
-ON MATCH
-SET person.title = null
-ON CREATE
-SET person = {
+ON MATCH SET person.spendingAuthorisation = 100.23
+ON MATCH SET person.serialNumber = 123456
+ON MATCH SET person.sex = ""Male""
+ON MATCH SET person.isOperative = true
+ON MATCH SET person.name = ""Sterling Archer""
+ON MATCH SET person.title = null
+ON CREATE SET person = {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -176,22 +150,16 @@ SET person = {
   id: 7
 }
 MERGE ((person)-[:HOME_ADDRESS]->(homeAddress:Address))
-ON MATCH
-SET homeAddress.suburb = ""Fakeville""
-ON MATCH
-SET homeAddress.street = ""200 Isis Street""
-ON CREATE
-SET homeAddress = {
+ON MATCH SET homeAddress.suburb = ""Fakeville""
+ON MATCH SET homeAddress.street = ""200 Isis Street""
+ON CREATE SET homeAddress = {
   suburb: ""Fakeville"",
   street: ""200 Isis Street""
 }
 MERGE ((person)-[:WORK_ADDRESS]->(workAddress:Address))
-ON MATCH
-SET workAddress.suburb = ""Fakeville""
-ON MATCH
-SET workAddress.street = ""59 Isis Street""
-ON CREATE
-SET workAddress = {
+ON MATCH SET workAddress.suburb = ""Fakeville""
+ON MATCH SET workAddress.street = ""59 Isis Street""
+ON CREATE SET workAddress = {
   suburb: ""Fakeville"",
   street: ""59 Isis Street""
 }", text);
