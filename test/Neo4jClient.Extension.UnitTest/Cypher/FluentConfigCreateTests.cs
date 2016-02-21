@@ -65,13 +65,26 @@ namespace Neo4jClient.Extension.Test.Cypher
 })", text);
         }
 
+        [Test]
+        public void CreateRelationshipWithNoIdentifier()
+        {
+            var homeRelationship = new HomeAddressRelationship(string.Empty, "a", "ha");
+
+            var q = GetFluentQuery()
+                .CreateRelationship(homeRelationship);
+            
+            var text = q.GetFormattedDebugText();
+            Console.WriteLine(text);
+
+            Assert.AreEqual("CREATE (a)-[:HOME_ADDRESS]->(ha)", text);
+        }
+
 
         [Test]
         public void CreateComplex()
         {
             var q = CreateComplexAct();
 
-            //var q = GetFluentQuery().Create(address);
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
@@ -92,16 +105,17 @@ CREATE (wa:Address {
   suburb: ""Fakeville"",
   street: ""59 Isis Street""
 })
-CREATE (a)-[homeaddressrelationship:HOME_ADDRESS {
-  dateEffective: ""2015-08-05T12:00:00+10:00""
+CREATE (a)-[myHomeRelationshipIdentifier:HOME_ADDRESS {
+  dateEffective: ""2015-08-05T12:00:00+00:00""
 }]->(ha)
-CREATE (a)-[workaddressrelationship:WORK_ADDRESS]->(wa)", text);
+CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
         }
         
         public ICypherFluentQuery CreateComplexAct()
         {
             var agent = SampleDataFactory.GetWellKnownPerson(7);
-            var homeRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "a", "ha");
+            var homeRelationship = new HomeAddressRelationship("myHomeRelationshipIdentifier", "a", "ha");
+            homeRelationship.DateEffective = DateTimeOffset.Parse("2015-08-05 12:00+00:00");
 
             var q = GetFluentQuery()
                 .CreateEntity(agent, "a")

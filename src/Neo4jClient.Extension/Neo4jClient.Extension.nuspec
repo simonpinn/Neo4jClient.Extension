@@ -14,4 +14,7 @@
     <tags>Neo4j Neo4jClient GraphDb GraphData</tags>
     <summary>Simplify and reduce magic strings when using the Neo4jClient, allows any object to be a data POCO</summary>
   </metadata>
+	<files>
+		<file src="bin\$configuration$\Neo4jClient.Extension.pdb" target="lib\net45\" />
+	</files>
 </package>

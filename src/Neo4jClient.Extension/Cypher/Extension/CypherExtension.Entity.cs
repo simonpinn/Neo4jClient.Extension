@@ -13,14 +13,31 @@ namespace Neo4jClient.Extension.Cypher
     /// </summary>
     public static partial class CypherExtension
     {
+        private static readonly object _syncRoot = new object();
+
         internal static string EntityLabel<T>(this T entity)
         {
             var entityType = entity.GetType();
-            if (!EntityLabelCache.ContainsKey(entityType))
+
+            // http://stackoverflow.com/questions/157933
+            lock (_syncRoot)
             {
-                var label = entityType.GetCustomAttributes(typeof(CypherLabelAttribute), true).FirstOrDefault() as CypherLabelAttribute;
-                EntityLabelCache.Add(entityType, label == null ? entityType.Name : label.Name);
+                if (!EntityLabelCache.ContainsKey(entityType))
+                {
+                    var label = entityType.GetCustomAttributes(typeof (CypherLabelAttribute), true).FirstOrDefault() as CypherLabelAttribute;
+
+                    try
+                    {
+                        EntityLabelCache.Add(entityType, label == null ? entityType.Name : label.Name);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        var moreInfoException = new ArgumentException($"Failed to cache label '{label}' for type='{typeof(T).Name}'", e);
+                        throw moreInfoException;
+                    }
+                }
             }
+
             var output = EntityLabelCache[entityType];
             return output;
         }

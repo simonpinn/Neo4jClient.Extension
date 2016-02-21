@@ -81,6 +81,12 @@ namespace Neo4jClient.Extension.Cypher
         {
             Func<string, string> getFinalCql = intermediateCql => GetRelationshipCql(entity.FromKey, intermediateCql, entity.ToKey);
 
+            if (options == null)
+            {
+                options = new CreateOptions();
+                options.Identifier = entity.Key;
+            }
+
             query = CommonCreate(query, entity, options, getFinalCql);
 
             return query;
@@ -242,12 +248,19 @@ namespace Neo4jClient.Extension.Cypher
             
             return query;
         }
-        
+
         public static string GetFormattedDebugText(this ICypherFluentQuery query)
         {
-            // write once, read never!
+            return GetFormattedCypher(query.Query.DebugQueryText);
+        }
+
+        public static string GetFormattedCypher(string cypherText)
+        {
             var regex = new Regex("\\\"([^(\\\")\"]+)\\\":", RegexOptions.Multiline);
-            return regex.Replace(query.Query.DebugQueryText, "$1:");
+            var s = regex.Replace(cypherText, "$1:");
+            s = s.Replace("ON MATCH\r\nSET", "ON MATCH SET");   // this is more readable
+            s = s.Replace("ON CREATE\r\nSET", "ON CREATE SET");
+            return s;
         }
     }
 }

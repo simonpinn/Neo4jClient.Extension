@@ -3,14 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E4A266CF-BA5F-4403-B05A-4EECC86B3D32}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{12FEE675-BAC9-48E5-9C28-28ED67FFC9AE}"
+	ProjectSection(SolutionItems) = preProject
+		build.common.ps1 = build.common.ps1
+		build.ps1 = build.ps1
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Properties", "Properties", "{4DF33B7D-5D06-4EBC-8569-2A1008683E2A}"
 	ProjectSection(SolutionItems) = preProject
