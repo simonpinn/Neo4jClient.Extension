@@ -48,7 +48,7 @@ namespace Neo4jClient.Extension.Cypher
         }
 
 
-        internal static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
+        public static List<CypherProperty> UseProperties<T>(this T entity, params Expression<Func<T, object>>[] properties)
             where T : class
         {
             return entity.UseProperties(DefaultExtensionContext, properties);
