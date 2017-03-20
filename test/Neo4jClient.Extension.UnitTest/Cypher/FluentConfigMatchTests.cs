@@ -79,14 +79,14 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
         [Test]
         public void MatchRelationshipWithProperty()
         {
-            var addressRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "agent", "homeAddress");
+            var addressRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05T12:00:00+10:00"), "agent", "homeAddress");
             var q = GetFluentQuery()
                     .MatchRelationship(addressRelationship);
             var text = q.GetFormattedDebugText();
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)", text);
+            Assert.AreEqual("MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{\r\n  dateEffective: \"2015-08-05T12:00:00+10:00\"\r\n}.dateEffective}]->(homeAddress)", text);
         }
     }
 }
