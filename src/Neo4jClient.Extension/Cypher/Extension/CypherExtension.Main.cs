@@ -196,7 +196,11 @@ namespace Neo4jClient.Extension.Cypher
                 , relationship.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), relationship.Key, matchProperties)
                 , relationship.ToKey);
 
-            return matchFunction(query,cql);
+            dynamic cutdown = relationship.CreateDynamic(options.MatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(relationship));
+            var matchKey = GetMatchParamName(relationship.Key);
+
+            return matchFunction(query, cql)
+                    .WithParam(matchKey, cutdown);
         }
 
         public static ICypherFluentQuery MatchRelationship<T>(this ICypherFluentQuery query, T relationship, List<CypherProperty> matchOverride = null) where T : BaseRelationship
