@@ -1,5 +1,6 @@
 ﻿using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Test.Cypher;
+using Neo4jClient.Extension.Test.Data.Neo.Relationships;
 using Neo4jClient.Extension.Test.TestData.Entities;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
 
@@ -37,10 +38,23 @@ namespace Neo4jClient.Extension.Test.Data
                 .MergeOnMatchOrCreate(w => w.BlastRadius)
                 .Set();
 
+
+            FluentConfig.Config()
+                .With<Organisation>()
+                .Merge(x => x.Name)
+                .MergeOnMatchOrCreate(w => w.Name)
+                .Set();
+
             FluentConfig.Config()
                 .With<HomeAddressRelationship>()
                 .Match(ha => ha.DateEffective)
                 .MergeOnMatchOrCreate(hr => hr.DateEffective)
+                .Set();
+
+            FluentConfig.Config()
+                .With<WorksForRelationship>()
+                .Match(wf => wf.Role)
+                .MergeOnMatchOrCreate(wf => wf.Role)
                 .Set();
 
             FluentConfig.Config()
