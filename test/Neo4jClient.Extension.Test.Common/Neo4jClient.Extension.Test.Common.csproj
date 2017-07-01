@@ -50,10 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Address.cs" />
+    <Compile Include="Domain\Company.cs" />
     <Compile Include="Domain\Person.cs" />
     <Compile Include="Domain\Weapon.cs" />
     <Compile Include="Neo\NeoConfig.cs" />
     <Compile Include="Neo\Relationships\HomeAddressRelationship.cs" />
+    <Compile Include="Neo\Relationships\WorksForRelationship.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Neo\Relationships\WorkAddressRelationship.cs" />
     <Compile Include="Neo\Relationships\CheckedOutRelationship.cs" />
