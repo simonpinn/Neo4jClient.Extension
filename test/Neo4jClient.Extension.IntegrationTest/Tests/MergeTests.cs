@@ -17,12 +17,12 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
             // create
             new FluentConfigMergeTests(RealQueryFactory)
                 .OneDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().Wait();
 
             // merge
             new FluentConfigMergeTests(RealQueryFactory)
                 .OneDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().Wait();
         }
 
         [Test]
@@ -31,12 +31,12 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
             // create
             new FluentConfigMergeTests(RealQueryFactory)
                 .TwoDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().Wait();
 
             // merge
             new FluentConfigMergeTests(RealQueryFactory)
                 .TwoDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().Wait();
         }
 
          [Test]
@@ -44,7 +44,7 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
         {
             new FluentConfigMergeTests(RealQueryFactory)
                 .OneDeepMergeByRelationshipAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().Wait();
         }
         
     }

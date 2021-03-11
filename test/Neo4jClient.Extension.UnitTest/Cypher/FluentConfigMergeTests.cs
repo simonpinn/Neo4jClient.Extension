@@ -33,24 +33,24 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
-  id: 7
-}.id})
-ON MATCH SET person.spendingAuthorisation = 100.23
-ON MATCH SET person.serialNumber = 123456
-ON MATCH SET person.sex = ""Male""
-ON MATCH SET person.isOperative = true
-ON MATCH SET person.name = ""Sterling Archer""
-ON MATCH SET person.title = null
+            Assert.AreEqual(@"MERGE (person:SecretAgent {Id:{
+  Id: 7
+}.Id})
+ON MATCH SET person.SpendingAuthorisation = 100.23
+ON MATCH SET person.SerialNumber = 123456
+ON MATCH SET person.Sex = ""Male""
+ON MATCH SET person.IsOperative = true
+ON MATCH SET person.Name = ""Sterling Archer""
+ON MATCH SET person.Title = null
 ON CREATE SET person = {
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  name: ""Sterling Archer"",
-  title: null,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  id: 7
+  SpendingAuthorisation: 100.23,
+  SerialNumber: 123456,
+  Sex: ""Male"",
+  IsOperative: true,
+  Name: ""Sterling Archer"",
+  Title: null,
+  DateCreated: ""2015-07-11T08:00:00+10:00"",
+  Id: 7
 }", text);
         }
         
@@ -70,36 +70,36 @@ ON CREATE SET person = {
             Console.WriteLine(text);
 
             // assert
-            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
-  id: 7
-}.id})
-ON MATCH SET person.spendingAuthorisation = 100.23
-ON MATCH SET person.serialNumber = 123456
-ON MATCH SET person.sex = ""Male""
-ON MATCH SET person.isOperative = true
-ON MATCH SET person.name = ""Sterling Archer""
-ON MATCH SET person.title = null
+            Assert.AreEqual(@"MERGE (person:SecretAgent {Id:{
+  Id: 7
+}.Id})
+ON MATCH SET person.SpendingAuthorisation = 100.23
+ON MATCH SET person.SerialNumber = 123456
+ON MATCH SET person.Sex = ""Male""
+ON MATCH SET person.IsOperative = true
+ON MATCH SET person.Name = ""Sterling Archer""
+ON MATCH SET person.Title = null
 ON CREATE SET person = {
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  name: ""Sterling Archer"",
-  title: null,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  id: 7
+  SpendingAuthorisation: 100.23,
+  SerialNumber: 123456,
+  Sex: ""Male"",
+  IsOperative: true,
+  Name: ""Sterling Archer"",
+  Title: null,
+  DateCreated: ""2015-07-11T08:00:00+10:00"",
+  Id: 7
 }
 MERGE ((person)-[:HOME_ADDRESS]->(address:Address))
-ON MATCH SET address.suburb = ""Fakeville""
-ON MATCH SET address.street = ""200 Isis Street""
+ON MATCH SET address.Suburb = ""Fakeville""
+ON MATCH SET address.Street = ""200 Isis Street""
 ON CREATE SET address = {
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
+  Suburb: ""Fakeville"",
+  Street: ""200 Isis Street""
 }
 MERGE (person)-[personaddress:HOME_ADDRESS]->(address)
-ON MATCH SET personaddress.dateEffective = ""2011-01-10T08:00:00+03:00""
+ON MATCH SET personaddress.DateEffective = ""2011-01-10T08:00:00+03:00""
 ON CREATE SET personaddress = {
-  dateEffective: ""2011-01-10T08:00:00+03:00""
+  DateEffective: ""2011-01-10T08:00:00+03:00""
 }", text);
         }
 
@@ -130,38 +130,38 @@ ON CREATE SET personaddress = {
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MERGE (person:SecretAgent {id:{
-  id: 7
-}.id})
-ON MATCH SET person.spendingAuthorisation = 100.23
-ON MATCH SET person.serialNumber = 123456
-ON MATCH SET person.sex = ""Male""
-ON MATCH SET person.isOperative = true
-ON MATCH SET person.name = ""Sterling Archer""
-ON MATCH SET person.title = null
+            Assert.AreEqual(@"MERGE (person:SecretAgent {Id:{
+  Id: 7
+}.Id})
+ON MATCH SET person.SpendingAuthorisation = 100.23
+ON MATCH SET person.SerialNumber = 123456
+ON MATCH SET person.Sex = ""Male""
+ON MATCH SET person.IsOperative = true
+ON MATCH SET person.Name = ""Sterling Archer""
+ON MATCH SET person.Title = null
 ON CREATE SET person = {
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  name: ""Sterling Archer"",
-  title: null,
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  id: 7
+  SpendingAuthorisation: 100.23,
+  SerialNumber: 123456,
+  Sex: ""Male"",
+  IsOperative: true,
+  Name: ""Sterling Archer"",
+  Title: null,
+  DateCreated: ""2015-07-11T08:00:00+10:00"",
+  Id: 7
 }
 MERGE ((person)-[:HOME_ADDRESS]->(homeAddress:Address))
-ON MATCH SET homeAddress.suburb = ""Fakeville""
-ON MATCH SET homeAddress.street = ""200 Isis Street""
+ON MATCH SET homeAddress.Suburb = ""Fakeville""
+ON MATCH SET homeAddress.Street = ""200 Isis Street""
 ON CREATE SET homeAddress = {
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
+  Suburb: ""Fakeville"",
+  Street: ""200 Isis Street""
 }
 MERGE ((person)-[:WORK_ADDRESS]->(workAddress:Address))
-ON MATCH SET workAddress.suburb = ""Fakeville""
-ON MATCH SET workAddress.street = ""59 Isis Street""
+ON MATCH SET workAddress.Suburb = ""Fakeville""
+ON MATCH SET workAddress.Street = ""59 Isis Street""
 ON CREATE SET workAddress = {
-  suburb: ""Fakeville"",
-  street: ""59 Isis Street""
+  Suburb: ""Fakeville"",
+  Street: ""59 Isis Street""
 }", text);
 
         }
@@ -196,7 +196,7 @@ ON CREATE SET workAddress = {
             Console.WriteLine(cypherKey);
 
             // assert
-            Assert.AreEqual("pkey:SecretAgent {id:{pkeyMatchKey}.id}", cypherKey);
+            Assert.AreEqual("pkey:SecretAgent {Id:$pkeyMatchKey.Id}", cypherKey);
         }
     }
 }

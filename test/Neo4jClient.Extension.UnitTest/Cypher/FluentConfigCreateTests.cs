@@ -61,7 +61,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             
             var text = q.GetFormattedDebugText();
             Assert.AreEqual(@"CREATE (address:Address {
-  street: ""200 Isis Street""
+  Street: ""200 Isis Street""
 })", text);
         }
 
@@ -89,24 +89,24 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(text);
 
             Assert.AreEqual(@"CREATE (a:SecretAgent {
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  name: ""Sterling Archer"",
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  id: 7
+  SpendingAuthorisation: 100.23,
+  SerialNumber: 123456,
+  Sex: ""Male"",
+  IsOperative: true,
+  Name: ""Sterling Archer"",
+  DateCreated: ""2015-07-11T08:00:00+10:00"",
+  Id: 7
 })
 CREATE (ha:Address {
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
+  Suburb: ""Fakeville"",
+  Street: ""200 Isis Street""
 })
 CREATE (wa:Address {
-  suburb: ""Fakeville"",
-  street: ""59 Isis Street""
+  Suburb: ""Fakeville"",
+  Street: ""59 Isis Street""
 })
 CREATE (a)-[myHomeRelationshipIdentifier:HOME_ADDRESS {
-  dateEffective: ""2015-08-05T12:00:00+00:00""
+  DateEffective: ""2015-08-05T12:00:00+00:00""
 }]->(ha)
 CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
         }
