@@ -20,7 +20,7 @@ namespace Neo4jClient.Extension.Cypher
 
         public CypherExtensionContext()
         {
-            JsonContractResolver = new CamelCasePropertyNamesContractResolver();
+            JsonContractResolver = GraphClient.DefaultJsonContractResolver;
         }
 
         public IContractResolver JsonContractResolver { get; set; }

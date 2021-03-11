@@ -45,7 +45,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var result2 = model.ToCypherString<CypherModel, CypherMergeAttribute>(helper.CypherExtensionContext);
 
             //assert
-            Assert.AreEqual("cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id}", result);
+            Assert.AreEqual("cyphermodel:CypherModel {id:$cyphermodelMatchKey.id}", result);
             Assert.AreEqual(result,result2);
         }
 
@@ -63,7 +63,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual(@"MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
+            Assert.AreEqual(@"MATCH (cyphermodel:CypherModel {id:$cyphermodelMatchKey.id})
 RETURN cyphermodel", q.Query.QueryText);
         }
 
@@ -148,7 +148,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})<--(a:Node)\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:$cyphermodelMatchKey.id})<--(a:Node)\r\nRETURN cyphermodel", q.Query.QueryText);
         }
 
         [Test]
@@ -275,11 +275,11 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
+            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:$cyphermodelMatchKey.id})
 ON MATCH
-SET cyphermodel.firstName = {cyphermodelfirstName}
+SET cyphermodel.firstName = $cyphermodelfirstName
 ON CREATE
-SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
+SET cyphermodel = $cyphermodelOnCreate", q.Query.QueryText);
         }
 
         [Test]

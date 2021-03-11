@@ -25,7 +25,7 @@ namespace Neo4jClient.Extension.Test.Integration
             CypherQuery.Match("(n)")
                 .OptionalMatch("(n)-[r]-()")
                 .Delete("n, r")
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().Wait();
         }
 
         protected Func<ICypherFluentQuery> RealQueryFactory
@@ -40,7 +40,7 @@ namespace Neo4jClient.Extension.Test.Integration
 
             GraphClient.JsonConverters.Add(new AreaJsonConverter());
 
-            GraphClient.Connect();
+            GraphClient.ConnectAsync().Wait();
 
             NeoConfig.ConfigureModel();
         }

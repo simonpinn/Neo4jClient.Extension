@@ -12,7 +12,7 @@ namespace Neo4jClient.Extension.Cypher
     {
         private static string GetMatchWithParam(string key, string label, string paramName)
         {
-            return GetMatchCypher(key, label, string.IsNullOrEmpty(paramName) ? "" : AsWrappedVariable(paramName));
+            return GetMatchCypher(key, label, string.IsNullOrEmpty(paramName) ? "" : $"${paramName}");
         }
 
         private static string GetMatchCypher(string key, string label, string variable)
@@ -39,7 +39,7 @@ namespace Neo4jClient.Extension.Cypher
 
         private static string GetSetWithParamCql(string alias, string paramName)
         {
-            var cql = string.Format("{0} = {{{1}}}", alias, paramName);
+            var cql = string.Format("{0} = ${1}", alias, paramName);
             return cql;
         }
 
@@ -74,7 +74,7 @@ namespace Neo4jClient.Extension.Cypher
             paramKey = entity.EntityParamKey(paramKey);
 
             var matchProperties = useProperties
-                .Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)))
+                .Select(x => string.Format("{0}:${1}.{0}", x.JsonName, GetMatchParamName(paramKey)))
                 .ToList();
 
             var jsonProperties = string.Join(",", matchProperties);
