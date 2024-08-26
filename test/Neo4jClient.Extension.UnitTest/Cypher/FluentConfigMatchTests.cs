@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
@@ -25,9 +26,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            text.Should().Be(@"MATCH (person:SecretAgent {id:{
   id: 7
-}.id})", text);
+}.id})");
         }
 
         [Test]
@@ -40,10 +41,10 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            text.Should().Be(@"MATCH (person:SecretAgent {id:{
   id: 7
 }.id})
-OPTIONAL MATCH (ha:Address)", text);
+OPTIONAL MATCH (ha:Address)");
         }
 
         [Test]
@@ -57,10 +58,10 @@ OPTIONAL MATCH (ha:Address)", text);
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            text.Should().Be(@"MATCH (person:SecretAgent {id:{
   id: 7
 }.id})
-OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
+OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)");
         }
 
         [Test] 
@@ -73,7 +74,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agentweapon:HAS_CHECKED_OUT]->(weapon)", text);
+            text.Should().Be("MATCH (agent)-[agentweapon:HAS_CHECKED_OUT]->(weapon)");
         }
 
         [Test]
@@ -86,7 +87,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)", text);
+            text.Should().Be("MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)");
         }
     }
 }

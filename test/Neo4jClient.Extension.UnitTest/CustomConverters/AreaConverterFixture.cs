@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using UnitsNet;
@@ -33,7 +34,7 @@ namespace Neo4jClient.Extension.Test.CustomConverters
 
             var areaReloaded = JsonConvert.DeserializeObject<Area?>(json, settings);
 
-            Assert.AreEqual(expected, areaReloaded);
+            areaReloaded.Should().Be(expected);
         }
     }
 }

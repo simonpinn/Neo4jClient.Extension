@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
@@ -18,15 +18,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Properties", "Properties", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9CE869B3-2DAC-4EBF-88B6-F70F74198B9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension", "src\Neo4jClient.Extension\Neo4jClient.Extension.csproj", "{41C65BED-56A6-4942-95D2-10E62F607C7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4jClient.Extension", "src\Neo4jClient.Extension\Neo4jClient.Extension.csproj", "{41C65BED-56A6-4942-95D2-10E62F607C7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension.Attributes", "src\Neo4jClient.Extension.Attributes\Neo4jClient.Extension.Attributes.csproj", "{6D2502F8-F491-45E6-ABD8-2F7407926F5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4jClient.Extension.Attributes", "src\Neo4jClient.Extension.Attributes\Neo4jClient.Extension.Attributes.csproj", "{6D2502F8-F491-45E6-ABD8-2F7407926F5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension.IntegrationTest", "test\Neo4jClient.Extension.IntegrationTest\Neo4jClient.Extension.IntegrationTest.csproj", "{8F1FA0BF-C481-4D1D-A8ED-F9B4CB17E98B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4jClient.Extension.IntegrationTest", "test\Neo4jClient.Extension.IntegrationTest\Neo4jClient.Extension.IntegrationTest.csproj", "{8F1FA0BF-C481-4D1D-A8ED-F9B4CB17E98B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension.Test.Common", "test\Neo4jClient.Extension.Test.Common\Neo4jClient.Extension.Test.Common.csproj", "{B7C14349-6BEC-44D1-AB33-B82AD85899AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4jClient.Extension.Test.Common", "test\Neo4jClient.Extension.Test.Common\Neo4jClient.Extension.Test.Common.csproj", "{B7C14349-6BEC-44D1-AB33-B82AD85899AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4jClient.Extension.UnitTest", "test\Neo4jClient.Extension.UnitTest\Neo4jClient.Extension.UnitTest.csproj", "{066A5EBD-C612-40E2-8065-160FA9853503}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4jClient.Extension.UnitTest", "test\Neo4jClient.Extension.UnitTest\Neo4jClient.Extension.UnitTest.csproj", "{066A5EBD-C612-40E2-8065-160FA9853503}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

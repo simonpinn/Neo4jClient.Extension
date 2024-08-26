@@ -22,8 +22,7 @@ namespace Neo4jClient.Extension.Cypher
             var propertiesForDict = properties.Select(
                 prop => new
                 {
-                    Key = prop.JsonName
-                    ,
+                    Key = prop.JsonName,
                     Value = GetValue(entity, prop, type)
                 }
                 ).ToList();

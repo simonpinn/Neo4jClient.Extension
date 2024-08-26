@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Cypher.Attributes;
@@ -60,9 +61,9 @@ namespace Neo4jClient.Extension.Test.Cypher
                 .CreateEntity(agent.HomeAddress);
             
             var text = q.GetFormattedDebugText();
-            Assert.AreEqual(@"CREATE (address:Address {
+            text.Should().Be(@"CREATE (address:Address {
   street: ""200 Isis Street""
-})", text);
+})");
         }
 
         [Test]
@@ -76,7 +77,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual("CREATE (a)-[:HOME_ADDRESS]->(ha)", text);
+            text.Should().Be("CREATE (a)-[:HOME_ADDRESS]->(ha)");
         }
 
 
@@ -88,7 +89,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"CREATE (a:SecretAgent {
+            text.Should().Be(@"CREATE (a:SecretAgent {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -108,7 +109,7 @@ CREATE (wa:Address {
 CREATE (a)-[myHomeRelationshipIdentifier:HOME_ADDRESS {
   dateEffective: ""2015-08-05T12:00:00+00:00""
 }]->(ha)
-CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
+CREATE (a)-[awa:WORK_ADDRESS]->(wa)");
         }
         
         public ICypherFluentQuery CreateComplexAct()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using Moq;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
@@ -45,8 +46,8 @@ namespace Neo4jClient.Extension.Test.Cypher
             var result2 = model.ToCypherString<CypherModel, CypherMergeAttribute>(helper.CypherExtensionContext);
 
             //assert
-            Assert.AreEqual("cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id}", result);
-            Assert.AreEqual(result,result2);
+            result.Should().Be("cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id}");
+            result.Should().Be(result2);
         }
 
         [Test]
@@ -63,8 +64,8 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual(@"MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
-RETURN cyphermodel", q.Query.QueryText);
+            q.Query.QueryText.Should().Be(@"MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
+RETURN cyphermodel");
         }
 
         [Test]
@@ -83,14 +84,14 @@ RETURN cyphermodel", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (cyphermodel:CypherModel {firstName:{
+            q.GetFormattedDebugText().Should().Be(@"MATCH (cyphermodel:CypherModel {firstName:{
   firstName: ""Foo"",
   isLegend: false
 }.firstName,isLegend:{
   firstName: ""Foo"",
   isLegend: false
 }.isLegend})
-RETURN cyphermodel", q.GetFormattedDebugText());
+RETURN cyphermodel");
         }
 
         [Test]
@@ -102,15 +103,16 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             var model = CreateModel();
             
             //act
-            var q = helper.Query.MatchEntity(model,"key").Return(cyphermodel => cyphermodel.As<CypherModel>());
+            var q = helper.Query.MatchEntity(model,"key")
+                .Return(cyphermodel => cyphermodel.As<CypherModel>());
 
             Console.WriteLine(q.Query.DebugQueryText);
 
             //assert
-            Assert.AreEqual(@"MATCH (key:CypherModel {id:{
+            q.Query.DebugQueryText.Should().Be(@"MATCH (key:CypherModel {id:{
   ""id"": ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
-RETURN cyphermodel", q.Query.DebugQueryText);
+RETURN cyphermodel");
         }
 
         [Test]
@@ -128,10 +130,10 @@ RETURN cyphermodel", q.Query.DebugQueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (a:Node)-->(cyphermodel:CypherModel {id:{
+            q.GetFormattedDebugText().Should().Be(@"MATCH (a:Node)-->(cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
-RETURN cyphermodel", q.GetFormattedDebugText());
+RETURN cyphermodel");
         }
 
         [Test]
@@ -148,7 +150,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})<--(a:Node)\r\nRETURN cyphermodel", q.Query.QueryText);
+            q.Query.QueryText.Should().Be("MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})<--(a:Node)\r\nRETURN cyphermodel");
         }
 
         [Test]
@@ -167,8 +169,8 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (a:Node)-->(key:CypherModel)<--(b:Node)
-RETURN cyphermodel", q.GetFormattedDebugText());
+            q.GetFormattedDebugText().Should().Be(@"MATCH (a:Node)-->(key:CypherModel)<--(b:Node)
+RETURN cyphermodel");
         }
 
         [Test]
@@ -181,7 +183,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             var result = helper.Query.MatchEntity(new CypherModel(), propertyOverride: new List<CypherProperty>());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel)", result.GetFormattedDebugText());
+            result.GetFormattedDebugText().Should().Be("MATCH (cyphermodel:CypherModel)");
         }
 
         [Test]
@@ -197,7 +199,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 ON MATCH SET cyphermodel.isLegend = false
@@ -207,7 +209,7 @@ ON CREATE SET cyphermodel = {
   dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
-}", q.GetFormattedDebugText());
+}");
         }
 
         [Test]
@@ -223,7 +225,7 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (key:CypherModel {id:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (key:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 ON MATCH SET key.isLegend = false
@@ -233,7 +235,7 @@ ON CREATE SET key = {
   dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
-}", q.GetFormattedDebugText());
+}");
         }
 
         [Test]
@@ -249,7 +251,7 @@ ON CREATE SET key = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {firstName:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (cyphermodel:CypherModel {firstName:{
   firstName: ""Foo""
 }.firstName})
 ON MATCH SET cyphermodel.isLegend = false
@@ -259,7 +261,7 @@ ON CREATE SET cyphermodel = {
   dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
-}", q.GetFormattedDebugText());
+}");
         }
 
         [Test]
@@ -275,11 +277,11 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
+            q.Query.QueryText.Should().Be(@"MERGE (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
 ON MATCH
 SET cyphermodel.firstName = {cyphermodelfirstName}
 ON CREATE
-SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
+SET cyphermodel = {cyphermodelOnCreate}");
         }
 
         [Test]
@@ -295,14 +297,14 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 ON MATCH SET cyphermodel.isLegend = false
 ON MATCH SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
 ON CREATE SET cyphermodel = {
   firstName: ""Foo""
-}", q.GetFormattedDebugText());
+}");
         }
 
         [Test]
@@ -318,7 +320,7 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (a:Node)-->(key:CypherModel)<--(b:Node)", q.GetFormattedDebugText());
+            q.GetFormattedDebugText().Should().Be("MERGE (a:Node)-->(key:CypherModel)<--(b:Node)");
         }
 
 
@@ -336,7 +338,7 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -360,7 +362,7 @@ ON CREATE SET cyphermodel = {
 ON MATCH SET fromto.quantity = 0.0
 ON MATCH SET fromto.unitOfMeasure = ""Gram""
 ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH SET fromto.instructionText = """"");
         }
 
         [Test]
@@ -377,7 +379,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
             
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -401,7 +403,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
 ON MATCH SET fromto.quantity = 0.0
 ON MATCH SET fromto.unitOfMeasure = ""Gram""
 ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH SET fromto.instructionText = """"");
         }
 
         [Test]
@@ -418,13 +420,13 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0
 }.quantity}]->(to)
 ON MATCH SET fromto.quantity = 0.0
 ON MATCH SET fromto.unitOfMeasure = ""Gram""
 ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH SET fromto.instructionText = """"");
         }
 
         [Test]
@@ -441,7 +443,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -462,7 +464,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
   factor: 0,
   instructionText: """"
 }.instructionText}]->(to)
-ON MATCH SET fromto.quantity = 0.0", q.GetFormattedDebugText());
+ON MATCH SET fromto.quantity = 0.0");
         }
 
         [Test]
@@ -479,7 +481,7 @@ ON MATCH SET fromto.quantity = 0.0", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            q.GetFormattedDebugText().Should().Be(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -506,7 +508,7 @@ ON MATCH SET fromto.factor = 0
 ON MATCH SET fromto.instructionText = """"
 ON CREATE SET fromto = {
   quantity: 0.0
-}", q.GetFormattedDebugText());
+}");
         }
 
         [Test]
@@ -523,7 +525,7 @@ ON CREATE SET fromto = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF]->(to)", q.GetFormattedDebugText());
+            q.GetFormattedDebugText().Should().Be("MERGE (from)-[fromto:COMPONENT_OF]->(to)");
         }
 
         [Test]
@@ -536,7 +538,7 @@ ON CREATE SET fromto = {
             var result = model.EntityLabel();
 
             //assert
-            Assert.AreEqual("CypherModel", result);
+            result.Should().Be("CypherModel");
         }
 
         [Test]
@@ -549,7 +551,7 @@ ON CREATE SET fromto = {
             var result = model.EntityLabel();
 
             //assert
-            Assert.AreEqual("MyName", result);
+            result.Should().Be("MyName");
         }
 
         private CypherModel CreateModel()

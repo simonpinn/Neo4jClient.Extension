@@ -16,7 +16,7 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
         {
             new FluentConfigCreateTests(RealQueryFactory)
                 .CreateWithUnusualTypeAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().GetAwaiter().GetResult();
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
         {
             new FluentConfigCreateTests(RealQueryFactory)
                 .CreateComplexAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync().GetAwaiter().GetResult();
         }
     }
 }

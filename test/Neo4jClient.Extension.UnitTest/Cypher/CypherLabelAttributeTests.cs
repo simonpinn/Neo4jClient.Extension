@@ -1,4 +1,5 @@
 using System;
+using FluentAssertions;
 
 namespace Neo4jClient.Extension.Test.Cypher
 {
@@ -18,7 +19,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var q = helper.Query.MergeEntity(model);
 
             Console.WriteLine(q.Query.QueryText);
-            Assert.AreEqual("MERGE (multilabel:Multi:Label {id:{multilabelMatchKey}.id})", q.Query.QueryText);
+            q.Query.QueryText.Should().Be("MERGE (multilabel:Multi:Label {id:{multilabelMatchKey}.id})");
         }
 
         [Test]
@@ -30,7 +31,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var q = helper.Query.MergeEntity(model, "n");
 
             Console.WriteLine(q.Query.QueryText);
-            Assert.AreEqual("MERGE (n:Multi:Label {id:{nMatchKey}.id})", q.Query.QueryText);
+            q.Query.QueryText.Should().Be("MERGE (n:Multi:Label {id:{nMatchKey}.id})");
         }
 
         [Test]
@@ -43,7 +44,7 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             var text = q.Query.QueryText;
             Console.WriteLine(text);
-            Assert.AreEqual("MERGE (multilabelwithspace:Multi:`Space Label` {id:{multilabelwithspaceMatchKey}.id})", text);
+            text.Should().Be("MERGE (multilabelwithspace:Multi:`Space Label` {id:{multilabelwithspaceMatchKey}.id})");
         }
 
         public abstract class MultiBase
