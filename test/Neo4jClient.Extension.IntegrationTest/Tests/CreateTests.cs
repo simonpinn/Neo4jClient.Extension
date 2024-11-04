@@ -12,19 +12,29 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
     public class CreateTests : IntegrationTest
     {
         [Test]
-        public void CreateWithUnusualType()
+        public async Task CreateWithUnusualType()
         {
-            new FluentConfigCreateTests(RealQueryFactory)
+            await new FluentConfigCreateTests(RealQueryFactory)
                 .CreateWithUnusualTypeAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
 
         [Test]
-        public void CreateComplex()
+        public async Task CreateComplex()
         {
-            new FluentConfigCreateTests(RealQueryFactory)
-                .CreateComplexAct()
-                .ExecuteWithoutResults();
+            try
+            {
+                await new FluentConfigCreateTests(RealQueryFactory)
+                    .CreateComplexAct()
+                    .ExecuteWithoutResultsAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            
         }
     }
 }

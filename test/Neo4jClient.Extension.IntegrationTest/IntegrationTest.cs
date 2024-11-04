@@ -25,7 +25,7 @@ namespace Neo4jClient.Extension.Test.Integration
             CypherQuery.Match("(n)")
                 .OptionalMatch("(n)-[r]-()")
                 .Delete("n, r")
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
 
         protected Func<ICypherFluentQuery> RealQueryFactory
@@ -36,11 +36,15 @@ namespace Neo4jClient.Extension.Test.Integration
         static IntegrationTest()
         {
             var connectionString = ConfigurationManager.AppSettings["Neo4jConnectionString"];
-            GraphClient  =new GraphClient(new Uri(connectionString));
+            
+            //GraphClient  =new GraphClient(new Uri("http://localhost:7687"), "neo4j", "72%En4qX6lWK6u");
+
+            GraphClient = new BoltGraphClient(new Uri("bolt://localhost:7687"), "neo4j", "72%En4qX6lWK6u");
+
 
             GraphClient.JsonConverters.Add(new AreaJsonConverter());
 
-            GraphClient.Connect();
+            GraphClient.ConnectAsync().GetAwaiter().GetResult();
 
             NeoConfig.ConfigureModel();
         }

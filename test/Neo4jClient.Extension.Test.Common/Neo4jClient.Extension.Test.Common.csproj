@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neo4jClient.Extension.Test.Data</RootNamespace>
     <AssemblyName>Neo4jClient.Extension.Test.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -60,6 +60,7 @@
     <Compile Include="SampleDataFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="DomainModelDiagram.cd" />
     <None Include="packages.config" />
   </ItemGroup>
