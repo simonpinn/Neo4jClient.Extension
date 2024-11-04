@@ -45,9 +45,11 @@ namespace Neo4jClient.Extension.Cypher
         /// </summary>
         public static MergeOptions ViaRelationship(BaseRelationship relationship)
         {
-            var options = new MergeOptions();
-            options.Identifier = relationship.ToKey;
-            options.MergeViaRelationship = relationship;
+            var options = new MergeOptions
+            {
+                Identifier = relationship.ToKey,
+                MergeViaRelationship = relationship
+            };
             return options;
         }
     }

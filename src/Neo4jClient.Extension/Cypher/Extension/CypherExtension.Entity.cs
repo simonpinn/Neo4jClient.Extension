@@ -71,8 +71,54 @@ namespace Neo4jClient.Extension.Cypher
 
         private static List<CypherProperty> GetCreateProperties<T>(T entity, List<CypherProperty> onCreateOverride = null) where T : class
         {
-            var properties = onCreateOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnCreateAttribute>(entity);
+            return onCreateOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnCreateAttribute>(entity);
+        }
+
+        internal static List<CypherProperty> GetMatchProperties<T>(T entity) where T : class
+        {
+            return CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity);
+        }
+
+        internal static List<CypherProperty> GetMergeOnCreateProperties<T>(T entity) where T : class
+        {
+            return CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnCreateAttribute>(entity);
+        }
+
+        internal static List<CypherProperty> GetMergeOnMatchProperties<T>(T entity) where T : class
+        {
+            return CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnMatchAttribute>(entity);
+        }
+
+
+        public static List<CypherProperty> GetPropertiesForConfig<T>(T entity, CypherExtensionContext context, Type attributeType) where T : class
+        {
+            var properties = new List<CypherProperty>();
+
+            // Get the CypherTypeItemHelper instance
+            var helper = new CypherTypeItemHelper();
+
+            // Use reflection to call the generic method PropertiesForPurpose<TEntity, TAttr>
+            var method = typeof(CypherTypeItemHelper).GetMethod("PropertiesForPurpose", new[] { typeof(ICypherExtensionContext), typeof(T) });
+            if (method != null)
+            {
+                // Make a generic method with the specified attributeType
+                var genericMethod = method.MakeGenericMethod(typeof(T), attributeType);
+
+                // Invoke the generic method with the context and entity as parameters
+                var result = genericMethod.Invoke(helper, new object[] { context, entity }) as List<CypherProperty>;
+                if (result != null)
+                {
+                    properties.AddRange(result.Select(prop => new CypherProperty
+                    {
+                        TypeName = prop.TypeName,
+                        JsonName = prop.JsonName.ApplyCasing(context)
+                    }));
+                }
+            }
+
             return properties;
         }
+
+
     }
 }

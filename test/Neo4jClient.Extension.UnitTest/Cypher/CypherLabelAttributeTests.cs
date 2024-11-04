@@ -27,7 +27,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var model = new MultiLabel { Id = 1 };
             var helper = new CypherExtensionTestHelper().SetupGraphClient();
 
-            var q = helper.Query.MergeEntity(model, "n");
+            var q = helper.Query.MergeEntity(model,  new MergeOptions() { Identifier = "n"});
 
             Console.WriteLine(q.Query.QueryText);
             Assert.AreEqual("MERGE (n:Multi:Label {id:{nMatchKey}.id})", q.Query.QueryText);

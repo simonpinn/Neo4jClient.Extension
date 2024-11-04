@@ -60,9 +60,8 @@ namespace Neo4jClient.Extension.Test.Cypher
                 .CreateEntity(agent.HomeAddress);
             
             var text = q.GetFormattedDebugText();
-            Assert.AreEqual(@"CREATE (address:Address {
-  street: ""200 Isis Street""
-})", text);
+            Assert.AreEqual(@"CREATE (address:Address)
+SET address = $address_CreateParams", text);
         }
 
         [Test]
@@ -76,7 +75,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual("CREATE (a)-[:HOME_ADDRESS]->(ha)", text);
+            Assert.AreEqual("CREATE (a)-[:HOMEADDRESSRELATIONSHIP]->(ha) SET  = $_RelationshipParams\r\nSET  = $_CreateParams", text);
         }
 
 
@@ -88,27 +87,15 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"CREATE (a:SecretAgent {
-  spendingAuthorisation: 100.23,
-  serialNumber: 123456,
-  sex: ""Male"",
-  isOperative: true,
-  name: ""Sterling Archer"",
-  dateCreated: ""2015-07-11T08:00:00+10:00"",
-  id: 7
-})
-CREATE (ha:Address {
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
-})
-CREATE (wa:Address {
-  suburb: ""Fakeville"",
-  street: ""59 Isis Street""
-})
-CREATE (a)-[myHomeRelationshipIdentifier:HOME_ADDRESS {
-  dateEffective: ""2015-08-05T12:00:00+00:00""
-}]->(ha)
-CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
+            Assert.AreEqual(@"CREATE (a:SecretAgent)
+SET a = $a_CreateParams
+CREATE (ha:Address)
+SET ha = $ha_CreateParams
+CREATE (wa:Address)
+SET wa = $wa_CreateParams
+CREATE (a)-[myHomeRelationshipIdentifier:HOMEADDRESSRELATIONSHIP]->(ha) SET myHomeRelationshipIdentifier = $myHomeRelationshipIdentifier_RelationshipParams
+SET myHomeRelationshipIdentifier = $myHomeRelationshipIdentifier_CreateParams
+CREATE (a)-[awa:WORKADDRESSRELATIONSHIP]->(wa) SET awa = $awa_RelationshipParams", text);
         }
         
         public ICypherFluentQuery CreateComplexAct()

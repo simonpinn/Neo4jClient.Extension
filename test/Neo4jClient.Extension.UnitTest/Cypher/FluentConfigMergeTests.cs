@@ -150,19 +150,7 @@ ON CREATE SET person = {
   id: 7
 }
 MERGE ((person)-[:HOME_ADDRESS]->(homeAddress:Address))
-ON MATCH SET homeAddress.suburb = ""Fakeville""
-ON MATCH SET homeAddress.street = ""200 Isis Street""
-ON CREATE SET homeAddress = {
-  suburb: ""Fakeville"",
-  street: ""200 Isis Street""
-}
-MERGE ((person)-[:WORK_ADDRESS]->(workAddress:Address))
-ON MATCH SET workAddress.suburb = ""Fakeville""
-ON MATCH SET workAddress.street = ""59 Isis Street""
-ON CREATE SET workAddress = {
-  suburb: ""Fakeville"",
-  street: ""59 Isis Street""
-}", text);
+MERGE ((person)-[:WORK_ADDRESS]->(workAddress:Address))", text);
 
         }
 

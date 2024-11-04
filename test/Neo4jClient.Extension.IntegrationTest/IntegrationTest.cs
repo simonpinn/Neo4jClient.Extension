@@ -36,7 +36,7 @@ namespace Neo4jClient.Extension.Test.Integration
         static IntegrationTest()
         {
             var connectionString = ConfigurationManager.AppSettings["Neo4jConnectionString"];
-            GraphClient  =new GraphClient(new Uri(connectionString));
+            GraphClient  =new GraphClient(new Uri(connectionString), "neo4j", "72%En4qX6lWK6u");
 
             GraphClient.JsonConverters.Add(new AreaJsonConverter());
 

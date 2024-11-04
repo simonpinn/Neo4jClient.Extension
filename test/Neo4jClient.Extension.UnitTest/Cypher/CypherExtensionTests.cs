@@ -218,7 +218,7 @@ ON CREATE SET cyphermodel = {
             var model = CreateModel();
 
             //act
-            var q = helper.Query.MergeEntity(model,"key");
+            var q = helper.Query.MergeEntity(model, new MergeOptions{ Identifier = "key"});
 
             Console.WriteLine(q.GetFormattedDebugText());
 
@@ -313,7 +313,9 @@ ON CREATE SET cyphermodel = {
             var model = CreateModel();
 
             //act
-            var q = helper.Query.MergeEntity(model,"key", new List<CypherProperty>(),new List<CypherProperty>(), new List<CypherProperty>(), "(a:Node)-->","<--(b:Node)");
+            var q = helper.Query.MergeEntity(model,new MergeOptions{ Identifier = "key", PreCql = "(a:Node)-->", PostCql = "<--(b:Node)" }, 
+                new List<CypherProperty>(),
+                new List<CypherProperty>(), new List<CypherProperty>());
 
             Console.WriteLine(q.GetFormattedDebugText());
 

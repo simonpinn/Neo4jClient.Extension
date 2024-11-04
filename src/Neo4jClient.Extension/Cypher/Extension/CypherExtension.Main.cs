@@ -58,15 +58,21 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, string identifier = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class
         {
-            var options = new CreateOptions();
+            var options = new CreateOptions
+            {
+                PostCql = postCql,
+                PreCql = preCql,
+                Identifier = identifier,
+                CreateOverride = onCreateOverride
+            };
 
-            options.PostCql = postCql;
-            options.PreCql = preCql;
-            options.Identifier = identifier;
-            options.CreateOverride = onCreateOverride;
+            // Pass the intermediate CQL without adding "CREATE" here
+            query = CommonCreate(query, entity, options, intermediateCql => intermediateCql);
 
-            return CreateEntity(query, entity, options);
+            return query;
         }
+
+
 
         public static ICypherFluentQuery CreateEntity<T>(this ICypherFluentQuery query, T entity, CreateOptions options) where T : class
         {
@@ -79,90 +85,142 @@ namespace Neo4jClient.Extension.Cypher
 
         public static ICypherFluentQuery CreateRelationship<T>(this ICypherFluentQuery query, T entity, CreateOptions options = null) where T : BaseRelationship
         {
-            Func<string, string> getFinalCql = intermediateCql => GetRelationshipCql(entity.FromKey, intermediateCql, entity.ToKey);
-
             if (options == null)
             {
-                options = new CreateOptions();
-                options.Identifier = entity.Key;
+                options = new CreateOptions { Identifier = entity.Key };
             }
 
-            query = CommonCreate(query, entity, options, getFinalCql);
+            // Generate a unique parameter name for the relationship properties
+            var uniqueParamName = $"{options.Identifier}_RelationshipParams";
+
+            // Call CommonCreate and pass the unique parameter name correctly
+            query = CommonCreate(query, entity, options, intermediateCql =>
+            {
+                // Get the relationship type, ensuring it’s correctly formatted for Neo4j syntax
+                var relationshipType = entity.GetType().Name.ToUpper(); // Or a specific property if type is stored differently
+
+                // Format the relationship pattern and add the SET statement with the unique parameter name
+                var relationshipCql = $"({entity.FromKey})-[{options.Identifier}:{relationshipType}]->({entity.ToKey})";
+                return $"{relationshipCql} SET {options.Identifier} = ${uniqueParamName}";
+            });
+
+            // Ensure WithParam is called with the generated unique parameter name
+            query = query.WithParam(uniqueParamName, entity.CreateDynamic(options.CreateOverride));
 
             return query;
         }
-        
+
+
+
         private static ICypherFluentQuery CommonCreate<T>(
-            this ICypherFluentQuery query
-            , T entity
-            , CreateOptions options
-            , Func<string, string> getFinalCql) where T : class
+            this ICypherFluentQuery query,
+            T entity,
+            CreateOptions options,
+            Func<string, string> getFinalCql) where T : class
         {
             if (options == null)
             {
                 options = new CreateOptions();
             }
 
-            var createProperties = GetCreateProperties(entity);
+            var createProperties = GetCreateProperties(entity, options.CreateOverride);
             var identifier = entity.EntityParamKey(options.Identifier);
-            var intermediateCreateCql = GetMatchWithParam(identifier, entity.EntityLabel(), createProperties.Count > 0 ? identifier : "");
 
+            // Construct the node or relationship creation pattern
+            var intermediateCreateCql = $"({identifier}:{entity.EntityLabel()})";
             var createCql = getFinalCql(intermediateCreateCql);
 
-            var dynamicOptions = new CreateDynamicOptions { IgnoreNulls = true }; // working around some buug where null properties are blowing up. don't care on create.
+            // Use SET only if there are properties to apply
+            var dynamicOptions = new CreateDynamicOptions { IgnoreNulls = true };
             var cutdownEntity = entity.CreateDynamic(createProperties, dynamicOptions);
 
             query = query.Create(createCql);
 
             if (createProperties.Count > 0)
             {
-                query = query.WithParam(identifier, cutdownEntity);
+                // Ensure unique parameter names for relationships
+                var paramName = $"{identifier}_CreateParams";
+                query = query.Set($"{identifier} = ${paramName}")
+                    .WithParam(paramName, cutdownEntity);
             }
 
             return query;
         }
 
-        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, string paramKey = null, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null, string preCql = "", string postCql = "") where T : class
+
+
+
+        public static ICypherFluentQuery MergeEntity<T>(
+            this ICypherFluentQuery query,
+            T entity,
+            MergeOptions options = null,
+            List<CypherProperty> mergeOverride = null,
+            List<CypherProperty> onMatchOverride = null,
+            List<CypherProperty> onCreateOverride = null,
+            CypherExtensionContext context = null) where T : class
         {
-            paramKey = entity.EntityParamKey(paramKey);
+            options = options ?? new MergeOptions();
+            context = context ?? CypherExtension.DefaultExtensionContext;
+
+            // Determine identifier for the entity
+            var identifier = options.Identifier ?? entity.EntityParamKey();
+
+            // If mergeOverride is provided, use it; otherwise, retrieve configured merge properties
+            var mergeProperties = mergeOverride ?? CypherExtension.GetPropertiesForConfig(entity, context, typeof(CypherMergeAttribute));
+            var onCreateProperties = onCreateOverride ?? CypherExtension.GetPropertiesForConfig(entity, context, typeof(CypherMergeOnCreateAttribute));
+            var onMatchProperties = onMatchOverride ?? CypherExtension.GetPropertiesForConfig(entity, context, typeof(CypherMergeOnMatchAttribute));
+
+            // Generate the Cypher pattern for the entity
+            var pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, identifier);
+
+            // Construct the full Cypher query with pre- and post-Cypher strings
+            var wrappedPattern = $"{options.PreCql}({pattern}){options.PostCql}";
+
+            // Call CommonMerge with the constructed pattern and configuration overrides
+            return query.CommonMerge(
+                entity,
+                identifier,
+                wrappedPattern,
+                context,
+                preCql: options.PreCql,
+                postCql: options.PostCql,
+                mergeOverride: mergeProperties,
+                onMatchOverride: onMatchProperties,
+                onCreateOverride: onCreateProperties
+            );
+        }
+
+
+
+
+        public static ICypherFluentQuery MergeRelationship<T>(
+            this ICypherFluentQuery query,
+            T entity,
+            List<CypherProperty> mergeOverride = null,
+            List<CypherProperty> onMatchOverride = null,
+            List<CypherProperty> onCreateOverride = null) where T : BaseRelationship
+        {
             var context = CypherExtensionContext.Create(query);
-            var cypher1 = entity.ToCypherString<T, CypherMergeAttribute>(context, paramKey, mergeOverride);
-            var cql = string.Format("{0}({1}){2}", preCql, cypher1, postCql);
-            return query.CommonMerge(entity, paramKey, cql, mergeOverride, onMatchOverride, onCreateOverride);
+
+            // Construct the relationship-specific Cypher pattern
+            var relationshipPattern = GetRelationshipCql(
+                entity.FromKey,
+                entity.ToCypherString<T, CypherMergeAttribute>(context, entity.Key, mergeOverride),
+                entity.ToKey
+            );
+
+            // Use CommonMerge for handling MERGE, ON MATCH, and ON CREATE with relationship pattern
+            return query.CommonMerge(
+                entity,
+                entity.Key,
+                relationshipPattern,
+                context,
+                mergeOverride: mergeOverride,
+                onMatchOverride: onMatchOverride,
+                onCreateOverride: onCreateOverride
+            );
         }
 
-        public static ICypherFluentQuery MergeEntity<T>(this ICypherFluentQuery query, T entity, MergeOptions options) where T : class
-        {
-            var context = CypherExtensionContext.Create(query);
-            string pattern;
-
-            if (options.MergeViaRelationship != null)
-            {
-                var relationshipSegment = GetAliasLabelCql(string.Empty, options.MergeViaRelationship.EntityLabel());
-
-                pattern = GetRelationshipCql(
-                    options.MergeViaRelationship.FromKey
-                    , relationshipSegment
-                    , GetAliasLabelCql(options.MergeViaRelationship.ToKey, entity.EntityLabel()));
-            }
-            else
-            {
-                pattern = entity.ToCypherString<T, CypherMergeAttribute>(context, options.Identifier, options.MergeOverride);
-            }
-            var wrappedPattern = string.Format("{0}({1}){2}", options.PreCql, pattern, options.PostCql);
-            return query.CommonMerge(entity, options.Identifier, wrappedPattern, options.MergeOverride, options.OnMatchOverride, options.OnCreateOverride);
-        }
-
-        public static ICypherFluentQuery MergeRelationship<T>(this ICypherFluentQuery query, T entity, List<CypherProperty> mergeOverride = null, List<CypherProperty> onMatchOverride = null, List<CypherProperty> onCreateOverride = null) where T : BaseRelationship
-        {
-            //Eaxctly the same as a merge entity except the cql is different
-            var cql = GetRelationshipCql(
-                entity.FromKey
-                , entity.ToCypherString<T, CypherMergeAttribute>(CypherExtensionContext.Create(query), entity.Key, mergeOverride)
-                , entity.ToKey);
-
-            return query.CommonMerge(entity, entity.Key, cql, mergeOverride, onMatchOverride, onCreateOverride);
-        }
 
         public static ICypherFluentQuery MatchRelationship<T>(
             this ICypherFluentQuery query
@@ -207,47 +265,56 @@ namespace Neo4jClient.Extension.Cypher
         }
 
         private static ICypherFluentQuery CommonMerge<T>(
-            this ICypherFluentQuery query
-            , T entity
-            , string key
-            , string mergeCql
-            , List<CypherProperty> mergeOverride = null
-            , List<CypherProperty> onMatchOverride = null
-            , List<CypherProperty> onCreateOverride = null) where T : class
+    this ICypherFluentQuery query,
+    T entity,
+    string key,
+    string mergeCql,
+    CypherExtensionContext context,
+    string preCql = "",
+    string postCql = "",
+    List<CypherProperty> mergeOverride = null,
+    List<CypherProperty> onMatchOverride = null,
+    List<CypherProperty> onCreateOverride = null) where T : class
         {
-            //A merge requires the properties of both merge, create and match in the cutdown object
-            var mergeProperties = mergeOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeAttribute>(entity);
-            var createProperties = GetCreateProperties(entity, onCreateOverride);
-            var matchProperties = onMatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMergeOnMatchAttribute>(entity);
+            // Use provided overrides or fetch based on configuration attributes
+            var mergeProperties = mergeOverride ?? CypherExtension.GetPropertiesForConfig(entity, context, typeof(CypherMergeAttribute));
+            var onCreateProperties = onCreateOverride ?? CypherExtension.GetPropertiesForConfig(entity, context, typeof(CypherMergeOnCreateAttribute));
+            var onMatchProperties = onMatchOverride ?? CypherExtension.GetPropertiesForConfig(entity, context, typeof(CypherMergeOnMatchAttribute));
 
-            dynamic mergeObjectParam = entity.CreateDynamic(mergeProperties);
-            var matchParamName = GetMatchParamName(key);
+            var mergeParamName = $"{key}_MergeParams";
+            var createParamName = $"{key}_OnCreateParams";
+            var matchParamPrefix = $"{key}_OnMatch";
 
-            query = query.Merge(mergeCql);
-            query = query.WithParam(matchParamName, mergeObjectParam);
-
-            if (matchProperties.Count > 0)
+            // Perform the MERGE operation with the primary properties
+            if (mergeProperties.Any())
             {
-                var entityType = entity.GetType();
-                foreach (var matchProperty in matchProperties)
+                var mergeObjectParam = entity.CreateDynamic(mergeProperties);
+                query = query.Merge(preCql + mergeCql + postCql).WithParam(mergeParamName, mergeObjectParam);
+            }
+
+            // Conditionally apply ON MATCH SET if onMatchProperties has values
+            if (onMatchProperties.Any())
+            {
+                foreach (var prop in onMatchProperties)
                 {
-                    var propertyParam = key + matchProperty.JsonName;
-                    var propertyValue = GetValue(entity, matchProperty, entityType);
-                    query = query.OnMatch().Set(GetSetWithParamCql(key, matchProperty.JsonName, propertyParam));
-                    query = query.WithParam(propertyParam, propertyValue);
+                    var matchParamName = $"{matchParamPrefix}_{prop.JsonName}";
+                    var matchParamValue = GetValue(entity, prop);
+                    query = query.OnMatch().Set($"{key}.{prop.JsonName} = ${matchParamName}").WithParam(matchParamName, matchParamValue);
                 }
             }
 
-            if (createProperties.Count > 0)
+            // Conditionally apply ON CREATE SET if onCreateProperties has values
+            if (onCreateProperties.Any())
             {
-                var createParamName = key + "OnCreate";
-                dynamic createObjectParam = entity.CreateDynamic(createProperties);
-                query = query.OnCreate().Set(GetSetWithParamCql(key, createParamName));
-                query = query.WithParam(createParamName, createObjectParam);
+                var createObjectParam = entity.CreateDynamic(onCreateProperties);
+                query = query.OnCreate().Set($"{key} = ${createParamName}").WithParam(createParamName, createObjectParam);
             }
-            
+
             return query;
         }
+
+
+
 
         public static string GetFormattedDebugText(this ICypherFluentQuery query)
         {
