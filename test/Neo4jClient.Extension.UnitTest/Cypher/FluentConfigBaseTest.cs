@@ -52,7 +52,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             return mockRawClient.Object;
         }
 
-        protected ICypherFluentQuery GetFluentQuery()
+        public ICypherFluentQuery GetFluentQuery()
         {
             return _seedQueryFactory();
         }

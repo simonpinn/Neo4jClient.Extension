@@ -17,12 +17,13 @@ namespace Neo4jClient.Extension.Cypher
             {
                 options = new CreateDynamicOptions();
             }
+            var prefixKey = string.IsNullOrWhiteSpace(options.MatchKeyName) ? string.Empty : $"{options.MatchKeyName}_";
 
             var type = entity.GetType();
             var propertiesForDict = properties.Select(
                 prop => new
                 {
-                    Key = prop.JsonName
+                    Key = $"{prefixKey}{prop.JsonName}"
                     ,
                     Value = GetValue(entity, prop, type)
                 }

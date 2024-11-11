@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher.Attributes;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Neo4jClient.Extension.Cypher
@@ -48,10 +49,14 @@ namespace Neo4jClient.Extension.Cypher
             var identifier = entity.EntityParamKey(options.Identifier);
             var matchCypher = entity.ToCypherString<T, CypherMatchAttribute>(CypherExtensionContext.Create(query), identifier, options.MatchOverride);
             var cql = string.Format("{0}({1}){2}", options.PreCql, matchCypher, options.PostCql);
-            dynamic cutdown = entity.CreateDynamic(options.MatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity));
-
+            
             var matchKey = GetMatchParamName(identifier);
-
+            dynamic cutdown = entity.CreateDynamic(options.MatchOverride ?? CypherTypeItemHelper.PropertiesForPurpose<T, CypherMatchAttribute>(entity),
+                new CreateDynamicOptions
+                {
+                //        MatchKeyName = matchKey
+                });
+            
             return matchFunction(query,cql)
                     .WithParam(matchKey, cutdown);
         }

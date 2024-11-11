@@ -26,9 +26,9 @@ namespace Neo4jClient.Extension.Test.Cypher
 
             Console.WriteLine(cypherText);
 
-            Assert.AreEqual(@"MATCH (p:SecretAgent)
+            Assert.That(@"MATCH (p:SecretAgent)
 WHERE (p.Id = 7)
-SET p.serialNumber = p.serialNumber + 1", cypherText);
+SET p.serialNumber = p.serialNumber + 1", Is.EqualTo(cypherText));
         }
     }
 }

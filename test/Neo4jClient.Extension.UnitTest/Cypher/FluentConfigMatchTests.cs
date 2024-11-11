@@ -25,9 +25,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            Assert.That(@"MATCH (person:SecretAgent {id:{
   id: 7
-}.id})", text);
+}.id})", Is.EqualTo(text));
         }
 
         [Test]
@@ -40,10 +40,10 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            Assert.That(@"MATCH (person:SecretAgent {id:{
   id: 7
 }.id})
-OPTIONAL MATCH (ha:Address)", text);
+OPTIONAL MATCH (ha:Address)", Is.EqualTo(text));
         }
 
         [Test]
@@ -57,10 +57,10 @@ OPTIONAL MATCH (ha:Address)", text);
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            Assert.That(@"MATCH (person:SecretAgent {id:{
   id: 7
 }.id})
-OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
+OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", Is.EqualTo(text));
         }
 
         [Test] 
@@ -73,7 +73,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agentweapon:HAS_CHECKED_OUT]->(weapon)", text);
+            Assert.That(@"MATCH (agent)-[agentweapon:HAS_CHECKED_OUT]->(weapon)", Is.EqualTo(text));
         }
 
         [Test]
@@ -86,7 +86,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)", text);
+            Assert.That(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)", Is.EqualTo(text));
         }
     }
 }

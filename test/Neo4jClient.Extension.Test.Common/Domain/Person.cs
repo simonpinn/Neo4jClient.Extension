@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Neo4jClient.Extension.Test.Cypher
 {
@@ -17,6 +18,8 @@ namespace Neo4jClient.Extension.Test.Cypher
         /// <summary>
         /// Primary key seeded from else where
         /// </summary>
+        /// 
+        [JsonProperty("id")]
         public int Id { get; set; }
         
         public string Name { get; set; }

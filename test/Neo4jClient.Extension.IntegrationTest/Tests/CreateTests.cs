@@ -12,19 +12,30 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
     public class CreateTests : IntegrationTest
     {
         [Test]
-        public void CreateWithUnusualType()
+        public async Task MatchTest()
         {
-            new FluentConfigCreateTests(RealQueryFactory)
+            var config = new FluentConfigCreateTests(RealQueryFactory);
+            var person = SampleDataFactory.GetWellKnownPerson(7);
+            var query = config.GetFluentQuery().MatchEntity(person, "person").Return<Person>("person");
+            var text = query.GetFormattedDebugText();
+            
+            var my = await query.ResultsAsync;
+        }
+        
+        [Test]
+        public async Task CreateWithUnusualType()
+        {
+            await new FluentConfigCreateTests(RealQueryFactory)
                 .CreateWithUnusualTypeAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
 
         [Test]
-        public void CreateComplex()
+        public async Task CreateComplex()
         {
-            new FluentConfigCreateTests(RealQueryFactory)
+            await new FluentConfigCreateTests(RealQueryFactory)
                 .CreateComplexAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
@@ -45,8 +46,8 @@ namespace Neo4jClient.Extension.Test.Cypher
             var result2 = model.ToCypherString<CypherModel, CypherMergeAttribute>(helper.CypherExtensionContext);
 
             //assert
-            Assert.AreEqual("cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id}", result);
-            Assert.AreEqual(result,result2);
+            Assert.That("cyphermodel:CypherModel {id:$cyphermodelMatchKey.id}", Is.EqualTo(result));
+            Assert.That(result,Is.EqualTo(result2));
         }
 
         [Test]
@@ -63,8 +64,8 @@ namespace Neo4jClient.Extension.Test.Cypher
             Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual(@"MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
-RETURN cyphermodel", q.Query.QueryText);
+            Assert.That(@"MATCH (cyphermodel:CypherModel {id:$cyphermodelMatchKey.id})
+RETURN cyphermodel", Is.EqualTo(q.Query.QueryText));
         }
 
         [Test]
@@ -83,14 +84,14 @@ RETURN cyphermodel", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (cyphermodel:CypherModel {firstName:{
+            Assert.That(@"MATCH (cyphermodel:CypherModel {firstName:{
   firstName: ""Foo"",
   isLegend: false
 }.firstName,isLegend:{
   firstName: ""Foo"",
   isLegend: false
 }.isLegend})
-RETURN cyphermodel", q.GetFormattedDebugText());
+RETURN cyphermodel", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -102,15 +103,17 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             var model = CreateModel();
             
             //act
-            var q = helper.Query.MatchEntity(model,"key").Return(cyphermodel => cyphermodel.As<CypherModel>());
+            var q = helper.Query.MatchEntity(model,"key")
+                .Return(cyphermodel => cyphermodel.As<CypherModel>());
 
             Console.WriteLine(q.Query.DebugQueryText);
 
             //assert
-            Assert.AreEqual(@"MATCH (key:CypherModel {id:{
-  ""id"": ""b00b7355-ce53-49f2-a421-deadb655673d""
-}.id})
-RETURN cyphermodel", q.Query.DebugQueryText);
+            Assert.That(q.Query.QueryParameters.Single(),
+                Is.EqualTo(new KeyValuePair<string, object>("keyMatchKey",
+                    new Dictionary<string, object> { { "id", model.id } })));
+            Assert.That(@"MATCH (key:CypherModel {id:$keyMatchKey.id})
+RETURN cyphermodel", Is.EqualTo(q.Query.QueryText));
         }
 
         [Test]
@@ -128,10 +131,10 @@ RETURN cyphermodel", q.Query.DebugQueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (a:Node)-->(cyphermodel:CypherModel {id:{
+            Assert.That(@"MATCH (a:Node)-->(cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
-RETURN cyphermodel", q.GetFormattedDebugText());
+RETURN cyphermodel", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -148,7 +151,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})<--(a:Node)\r\nRETURN cyphermodel", q.Query.QueryText);
+            Assert.That("MATCH (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})<--(a:Node)\r\nRETURN cyphermodel", Is.EqualTo(q.Query.QueryText));
         }
 
         [Test]
@@ -167,8 +170,8 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MATCH (a:Node)-->(key:CypherModel)<--(b:Node)
-RETURN cyphermodel", q.GetFormattedDebugText());
+            Assert.That(@"MATCH (a:Node)-->(key:CypherModel)<--(b:Node)
+RETURN cyphermodel", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -181,7 +184,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             var result = helper.Query.MatchEntity(new CypherModel(), propertyOverride: new List<CypherProperty>());
 
             //assert
-            Assert.AreEqual("MATCH (cyphermodel:CypherModel)", result.GetFormattedDebugText());
+            Assert.That("MATCH (cyphermodel:CypherModel)", Is.EqualTo(result.GetFormattedDebugText()));
         }
 
         [Test]
@@ -197,7 +200,7 @@ RETURN cyphermodel", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{
+            Assert.That(@"MERGE (cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 ON MATCH SET cyphermodel.isLegend = false
@@ -207,7 +210,7 @@ ON CREATE SET cyphermodel = {
   dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
-}", q.GetFormattedDebugText());
+}", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -223,7 +226,7 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (key:CypherModel {id:{
+            Assert.That(@"MERGE (key:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 ON MATCH SET key.isLegend = false
@@ -233,7 +236,7 @@ ON CREATE SET key = {
   dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
-}", q.GetFormattedDebugText());
+}", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -249,7 +252,7 @@ ON CREATE SET key = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {firstName:{
+            Assert.That(@"MERGE (cyphermodel:CypherModel {firstName:{
   firstName: ""Foo""
 }.firstName})
 ON MATCH SET cyphermodel.isLegend = false
@@ -259,7 +262,7 @@ ON CREATE SET cyphermodel = {
   dateOfBirth: ""1981-04-01T00:00:00+00:00"",
   isLegend: false,
   answerToTheMeaningOfLifeAndEverything: 42
-}", q.GetFormattedDebugText());
+}", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -275,11 +278,11 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.Query.QueryText);
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
+            Assert.That(@"MERGE (cyphermodel:CypherModel {id:{cyphermodelMatchKey}.id})
 ON MATCH
 SET cyphermodel.firstName = {cyphermodelfirstName}
 ON CREATE
-SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
+SET cyphermodel = {cyphermodelOnCreate}", Is.EqualTo(q.Query.QueryText));
         }
 
         [Test]
@@ -295,14 +298,14 @@ SET cyphermodel = {cyphermodelOnCreate}", q.Query.QueryText);
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (cyphermodel:CypherModel {id:{
+            Assert.That(@"MERGE (cyphermodel:CypherModel {id:{
   id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 ON MATCH SET cyphermodel.isLegend = false
 ON MATCH SET cyphermodel.answerToTheMeaningOfLifeAndEverything = 42
 ON CREATE SET cyphermodel = {
   firstName: ""Foo""
-}", q.GetFormattedDebugText());
+}", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -318,7 +321,7 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (a:Node)-->(key:CypherModel)<--(b:Node)", q.GetFormattedDebugText());
+            Assert.That("MERGE (a:Node)-->(key:CypherModel)<--(b:Node)", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
 
@@ -336,7 +339,7 @@ ON CREATE SET cyphermodel = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            Assert.That(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -360,7 +363,7 @@ ON CREATE SET cyphermodel = {
 ON MATCH SET fromto.quantity = 0.0
 ON MATCH SET fromto.unitOfMeasure = ""Gram""
 ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH SET fromto.instructionText = """"", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -377,7 +380,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
             
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            Assert.That(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -401,7 +404,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
 ON MATCH SET fromto.quantity = 0.0
 ON MATCH SET fromto.unitOfMeasure = ""Gram""
 ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH SET fromto.instructionText = """"", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -418,13 +421,13 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            Assert.That(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0
 }.quantity}]->(to)
 ON MATCH SET fromto.quantity = 0.0
 ON MATCH SET fromto.unitOfMeasure = ""Gram""
 ON MATCH SET fromto.factor = 0
-ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
+ON MATCH SET fromto.instructionText = """"", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -441,7 +444,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            Assert.That(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -462,7 +465,7 @@ ON MATCH SET fromto.instructionText = """"", q.GetFormattedDebugText());
   factor: 0,
   instructionText: """"
 }.instructionText}]->(to)
-ON MATCH SET fromto.quantity = 0.0", q.GetFormattedDebugText());
+ON MATCH SET fromto.quantity = 0.0", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -479,7 +482,7 @@ ON MATCH SET fromto.quantity = 0.0", q.GetFormattedDebugText());
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
+            Assert.That(@"MERGE (from)-[fromto:COMPONENT_OF {quantity:{
   quantity: 0.0,
   unitOfMeasure: ""Gram"",
   factor: 0,
@@ -506,7 +509,7 @@ ON MATCH SET fromto.factor = 0
 ON MATCH SET fromto.instructionText = """"
 ON CREATE SET fromto = {
   quantity: 0.0
-}", q.GetFormattedDebugText());
+}", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -523,7 +526,7 @@ ON CREATE SET fromto = {
             Console.WriteLine(q.GetFormattedDebugText());
 
             //assert
-            Assert.AreEqual("MERGE (from)-[fromto:COMPONENT_OF]->(to)", q.GetFormattedDebugText());
+            Assert.That("MERGE (from)-[fromto:COMPONENT_OF]->(to)", Is.EqualTo(q.GetFormattedDebugText()));
         }
 
         [Test]
@@ -536,7 +539,7 @@ ON CREATE SET fromto = {
             var result = model.EntityLabel();
 
             //assert
-            Assert.AreEqual("CypherModel", result);
+            Assert.That("CypherModel", Is.EqualTo(result));
         }
 
         [Test]
@@ -549,7 +552,7 @@ ON CREATE SET fromto = {
             var result = model.EntityLabel();
 
             //assert
-            Assert.AreEqual("MyName", result);
+            Assert.That("MyName", Is.EqualTo(result));
         }
 
         private CypherModel CreateModel()

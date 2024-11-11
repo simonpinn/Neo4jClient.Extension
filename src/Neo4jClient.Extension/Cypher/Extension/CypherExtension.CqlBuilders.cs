@@ -74,7 +74,8 @@ namespace Neo4jClient.Extension.Cypher
             paramKey = entity.EntityParamKey(paramKey);
 
             var matchProperties = useProperties
-                .Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)))
+                //.Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)))
+                .Select(x => string.Format("{0}:${1}.{0}", x.JsonName, GetMatchParamName(paramKey)))
                 .ToList();
 
             var jsonProperties = string.Join(",", matchProperties);

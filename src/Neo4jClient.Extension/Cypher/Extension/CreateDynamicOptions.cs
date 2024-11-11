@@ -3,6 +3,7 @@ namespace Neo4jClient.Extension.Cypher
     class CreateDynamicOptions
     {
         public bool IgnoreNulls { get; set; }
+        public string MatchKeyName { get; set; }
 
         public override string ToString()
         {

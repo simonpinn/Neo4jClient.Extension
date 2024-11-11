@@ -12,39 +12,39 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
     public class MergeTests : IntegrationTest
     {
         [Test]
-        public void OneDeep()
+        public async Task OneDeep()
         {
             // create
-            new FluentConfigMergeTests(RealQueryFactory)
+            await new FluentConfigMergeTests(RealQueryFactory)
                 .OneDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
 
             // merge
-            new FluentConfigMergeTests(RealQueryFactory)
+            await new FluentConfigMergeTests(RealQueryFactory)
                 .OneDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
 
         [Test]
-        public void TwoDeep()
+        public async Task TwoDeep()
         {
             // create
-            new FluentConfigMergeTests(RealQueryFactory)
+            await new FluentConfigMergeTests(RealQueryFactory)
                 .TwoDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
 
             // merge
-            new FluentConfigMergeTests(RealQueryFactory)
+            await new FluentConfigMergeTests(RealQueryFactory)
                 .TwoDeepAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
 
          [Test]
-        public void OneDeepMergeByRelationship()
+        public async Task OneDeepMergeByRelationship()
         {
-            new FluentConfigMergeTests(RealQueryFactory)
+            await new FluentConfigMergeTests(RealQueryFactory)
                 .OneDeepMergeByRelationshipAct()
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
         
     }
