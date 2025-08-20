@@ -60,9 +60,9 @@ namespace Neo4jClient.Extension.Test.Cypher
                 .CreateEntity(agent.HomeAddress);
             
             var text = q.GetFormattedDebugText();
-            Assert.AreEqual(@"CREATE (address:Address {
+            Assert.That(text, Is.EqualTo(@"CREATE (address:Address {
   street: ""200 Isis Street""
-})", text);
+})"));
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual("CREATE (a)-[:HOME_ADDRESS]->(ha)", text);
+            Assert.That(text, Is.EqualTo("CREATE (a)-[:HOME_ADDRESS]->(ha)"));
         }
 
 
@@ -88,7 +88,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"CREATE (a:SecretAgent {
+            Assert.That(text, Is.EqualTo(@"CREATE (a:SecretAgent {
   spendingAuthorisation: 100.23,
   serialNumber: 123456,
   sex: ""Male"",
@@ -108,7 +108,7 @@ CREATE (wa:Address {
 CREATE (a)-[myHomeRelationshipIdentifier:HOME_ADDRESS {
   dateEffective: ""2015-08-05T12:00:00+00:00""
 }]->(ha)
-CREATE (a)-[awa:WORK_ADDRESS]->(wa)", text);
+CREATE (a)-[awa:WORK_ADDRESS]->(wa)"));
         }
         
         public ICypherFluentQuery CreateComplexAct()

@@ -35,7 +35,7 @@ namespace Neo4jClient.Extension.Test.Cypher
         [SetUp]
         public void TestSetup()
         {
-            JsonConverters = GraphClient.DefaultJsonConverters.ToList();
+            JsonConverters = new List<JsonConverter>();
             JsonConverters.Add(new AreaJsonConverter());
 
             NeoConfig.ConfigureModel();
@@ -47,7 +47,7 @@ namespace Neo4jClient.Extension.Test.Cypher
             var mockRawClient = moqGraphClient.As<IRawGraphClient>();
             
             moqGraphClient.Setup(c => c.JsonConverters).Returns(JsonConverters);
-            moqGraphClient.Setup(c => c.JsonContractResolver).Returns(GraphClient.DefaultJsonContractResolver);
+            moqGraphClient.Setup(c => c.JsonContractResolver).Returns(new Newtonsoft.Json.Serialization.DefaultContractResolver());
             
             return mockRawClient.Object;
         }

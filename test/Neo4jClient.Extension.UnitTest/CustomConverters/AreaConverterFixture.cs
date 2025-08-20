@@ -33,7 +33,7 @@ namespace Neo4jClient.Extension.Test.CustomConverters
 
             var areaReloaded = JsonConvert.DeserializeObject<Area?>(json, settings);
 
-            Assert.AreEqual(expected, areaReloaded);
+            Assert.That(areaReloaded, Is.EqualTo(expected));
         }
     }
 }

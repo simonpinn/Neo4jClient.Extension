@@ -17,7 +17,8 @@ namespace Neo4jClient.Extension.Test.Cypher
             var key = helper.AddKeyAttribute<CypherModel, CypherMatchAttribute>(CypherExtension.DefaultExtensionContext, new CypherModel());
 
             //assert
-            Assert.AreEqual(new CypherTypeItem(){ Type = typeof(CypherModel), AttributeType = typeof(CypherMatchAttribute)}, key);
+            Assert.That(key.AttributeType, Is.EqualTo(typeof(CypherMatchAttribute)));
+            Assert.That(key.Type, Is.EqualTo(typeof(CypherModel)));
         }
 
         [Test]
@@ -30,8 +31,8 @@ namespace Neo4jClient.Extension.Test.Cypher
             var result = helper.PropertiesForPurpose<CypherModel, CypherMatchAttribute>(new CypherModel());
 
             //assert
-            Assert.AreEqual("id",result[0].TypeName);
-            Assert.AreEqual("id", result[0].JsonName);
+            Assert.That(result[0].TypeName, Is.EqualTo("id"));
+            Assert.That(result[0].JsonName, Is.EqualTo("id"));
         }
 
     }
