@@ -36,7 +36,10 @@ namespace Neo4jClient.Extension.Test.Integration
         static IntegrationTest()
         {
             var connectionString = ConfigurationManager.AppSettings["Neo4jConnectionString"] ?? "bolt://localhost:7687";
-            GraphClient = new BoltGraphClient(new Uri(connectionString), "neo4j", "password");
+            var username = ConfigurationManager.AppSettings["Neo4jUsername"] ?? "neo4j";
+            var password = ConfigurationManager.AppSettings["Neo4jPassword"] ?? "testpassword";
+            
+            GraphClient = new BoltGraphClient(new Uri(connectionString), username, password);
 
             GraphClient.JsonConverters.Add(new AreaJsonConverter());
 
