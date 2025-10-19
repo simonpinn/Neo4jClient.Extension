@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  release:
+    name: Build and Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v1
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v1
+      with:
+        useConfigFile: true
+
+    - name: Verify tag matches version
+      run: |
+        TAG_VERSION=${GITHUB_REF#refs/tags/v}
+        GITVERSION_VERSION=${{ steps.gitversion.outputs.semVer }}
+        echo "Tag version: $TAG_VERSION"
+        echo "GitVersion: $GITVERSION_VERSION"
+        if [ "$TAG_VERSION" != "$GITVERSION_VERSION" ]; then
+          echo "ERROR: Tag version ($TAG_VERSION) does not match GitVersion ($GITVERSION_VERSION)"
+          exit 1
+        fi
+
+    - name: Restore dependencies
+      run: dotnet restore Neo4jClient.Extension.sln
+
+    - name: Build
+      run: dotnet build Neo4jClient.Extension.sln --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+
+    - name: Run Unit Tests
+      run: dotnet test test/Neo4jClient.Extension.UnitTest/ --configuration Release --no-build --verbosity normal
+
+    - name: Pack NuGet packages
+      run: |
+        dotnet pack src/Neo4jClient.Extension/Neo4jClient.Extension.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }} \
+          /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+          /p:RepositoryBranch=${{ github.ref_name }} \
+          /p:RepositoryCommit=${{ github.sha }}
+
+    - name: Publish to NuGet.org
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./artifacts/*.nupkg
+        generate_release_notes: true
+        body: |
+          ## Release ${{ steps.gitversion.outputs.semVer }}
+
+          ### NuGet Package
+          ```bash
+          dotnet add package Neo4jClient.Extension --version ${{ steps.gitversion.outputs.semVer }}
+          ```
+
+          ### Changes
+          See the [CHANGELOG.md](CHANGELOG.md) for detailed changes.
+
+          ---
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.gitversion.outputs.previousTag }}...${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-packages
+        path: ./artifacts/*.nupkg
+        retention-days: 90

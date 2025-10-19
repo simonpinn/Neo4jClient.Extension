@@ -33,113 +33,158 @@ dotnet add package Neo4jClient.Extension
 
 ## Fluent Configuration
 
-Configure entity metadata once at application startup without decorating your domain models: 
+Configure entity metadata once at application startup without decorating your domain models:
 
-	FluentConfig.Config()
-                .With<Person>("SecretAgent")
-                .Match(x => x.Id)
-                .Merge(x => x.Id)
-                .MergeOnCreate(p => p.Id)
-                .MergeOnCreate(p => p.DateCreated)
-                .MergeOnMatchOrCreate(p => p.Title)
-                .MergeOnMatchOrCreate(p => p.Name)
-                .MergeOnMatchOrCreate(p => p.IsOperative)
-                .MergeOnMatchOrCreate(p => p.Sex)
-                .MergeOnMatchOrCreate(p => p.SerialNumber)
-                .MergeOnMatchOrCreate(p => p.SpendingAuthorisation)
-                .Set();
+```csharp
+FluentConfig.Config()
+    .With<Person>("SecretAgent")
+    .Match(x => x.Id)
+    .Merge(x => x.Id)
+    .MergeOnCreate(p => p.DateCreated)
+    .MergeOnMatchOrCreate(p => p.Name)
+    .MergeOnMatchOrCreate(p => p.Title)
+    .Set();
+```
 
-Note how we only set DateCreated when creating, not updating.
+Configure relationships with properties:
 
-A relationship might be setup like this:
+```csharp
+FluentConfig.Config()
+    .With<HomeAddressRelationship>()
+    .MergeOnMatchOrCreate(hr => hr.DateEffective)
+    .Set();
+```
 
-		FluentConfig.Config()
-                .With<HomeAddressRelationship>()
-                .MergeOnMatchOrCreate(hr => hr.DateEffective)
-                .Set();
+## Usage Examples
 
-The address entity undergoes a similar setup - see the [unit tests](https://github.com/simonpinn/Neo4jClient.Extension/blob/master/test/Neo4jClient.Extension.Test.Common/Neo/NeoConfig.cs) for the complete setup.
+### Create a Node
 
-##Fluent Config Usage##
-Now that our model is configured, creating a weapon is as simple as:
+```csharp
+var person = new Person { Id = 1, Name = "John Doe" };
+await client.Cypher
+    .CreateEntity(person, "p")
+    .ExecuteWithoutResultsAsync();
+```
 
-		var weapon = SampleDataFactory.GetWellKnownWeapon(1);
-    	var q = GetFluentQuery()
-                .CreateEntity(weapon, "w");
+### Create Nodes with Relationships
 
-Creating a person, their two addresses and setting the relationships between the three nodes:
+```csharp
+var person = new Person { Id = 1, Name = "John Doe" };
+var address = new Address { Street = "123 Main St", City = "Austin" };
 
-		var agent = SampleDataFactory.GetWellKnownPerson(7);
+await client.Cypher
+    .CreateEntity(person, "p")
+    .CreateEntity(address, "a")
+    .CreateRelationship(new HomeAddressRelationship("p", "a"))
+    .ExecuteWithoutResultsAsync();
+```
 
-        var q = GetFluentQuery()
-                .CreateEntity(agent, "a")
-                .CreateEntity(agent.HomeAddress, "ha")
-                .CreateEntity(agent.WorkAddress, "wa")
-                .CreateRelationship(new HomeAddressRelationship("a", "ha"))
-                .CreateRelationship(new WorkAddressRelationship("a", "wa"));
-        		.ExecuteWithoutResults();
+### Merge Nodes
 
-Easy. Here is some merge syntax just to show off:
+```csharp
+var person = new Person { Id = 1, Name = "John Doe", DateCreated = DateTime.UtcNow };
 
-		var person = SampleDataFactory.GetWellKnownPerson(7);
+await client.Cypher
+    .MergeEntity(person)  // Uses configured Merge properties
+    .MergeEntity(person.HomeAddress)
+    .MergeRelationship(new HomeAddressRelationship("person", "homeAddress"))
+    .ExecuteWithoutResultsAsync();
+```
 
-        var homeAddressRelationship = new HomeAddressRelationship("person", "address");
+## Alternative: Attribute Configuration
 
-        homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
+For those who prefer attributes, you can decorate your models directly:
 
-        var q = GetFluentQuery()
-            .MergeEntity(person)
-            .MergeEntity(person.HomeAddress)
-            .MergeRelationship(homeAddressRelationship);
-			.ExecuteWithoutResults();
+```csharp
+[CypherLabel(Name = "Person")]
+public class Person
+{
+    [CypherMerge]
+    public Guid Id { get; set; }
 
-## Attribute Config ##
-Before Fluent Config there was Attribute Config. If you insist on decorating your models with attributes, you may use the following attributes on a domain model to control the generated query
+    [CypherMergeOnCreate]
+    public string Name { get; set; }
 
-* `CypherLabel` Placed at class level, controls the node `label`, if unspecified then the class name is used
-* `CypherMatch` Specifies that a property will be used in a `MATCH` statement
-* `CypherMerge` Specifies that a property will be used in a `MERGE` statement
-* `CypherMergeOnCreate` Specifies that a property will be used in the `ON CREATE SET` portion of a`MERGE` statement
-* `CypherMergeOnMatch` Specifies that a property will be used in the `ON MATCH SET` portion of a `MERGE` statement
+    [CypherMergeOnMatchOrCreate]
+    public bool IsActive { get; set; }
+}
+```
 
-Below is an example model decorated with the above attributes
+**Available Attributes:**
+- `CypherLabel` - Custom node label (defaults to class name)
+- `CypherMatch` - Used in MATCH clauses
+- `CypherMerge` - Used in MERGE clauses
+- `CypherMergeOnCreate` - Set only when creating (ON CREATE SET)
+- `CypherMergeOnMatch` - Set only when matching (ON MATCH SET)
 
-    public class CypherModel
-    {
-        public CypherModel()
-        {
-            id = Guid.NewGuid();
-        }
+> **Note:** Fluent configuration is recommended to keep domain models infrastructure-free.
 
-        [CypherMerge]
-        public Guid id { get; set; }
+## Relationship Modeling
 
-        [CypherMergeOnCreate]
-        [CypherMatch]
-        public string firstName { get; set; }
-        
-        [CypherMergeOnCreate]
-        public DateTimeOffset dateOfBirth { get; set; }
-        
-        [CypherMergeOnCreate]
-        [CypherMergeOnMatch]
-        public bool isLegend { get; set; }
-        
-        [CypherMergeOnCreate]
-        public int answerToTheMeaningOfLifeAndEverything { get; set; }
-    }
+Define strongly-typed relationships by inheriting from `BaseRelationship`:
 
-Yes, we think you should use the Fluent Config too.
+```csharp
+[CypherLabel(Name = "HOME_ADDRESS")]
+public class HomeAddressRelationship : BaseRelationship
+{
+    public HomeAddressRelationship(string fromKey, string toKey)
+        : base(fromKey, toKey) { }
 
-A full list of examples can be found in the unit tests within the solution.
+    public DateTime DateEffective { get; set; }
+}
+```
 
+## Development
 
-## Packaging ##
-`build.ps1` is designed for [myget](http://www.myget.org/) compatibility. 
+### Building
 
-The script can be run locally via `powershell -f build.ps1`. By default, it expects an environment variable named `packageVersion`.
+```bash
+dotnet build Neo4jClient.Extension.sln
+```
 
-Some default parameters may be overridden, for example:
-`powershell -f build.ps1 -configuration debug -sourceUrl https://github.com/your-username/Neo4jClient.Extension -packageVersion 5.0.0.1` 
+### Running Tests
 
-Nuget packages are written to `./_output`
+**Unit Tests:**
+```bash
+dotnet test test/Neo4jClient.Extension.UnitTest/
+```
+
+**Integration Tests** (requires Neo4j):
+```bash
+# Automated setup (recommended)
+./run-tests-with-neo4j.sh      # Linux/macOS
+run-tests-with-neo4j.bat        # Windows
+
+# Manual setup
+docker compose up -d neo4j
+dotnet test --filter Integration
+docker compose down
+```
+
+### Packaging
+
+```bash
+powershell -f build.ps1 -packageVersion 1.0.0
+```
+
+Output: `./_output/` directory
+
+## Documentation
+
+- [CLAUDE.md](CLAUDE.md) - Comprehensive architecture documentation
+- [DOCKER-TESTING.md](DOCKER-TESTING.md) - Docker setup for integration tests
+- [Unit Tests](test/Neo4jClient.Extension.UnitTest/) - Usage examples
+
+## Requirements
+
+- .NET 9.0 or later
+- Neo4jClient 4.0.0+
+- Neo4j 5.x (for integration tests)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
