@@ -1,27 +1,39 @@
-# Neo4jClient.Extension #
+# Neo4jClient.Extension
 
-Extending the awesome of [Neo4jClient](https://github.com/Readify/Neo4jClient)
+[![NuGet Version](https://img.shields.io/nuget/v/Neo4jClient.Extension.svg)](https://www.nuget.org/packages/Neo4jClient.Extension/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/simonpinn/Neo4jClient.Extension/ci.yml?branch=master)](https://github.com/simonpinn/Neo4jClient.Extension/actions)
+[![License](https://img.shields.io/github/license/simonpinn/Neo4jClient.Extension.svg)](LICENSE)
 
-![Version](https://img.shields.io/nuget/v/Neo4jClient.Extension.svg)
+A fluent API extension for [Neo4jClient](https://github.com/Readify/Neo4jClient) that simplifies building Cypher queries using strongly-typed C# objects.
 
-Merge, match and create nodes or relationships using objects instead of typing pseudo Cypher.
+## Features
 
-Reduces mistakes and simplifies composition of queries. As well as some more advanced features, the following key extension methods are provided:
+- **Type-Safe Query Building** - Create, match, and merge nodes and relationships using objects instead of writing Cypher strings
+- **Fluent Configuration** - Configure entity metadata without cluttering domain models with attributes
+- **Relationship Modeling** - Strongly-typed relationships with properties
+- **IntelliSense Support** - Full IDE autocomplete for improved productivity
+- **Reduced Errors** - Compile-time checking prevents property name typos and refactoring issues
 
-* `CreateEntity<T>`
-* `CreateRelationship<T>`
-* `MergeEntity<T>`
-* `MergeRelationship<T>`
+## Key Extension Methods
 
-Any object can be provided to these methods. 
+- `CreateEntity<T>` - Create nodes from objects
+- `MergeEntity<T>` - Merge nodes with ON CREATE/ON MATCH support
+- `MatchEntity<T>` - Match nodes by properties
+- `CreateRelationship<T>` - Create typed relationships
+- `MergeRelationship<T>` - Merge relationships
+- `MatchRelationship<T>` - Match relationships
 
-##Fluent Config Setup##
+## Quick Start
 
-To allow unobtrusive usage the extension library with domain model projects which don't want a reference to Neo4j, a fluent config interface has been included to construct the model. Given a domain model like below:
+### Installation
 
-![Person, Address domain entities](https://raw.githubusercontent.com/simonpinn/Neo4jClient.Extension/master/docs/images/TestDataDiagram.png)
+```bash
+dotnet add package Neo4jClient.Extension
+``` 
 
-The person entity would be configured once per application lifetime scope like this: 
+## Fluent Configuration
+
+Configure entity metadata once at application startup without decorating your domain models: 
 
 	FluentConfig.Config()
                 .With<Person>("SecretAgent")

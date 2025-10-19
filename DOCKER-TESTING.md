@@ -25,7 +25,7 @@ run-tests-with-neo4j.bat
 
 1. **Start Neo4j:**
    ```bash
-   docker-compose up -d neo4j
+   docker compose up -d neo4j
    ```
 
 2. **Wait for Neo4j to be ready** (about 30-60 seconds)
@@ -37,7 +37,7 @@ run-tests-with-neo4j.bat
 
 4. **Stop Neo4j when done:**
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 ## Neo4j Configuration
