@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using FluentAssertions.Common;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Test.Data.Neo.Relationships;
@@ -75,16 +76,15 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)"));
         [Test]
         public void MatchRelationshipWithProperty()
         {
-            var addressRelationship = new HomeAddressRelationship(DateTimeOffset.Parse("2015-08-05 12:00"), "agent", "homeAddress");
+            var now = DateTimeOffset.Now;
+            var addressRelationship = new HomeAddressRelationship(now, "agent", "homeAddress");
             var q = GetFluentQuery()
                     .MatchRelationship(addressRelationship);
             var text = q.GetFormattedDebugText();
 
             Console.WriteLine(text);
 
-            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{
-  dateEffective: ""2015-08-05T12:00:00+10:00""
-}.dateEffective}]->(homeAddress)"));
+            Assert.That(text, Is.EqualTo($"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {{dateEffective:{{\n  dateEffective: \"{now:O}\"\n}}.dateEffective}}]->(homeAddress)"));
         }
         
         public ICypherFluentQuery MatchRelationshipWithProperty2Act()
