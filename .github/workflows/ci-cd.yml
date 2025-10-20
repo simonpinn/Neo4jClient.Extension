@@ -124,14 +124,13 @@ jobs:
         path: ./artifacts/*.nupkg
         retention-days: 30
 
-    - name: Publish to NuGet.org (master only)
-      if: github.ref == 'refs/heads/master'
+    - name: Publish to NuGet.org
       run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
-    - name: Publish to GitHub Packages (all branches)
-      if: github.ref != 'refs/heads/master'
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Publish to GitHub Packages (all branches)
+#      if: github.ref != 'refs/heads/master'
+#      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
