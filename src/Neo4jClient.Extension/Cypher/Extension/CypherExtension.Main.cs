@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher.Attributes;
-using Newtonsoft.Json.Serialization;
 
 namespace Neo4jClient.Extension.Cypher
 {

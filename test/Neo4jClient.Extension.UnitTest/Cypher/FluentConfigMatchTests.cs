@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
-using Neo4jClient.Extension.Cypher.Attributes;
 using Neo4jClient.Extension.Test.TestData.Relationships;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using NUnit.Framework;
