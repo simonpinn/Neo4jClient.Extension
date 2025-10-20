@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - Upcoming
+
+**BREAKING CHANGES:** This release aligns the major version with Neo4jClient 4.x to indicate compatibility.
+
 ### Added
 - GitHub Actions CI/CD pipeline for automated builds and tests
 - GitVersion for automatic semantic versioning
@@ -14,11 +18,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced README with modern formatting and examples
 - Docker-based integration testing with Neo4j 5.24
 - CHANGELOG.md for tracking project changes
+- CONTRIBUTING.md with development guidelines
+- Pull request template
 
 ### Changed
-- Updated to .NET 9.0
+- **BREAKING:** Updated to .NET 9.0 (from .NET Framework)
+- **BREAKING:** Updated to Neo4jClient 4.0.0
+- Updated unit tests to match Neo4jClient 4.0.0 query formatting changes
 - Modernized README with better examples and structure
 - Enhanced test scripts for Docker integration
+
+### Fixed
+- Fixed unit tests for Neo4jClient 4.0.0 parameter syntax (`$param` instead of `{param}`)
+- Fixed unit tests for Neo4jClient 4.0.0 formatting (`ON MATCH\nSET` instead of `ON MATCH SET`)
+
+## Versioning Strategy
+
+Starting with v4.0.0, this library's major version will match the Neo4jClient major version it targets:
+- Neo4jClient.Extension 4.x → Neo4jClient 4.x
+- Neo4jClient.Extension 5.x → Neo4jClient 5.x (future)
+
+This makes it clear which version of Neo4jClient is compatible.
 
 ## [1.0.2] - 2024-08-26
 
