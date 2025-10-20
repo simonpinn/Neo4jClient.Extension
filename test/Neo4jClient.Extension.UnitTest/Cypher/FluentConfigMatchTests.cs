@@ -86,7 +86,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)"));
 
             Console.WriteLine(text);
 
-            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)"));
+            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:$agenthomeAddressMatchKey.dateEffective}]->(homeAddress)"));
         }
     }
 }

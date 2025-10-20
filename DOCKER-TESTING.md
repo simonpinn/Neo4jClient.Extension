@@ -73,38 +73,38 @@ You can override these in the App.config file:
 ### Neo4j won't start
 ```bash
 # Check Docker logs
-docker-compose logs neo4j
+docker compose logs neo4j
 
 # Restart the container
-docker-compose restart neo4j
+docker compose restart neo4j
 ```
 
 ### Connection refused errors
-- Make sure Neo4j container is running: `docker-compose ps`
+- Make sure Neo4j container is running: `docker compose ps`
 - Wait longer for Neo4j to fully start (can take 1-2 minutes)
 - Check if ports 7474 and 7687 are available
 
 ### Tests still failing
 - Verify Neo4j is responding:
   ```bash
-  docker-compose exec neo4j cypher-shell -u neo4j -p testpassword "RETURN 1;"
+  docker compose exec neo4j cypher-shell -u neo4j -p testpassword "RETURN 1;"
   ```
 - Check the connection string in App.config matches your setup
 
 ### Clean Reset
 If you need to start fresh:
 ```bash
-docker-compose down -v  # Removes volumes too
-docker-compose up -d neo4j
+docker compose down -v  # Removes volumes too
+docker compose up -d neo4j
 ```
 
 ## Development Workflow
 
-1. Start Neo4j: `docker-compose up -d neo4j`
+1. Start Neo4j: `docker compose up -d neo4j`
 2. Develop and test your code
 3. Run integration tests: `dotnet test --filter Integration`
 4. Use Neo4j Browser at http://localhost:7474 to inspect data
-5. Stop when done: `docker-compose down`
+5. Stop when done: `docker compose down`
 
 ## Performance Notes
 
@@ -113,4 +113,4 @@ The Neo4j container is configured with:
 - **Max heap**: 2GB  
 - **Page cache**: 1GB
 
-You can adjust these in docker-compose.yml if needed for your system.
+You can adjust these in docker compose.yml if needed for your system.
