@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Test.Cypher;
+using Neo4jClient.Extension.Test.Data.Neo.Relationships;
 using Neo4jClient.Extension.Test.TestData.Entities;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using NUnit.Framework;
@@ -210,7 +211,7 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
             retrieved.BlastRadius.Value.SquareKilometers.Should().BeApproximately(12.4, 0.01);
         }
         
-        public void ArrangeTestData()
+        public Task ArrangeTestData() 
         {
             var archer = SampleDataFactory.GetWellKnownPerson(1);
             var isis = new Organisation {Name="ISIS"};
@@ -225,17 +226,17 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
 
             var q = RealQueryFactory();
 
-            q
+            return q
                 .CreateEntity(archer, archerVariable)
                 .CreateEntity(isis, isisVariable)
                 .CreateEntity(kgb, kgbVariable)
                 .CreateRelationship(agentRelationship)
                 .CreateRelationship(doubleAgentRelationship)
-                .ExecuteWithoutResults();
+                .ExecuteWithoutResultsAsync();
         }
         
         [Test]
-        public void Match()
+        public async Task Match()
         {
             ArrangeTestData();
             
@@ -245,9 +246,9 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
                 .Return(o => o.As<Organisation>());
 
             Console.WriteLine(q.GetFormattedDebugText());
-            var r = q.Results.ToList();
+            var r = (await q.ResultsAsync).ToList();
 
-            Assert.AreEqual(1, r.Count);
+            r.Count.Should().Be(1);
             
             //Not working??
             Console.WriteLine($" Org={r[0].Name}");

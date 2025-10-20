@@ -1,5 +1,8 @@
 ﻿using System;
+using FluentAssertions;
+using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
+using Neo4jClient.Extension.Test.Data.Neo.Relationships;
 using Neo4jClient.Extension.Test.TestData.Relationships;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using NUnit.Framework;
@@ -79,10 +82,11 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)"));
 
             Console.WriteLine(text);
 
-            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:$agenthomeAddressMatchKey.dateEffective}]->(homeAddress)"));
+            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{
+  dateEffective: ""2015-08-05T12:00:00+10:00""
+}.dateEffective}]->(homeAddress)"));
         }
         
-        [Test]
         public ICypherFluentQuery MatchRelationshipWithProperty2Act()
         {
             var archer = SampleDataFactory.GetWellKnownPerson(1);
@@ -103,7 +107,9 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)"));
         {
             var q = MatchRelationshipWithProperty2Act();
             var cypher = q.GetFormattedDebugText();
-            Assert.AreEqual("MATCH (p)-[po:WORKS_FOR {role:{\r\n  role: \"special agent\"\r\n}.role}]->(o)", cypher);
+            cypher.Should().Be(@"MATCH (p)-[po:WORKS_FOR {role:{
+  role: ""special agent""
+}.role}]->(o)");
         }
     }
 }
