@@ -25,6 +25,10 @@ namespace Neo4jClient.Extension.Test.Data
 
             FluentConfig.Config()
                 .With<Address>()
+                .Match(a => a.Street)
+                .Match(a => a.Suburb)
+                .Merge(a => a.Street)
+                .Merge(a => a.Suburb)
                 .MergeOnMatchOrCreate(a => a.Street)
                 .MergeOnMatchOrCreate(a => a.Suburb)
                 .Set();
@@ -33,6 +37,9 @@ namespace Neo4jClient.Extension.Test.Data
                 .With<Weapon>()
                 .Match(x => x.Id)
                 .Merge(x => x.Id)
+                .MergeOnCreate(w => w.Id)
+                .MergeOnCreate(w => w.Name)
+                .MergeOnCreate(w => w.BlastRadius)
                 .MergeOnMatchOrCreate(w => w.Name)
                 .MergeOnMatchOrCreate(w => w.BlastRadius)
                 .Set();
