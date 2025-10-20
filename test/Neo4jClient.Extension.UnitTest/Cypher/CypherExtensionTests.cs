@@ -108,7 +108,7 @@ RETURN cyphermodel"));
 
             //assert
             Assert.That(q.Query.DebugQueryText, Is.EqualTo(@"MATCH (key:CypherModel {id:{
-  ""id"": ""b00b7355-ce53-49f2-a421-deadb655673d""
+  id: ""b00b7355-ce53-49f2-a421-deadb655673d""
 }.id})
 RETURN cyphermodel"));
         }
