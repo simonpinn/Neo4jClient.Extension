@@ -1,133 +1,213 @@
-# Neo4jClient.Extension #
+# Neo4jClient.Extension
 
-Extending the awesome of [Neo4jClient](https://github.com/Readify/Neo4jClient)
+[![NuGet Version](https://img.shields.io/nuget/v/Neo4jClient.Extension.svg)](https://www.nuget.org/packages/Neo4jClient.Extension/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/simonpinn/Neo4jClient.Extension/ci.yml?branch=master)](https://github.com/simonpinn/Neo4jClient.Extension/actions)
+[![License](https://img.shields.io/github/license/simonpinn/Neo4jClient.Extension.svg)](LICENSE)
 
-![Version](https://img.shields.io/nuget/v/Neo4jClient.Extension.svg)
+A fluent API extension for [Neo4jClient](https://github.com/Readify/Neo4jClient) that simplifies building Cypher queries using strongly-typed C# objects.
 
-Merge, match and create nodes or relationships using objects instead of typing pseudo Cypher.
+## Features
 
-Reduces mistakes and simplifies composition of queries. As well as some more advanced features, the following key extension methods are provided:
+- **Type-Safe Query Building** - Create, match, and merge nodes and relationships using objects instead of writing Cypher strings
+- **Fluent Configuration** - Configure entity metadata without cluttering domain models with attributes
+- **Relationship Modeling** - Strongly-typed relationships with properties
+- **IntelliSense Support** - Full IDE autocomplete for improved productivity
+- **Reduced Errors** - Compile-time checking prevents property name typos and refactoring issues
 
-* `CreateEntity<T>`
-* `CreateRelationship<T>`
-* `MergeEntity<T>`
-* `MergeRelationship<T>`
+## Key Extension Methods
 
-Any object can be provided to these methods. 
+- `CreateEntity<T>` - Create nodes from objects
+- `MergeEntity<T>` - Merge nodes with ON CREATE/ON MATCH support
+- `MatchEntity<T>` - Match nodes by properties
+- `CreateRelationship<T>` - Create typed relationships
+- `MergeRelationship<T>` - Merge relationships
+- `MatchRelationship<T>` - Match relationships
 
-##Fluent Config Setup##
+## Quick Start
 
-To allow unobtrusive usage the extension library with domain model projects which don't want a reference to Neo4j, a fluent config interface has been included to construct the model. Given a domain model like below:
+### Installation
 
-![Person, Address domain entities](https://raw.githubusercontent.com/simonpinn/Neo4jClient.Extension/master/docs/images/TestDataDiagram.png)
+```bash
+# Install Neo4jClient
+dotnet add package Neo4jClient
 
-The person entity would be configured once per application lifetime scope like this: 
+# Install Neo4jClient.Extension
+dotnet add package Neo4jClient.Extension
+```
 
-	FluentConfig.Config()
-                .With<Person>("SecretAgent")
-                .Match(x => x.Id)
-                .Merge(x => x.Id)
-                .MergeOnCreate(p => p.Id)
-                .MergeOnCreate(p => p.DateCreated)
-                .MergeOnMatchOrCreate(p => p.Title)
-                .MergeOnMatchOrCreate(p => p.Name)
-                .MergeOnMatchOrCreate(p => p.IsOperative)
-                .MergeOnMatchOrCreate(p => p.Sex)
-                .MergeOnMatchOrCreate(p => p.SerialNumber)
-                .MergeOnMatchOrCreate(p => p.SpendingAuthorisation)
-                .Set();
+### Setup
 
-Note how we only set DateCreated when creating, not updating.
+```csharp
+using Neo4jClient;
+using Neo4jClient.Extension.Cypher;
 
-A relationship might be setup like this:
+// Connect to Neo4j
+var client = new BoltGraphClient(new Uri("bolt://localhost:7687"), "neo4j", "password");
+await client.ConnectAsync();
 
-		FluentConfig.Config()
-                .With<HomeAddressRelationship>()
-                .MergeOnMatchOrCreate(hr => hr.DateEffective)
-                .Set();
+// Configure your entities (do this once at startup)
+FluentConfig.Config()
+    .With<Person>()
+    .Match(x => x.Id)
+    .Merge(x => x.Id)
+    .MergeOnCreate(p => p.DateCreated)
+    .Set();
+```
 
-The address entity undergoes a similar setup - see the [unit tests](https://github.com/simonpinn/Neo4jClient.Extension/blob/master/test/Neo4jClient.Extension.Test.Common/Neo/NeoConfig.cs) for the complete setup.
+## Fluent Configuration
 
-##Fluent Config Usage##
-Now that our model is configured, creating a weapon is as simple as:
+Configure entity metadata once at application startup without decorating your domain models:
 
-		var weapon = SampleDataFactory.GetWellKnownWeapon(1);
-    	var q = GetFluentQuery()
-                .CreateEntity(weapon, "w");
+```csharp
+FluentConfig.Config()
+    .With<Person>("SecretAgent")
+    .Match(x => x.Id)
+    .Merge(x => x.Id)
+    .MergeOnCreate(p => p.DateCreated)
+    .MergeOnMatchOrCreate(p => p.Name)
+    .MergeOnMatchOrCreate(p => p.Title)
+    .Set();
+```
 
-Creating a person, their two addresses and setting the relationships between the three nodes:
+Configure relationships with properties:
 
-		var agent = SampleDataFactory.GetWellKnownPerson(7);
+```csharp
+FluentConfig.Config()
+    .With<HomeAddressRelationship>()
+    .MergeOnMatchOrCreate(hr => hr.DateEffective)
+    .Set();
+```
 
-        var q = GetFluentQuery()
-                .CreateEntity(agent, "a")
-                .CreateEntity(agent.HomeAddress, "ha")
-                .CreateEntity(agent.WorkAddress, "wa")
-                .CreateRelationship(new HomeAddressRelationship("a", "ha"))
-                .CreateRelationship(new WorkAddressRelationship("a", "wa"));
-        		.ExecuteWithoutResults();
+## Usage Examples
 
-Easy. Here is some merge syntax just to show off:
+### Create a Node
 
-		var person = SampleDataFactory.GetWellKnownPerson(7);
+```csharp
+var person = new Person { Id = 1, Name = "John Doe" };
+await client.Cypher
+    .CreateEntity(person, "p")
+    .ExecuteWithoutResultsAsync();
+```
 
-        var homeAddressRelationship = new HomeAddressRelationship("person", "address");
+### Create Nodes with Relationships
 
-        homeAddressRelationship.DateEffective = DateTime.Parse("2011-01-10T08:00:00+10:00");
+```csharp
+var person = new Person { Id = 1, Name = "John Doe" };
+var address = new Address { Street = "123 Main St", City = "Austin" };
 
-        var q = GetFluentQuery()
-            .MergeEntity(person)
-            .MergeEntity(person.HomeAddress)
-            .MergeRelationship(homeAddressRelationship);
-			.ExecuteWithoutResults();
+await client.Cypher
+    .CreateEntity(person, "p")
+    .CreateEntity(address, "a")
+    .CreateRelationship(new HomeAddressRelationship("p", "a"))
+    .ExecuteWithoutResultsAsync();
+```
 
-## Attribute Config ##
-Before Fluent Config there was Attribute Config. If you insist on decorating your models with attributes, you may use the following attributes on a domain model to control the generated query
+### Merge Nodes
 
-* `CypherLabel` Placed at class level, controls the node `label`, if unspecified then the class name is used
-* `CypherMatch` Specifies that a property will be used in a `MATCH` statement
-* `CypherMerge` Specifies that a property will be used in a `MERGE` statement
-* `CypherMergeOnCreate` Specifies that a property will be used in the `ON CREATE SET` portion of a`MERGE` statement
-* `CypherMergeOnMatch` Specifies that a property will be used in the `ON MATCH SET` portion of a `MERGE` statement
+```csharp
+var person = new Person { Id = 1, Name = "John Doe", DateCreated = DateTime.UtcNow };
 
-Below is an example model decorated with the above attributes
+await client.Cypher
+    .MergeEntity(person)  // Uses configured Merge properties
+    .MergeEntity(person.HomeAddress)
+    .MergeRelationship(new HomeAddressRelationship("person", "homeAddress"))
+    .ExecuteWithoutResultsAsync();
+```
 
-    public class CypherModel
-    {
-        public CypherModel()
-        {
-            id = Guid.NewGuid();
-        }
+## Alternative: Attribute Configuration
 
-        [CypherMerge]
-        public Guid id { get; set; }
+For those who prefer attributes, you can decorate your models directly:
 
-        [CypherMergeOnCreate]
-        [CypherMatch]
-        public string firstName { get; set; }
-        
-        [CypherMergeOnCreate]
-        public DateTimeOffset dateOfBirth { get; set; }
-        
-        [CypherMergeOnCreate]
-        [CypherMergeOnMatch]
-        public bool isLegend { get; set; }
-        
-        [CypherMergeOnCreate]
-        public int answerToTheMeaningOfLifeAndEverything { get; set; }
-    }
+```csharp
+[CypherLabel(Name = "Person")]
+public class Person
+{
+    [CypherMerge]
+    public Guid Id { get; set; }
 
-Yes, we think you should use the Fluent Config too.
+    [CypherMergeOnCreate]
+    public string Name { get; set; }
 
-A full list of examples can be found in the unit tests within the solution.
+    [CypherMergeOnMatchOrCreate]
+    public bool IsActive { get; set; }
+}
+```
 
+**Available Attributes:**
+- `CypherLabel` - Custom node label (defaults to class name)
+- `CypherMatch` - Used in MATCH clauses
+- `CypherMerge` - Used in MERGE clauses
+- `CypherMergeOnCreate` - Set only when creating (ON CREATE SET)
+- `CypherMergeOnMatch` - Set only when matching (ON MATCH SET)
 
-## Packaging ##
-`build.ps1` is designed for [myget](http://www.myget.org/) compatibility. 
+> **Note:** Fluent configuration is recommended to keep domain models infrastructure-free.
 
-The script can be run locally via `powershell -f build.ps1`. By default, it expects an environment variable named `packageVersion`.
+## Relationship Modeling
 
-Some default parameters may be overridden, for example:
-`powershell -f build.ps1 -configuration debug -sourceUrl https://github.com/your-username/Neo4jClient.Extension -packageVersion 5.0.0.1` 
+Define strongly-typed relationships by inheriting from `BaseRelationship`:
 
-Nuget packages are written to `./_output`
+```csharp
+[CypherLabel(Name = "HOME_ADDRESS")]
+public class HomeAddressRelationship : BaseRelationship
+{
+    public HomeAddressRelationship(string fromKey, string toKey)
+        : base(fromKey, toKey) { }
+
+    public DateTime DateEffective { get; set; }
+}
+```
+
+## Development
+
+### Building
+
+```bash
+dotnet build Neo4jClient.Extension.sln
+```
+
+### Running Tests
+
+**Unit Tests:**
+```bash
+dotnet test test/Neo4jClient.Extension.UnitTest/
+```
+
+**Integration Tests** (requires Neo4j):
+```bash
+# Automated setup (recommended)
+./run-tests-with-neo4j.sh      # Linux/macOS
+run-tests-with-neo4j.bat        # Windows
+
+# Manual setup
+docker compose up -d neo4j
+dotnet test --filter Integration
+docker compose down
+```
+
+### Packaging
+
+```bash
+powershell -f build.ps1 -packageVersion 1.0.0
+```
+
+Output: `./_output/` directory
+
+## Documentation
+
+- [CLAUDE.md](CLAUDE.md) - Comprehensive architecture documentation
+- [DOCKER-TESTING.md](DOCKER-TESTING.md) - Docker setup for integration tests
+- [Unit Tests](test/Neo4jClient.Extension.UnitTest/) - Usage examples
+
+## Requirements
+
+- .NET 9.0 or later
+- Neo4jClient 4.0.0+
+- Neo4j 5.x (for integration tests)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.

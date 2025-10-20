@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using Neo4jClient.Cypher;
 using Neo4jClient.Extension.Cypher;
-using Neo4jClient.Extension.Cypher.Attributes;
 using Neo4jClient.Extension.Test.TestData.Relationships;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using NUnit.Framework;
@@ -25,9 +18,9 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            Assert.That(text, Is.EqualTo(@"MATCH (person:SecretAgent {id:{
   id: 7
-}.id})", text);
+}.id})"));
         }
 
         [Test]
@@ -40,10 +33,10 @@ namespace Neo4jClient.Extension.Test.Cypher
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            Assert.That(text, Is.EqualTo(@"MATCH (person:SecretAgent {id:{
   id: 7
 }.id})
-OPTIONAL MATCH (ha:Address)", text);
+OPTIONAL MATCH (ha:Address)"));
         }
 
         [Test]
@@ -57,10 +50,10 @@ OPTIONAL MATCH (ha:Address)", text);
             var text = q.GetFormattedDebugText();
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (person:SecretAgent {id:{
+            Assert.That(text, Is.EqualTo(@"MATCH (person:SecretAgent {id:{
   id: 7
 }.id})
-OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
+OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)"));
         }
 
         [Test] 
@@ -73,7 +66,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agentweapon:HAS_CHECKED_OUT]->(weapon)", text);
+            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agentweapon:HAS_CHECKED_OUT]->(weapon)"));
         }
 
         [Test]
@@ -86,7 +79,7 @@ OPTIONAL MATCH (person)-[personaddress:HOME_ADDRESS]->(address)", text);
 
             Console.WriteLine(text);
 
-            Assert.AreEqual(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:{agenthomeAddressMatchKey}.dateEffective}]->(homeAddress)", text);
+            Assert.That(text, Is.EqualTo(@"MATCH (agent)-[agenthomeAddress:HOME_ADDRESS {dateEffective:$agenthomeAddressMatchKey.dateEffective}]->(homeAddress)"));
         }
     }
 }

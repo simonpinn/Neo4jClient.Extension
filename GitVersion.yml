@@ -1,0 +1,25 @@
+mode: ContinuousDelivery
+tag-prefix: v
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
+no-bump-message: '\+semver:\s?(none|skip)'
+branches:
+  master:
+    regex: ^master$|^main$
+    increment: Patch
+  develop:
+    regex: ^dev(elop)?(ment)?$
+    label: alpha
+    increment: Minor
+  feature:
+    regex: ^features?[/-]
+    label: useBranchName
+    increment: Inherit
+  release:
+    regex: ^releases?[/-]
+    label: beta
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    label: beta
+    increment: Patch

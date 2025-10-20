@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Neo4jClient.Extension.Cypher.Attributes;
 using Newtonsoft.Json.Serialization;
 
@@ -28,7 +25,7 @@ namespace Neo4jClient.Extension.Cypher
 
         private static string AsWrappedVariable(string input)
         {
-            var output = string.Format("{{{0}}}", input);
+            var output = string.Format("${0}", input);
             return output;
         }
         private static string WithPrePostWrap(string innerCypher, IOptionsBase options)
@@ -39,7 +36,7 @@ namespace Neo4jClient.Extension.Cypher
 
         private static string GetSetWithParamCql(string alias, string paramName)
         {
-            var cql = string.Format("{0} = {{{1}}}", alias, paramName);
+            var cql = string.Format("{0} = ${1}", alias, paramName);
             return cql;
         }
 
@@ -74,12 +71,12 @@ namespace Neo4jClient.Extension.Cypher
             paramKey = entity.EntityParamKey(paramKey);
 
             var matchProperties = useProperties
-                .Select(x => string.Format("{0}:{{{1}}}.{0}", x.JsonName, GetMatchParamName(paramKey)))
+                .Select(x => string.Format("{0}:${1}.{0}", x.JsonName, GetMatchParamName(paramKey)))
                 .ToList();
 
             var jsonProperties = string.Join(",", matchProperties);
 
-            var parameterCypher = matchProperties.Count == 0 ? string.Empty : AsWrappedVariable(jsonProperties);
+            var parameterCypher = matchProperties.Count == 0 ? string.Empty : string.Format("{{{0}}}", jsonProperties);
 
             var cypher = GetMatchCypher(paramKey, label, parameterCypher);
 
@@ -96,14 +93,27 @@ namespace Neo4jClient.Extension.Cypher
         }
         internal static string ApplyCasing(this string value, ICypherExtensionContext context)
         {
-            var useCamelCase = (context.JsonContractResolver is CamelCasePropertyNamesContractResolver);
-            if (useCamelCase)
+            // Use the contract resolver to determine the JSON property name
+            if (context.JsonContractResolver != null)
             {
-                return string.Format(
-                    "{0}{1}"
-                    , value.Substring(0, 1).ToLowerInvariant()
-                    , value.Length > 1 ? value.Substring(1, value.Length - 1) : string.Empty);
+                // Use DefaultContractResolver's NamingStrategy if available (Newtonsoft.Json 9.0+)
+                if (context.JsonContractResolver is DefaultContractResolver defaultResolver &&
+                    defaultResolver.NamingStrategy != null)
+                {
+                    return defaultResolver.NamingStrategy.GetPropertyName(value, false);
+                }
+
+                // For CamelCasePropertyNamesContractResolver (legacy support)
+                if (context.JsonContractResolver is CamelCasePropertyNamesContractResolver)
+                {
+                    return string.Format(
+                        "{0}{1}",
+                        value.Substring(0, 1).ToLowerInvariant(),
+                        value.Length > 1 ? value.Substring(1, value.Length - 1) : string.Empty);
+                }
             }
+
+            // Fallback to PascalCase if no resolver is configured
             return value;
         }
     }

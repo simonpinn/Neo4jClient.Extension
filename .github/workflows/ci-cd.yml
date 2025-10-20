@@ -1,0 +1,145 @@
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'release/**'
+      - 'hotfix/**'
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-test-pack-publish:
+    name: Build, Test, Pack & Publish
+    runs-on: ubuntu-latest
+
+    services:
+      neo4j:
+        image: neo4j:5.24-community
+        env:
+          NEO4J_AUTH: neo4j/testpassword
+          NEO4J_server_memory_heap_initial__size: 512m
+          NEO4J_server_memory_heap_max__size: 2G
+          NEO4J_server_memory_pagecache_size: 1G
+        ports:
+          - 7474:7474
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for GitVersion
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v4.1.0
+      with:
+        versionSpec: '6.x'
+
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v1
+      with:
+        useConfigFile: true
+
+    - name: Display GitVersion outputs
+      run: |
+        echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+        echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+        echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
+        echo "BranchName: ${{ steps.gitversion.outputs.branchName }}"
+
+    - name: Set NuGet-compatible version
+      id: nuget-version
+      run: |
+        # Replace + with - to make it NuGet.org compatible
+        NUGET_VERSION="${{ steps.gitversion.outputs.fullSemVer }}"
+        NUGET_VERSION="${NUGET_VERSION//+/-}"
+        echo "version=$NUGET_VERSION" >> $GITHUB_OUTPUT
+        echo "NuGet Package Version: $NUGET_VERSION"
+
+    - name: Restore dependencies
+      run: dotnet restore Neo4jClient.Extension.sln
+
+    - name: Build
+      run: dotnet build Neo4jClient.Extension.sln --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+
+    - name: Run Unit Tests
+      run: dotnet test test/Neo4jClient.Extension.UnitTest/ --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=unit-test-results.trx"
+
+    - name: Wait for Neo4j
+      run: |
+        echo "Waiting for Neo4j to be ready..."
+        timeout 60 bash -c 'until docker exec ${{ job.services.neo4j.id }} cypher-shell -u neo4j -p testpassword "RETURN 1" 2>/dev/null; do sleep 2; done' || echo "Neo4j health check via docker exec failed, continuing..."
+
+    - name: Run Integration Tests
+      run: dotnet test test/Neo4jClient.Extension.IntegrationTest/ --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=integration-test-results.trx"
+      env:
+        Neo4jConnectionString: bolt://localhost:7687
+        Neo4jUsername: neo4j
+        Neo4jPassword: testpassword
+
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test Results (CI-CD)
+        path: '**/*.trx'
+        reporter: dotnet-trx
+        fail-on-error: true
+
+    - name: Pack NuGet packages
+      run: |
+        dotnet pack src/Neo4jClient.Extension.Attributes/Neo4jClient.Extension.Attributes.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=${{ steps.nuget-version.outputs.version }} \
+          /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+          /p:RepositoryBranch=${{ github.ref_name }} \
+          /p:RepositoryCommit=${{ github.sha }}
+
+        dotnet pack src/Neo4jClient.Extension/Neo4jClient.Extension.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=${{ steps.nuget-version.outputs.version }} \
+          /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+          /p:RepositoryBranch=${{ github.ref_name }} \
+          /p:RepositoryCommit=${{ github.sha }}
+
+    - name: List artifacts
+      run: ls -la ./artifacts/
+
+    - name: Upload NuGet packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages-${{ steps.nuget-version.outputs.version }}
+        path: ./artifacts/*.nupkg
+        retention-days: 30
+
+    - name: Publish to NuGet.org
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+#    - name: Publish to GitHub Packages (all branches)
+#      if: github.ref != 'refs/heads/master'
+#      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
