@@ -17,7 +17,7 @@ namespace Neo4jClient.Extension.Test.Integration
     {
         protected static ITransactionalGraphClient GraphClient { get; private set; }
 
-        protected ICypherFluentQuery CypherQuery { get { return GraphClient.Cypher; } }
+        protected ICypherFluentQuery CypherQuery => GraphClient.Cypher;
 
         [SetUp]
         public void Setup()
