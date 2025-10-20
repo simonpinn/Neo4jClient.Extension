@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Neo4jClient.Extension.Cypher;
 using Neo4jClient.Extension.Test.Cypher;
+using Neo4jClient.Extension.Test.Data.Neo.Relationships;
 using Neo4jClient.Extension.Test.TestData.Entities;
 using Neo4jClient.Extension.Test.TestEntities.Relationships;
 using NUnit.Framework;
@@ -208,6 +209,49 @@ namespace Neo4jClient.Extension.Test.Integration.Tests
             retrieved.Name.Should().Be("Walther PPK");
             retrieved.BlastRadius.Should().NotBeNull();
             retrieved.BlastRadius.Value.SquareKilometers.Should().BeApproximately(12.4, 0.01);
+        }
+        
+        public Task ArrangeTestData() 
+        {
+            var archer = SampleDataFactory.GetWellKnownPerson(1);
+            var isis = new Organisation {Name="ISIS"};
+            var kgb = new Organisation { Name = "KGB" };
+            
+            var archerVariable = "a";
+            var kgbVariable = "k";
+            var isisVariable = "i";
+
+            var agentRelationship = new WorksForRelationship("special agent", archerVariable, isisVariable);
+            var doubleAgentRelationship = new WorksForRelationship("double agent", archerVariable, kgbVariable);
+
+            var q = RealQueryFactory();
+
+            return q
+                .CreateEntity(archer, archerVariable)
+                .CreateEntity(isis, isisVariable)
+                .CreateEntity(kgb, kgbVariable)
+                .CreateRelationship(agentRelationship)
+                .CreateRelationship(doubleAgentRelationship)
+                .ExecuteWithoutResultsAsync();
+        }
+        
+        [Test]
+        public async Task Match()
+        {
+            ArrangeTestData();
+            
+            // Act
+            var q = RealQueryFactory()
+                .MatchRelationship(new WorksForRelationship("special agent", "p", "o"))
+                .Return(o => o.As<Organisation>());
+
+            Console.WriteLine(q.GetFormattedDebugText());
+            var r = (await q.ResultsAsync).ToList();
+
+            r.Count.Should().Be(1);
+            
+            //Not working??
+            Console.WriteLine($" Org={r[0].Name}");
         }
     }
 }

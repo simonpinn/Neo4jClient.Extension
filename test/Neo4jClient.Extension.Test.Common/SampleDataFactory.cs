@@ -38,5 +38,12 @@ namespace Neo4jClient.Extension.Test.Cypher
             weapon.BlastRadius = Area.FromSquareMeters(20);
             return weapon;
         }
+
+        public static Organisation GetWellKnownOrganisation()
+        {
+            var org = new Organisation();
+            org.Name = "ISIS";
+            return org;
+        }
     }
 }
