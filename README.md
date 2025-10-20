@@ -28,8 +28,31 @@ A fluent API extension for [Neo4jClient](https://github.com/Readify/Neo4jClient)
 ### Installation
 
 ```bash
+# Install Neo4jClient
+dotnet add package Neo4jClient
+
+# Install Neo4jClient.Extension
 dotnet add package Neo4jClient.Extension
-``` 
+```
+
+### Setup
+
+```csharp
+using Neo4jClient;
+using Neo4jClient.Extension.Cypher;
+
+// Connect to Neo4j
+var client = new BoltGraphClient(new Uri("bolt://localhost:7687"), "neo4j", "password");
+await client.ConnectAsync();
+
+// Configure your entities (do this once at startup)
+FluentConfig.Config()
+    .With<Person>()
+    .Match(x => x.Id)
+    .Merge(x => x.Id)
+    .MergeOnCreate(p => p.DateCreated)
+    .Set();
+```
 
 ## Fluent Configuration
 

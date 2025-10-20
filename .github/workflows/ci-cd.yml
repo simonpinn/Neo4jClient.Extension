@@ -105,6 +105,15 @@ jobs:
 
     - name: Pack NuGet packages
       run: |
+        dotnet pack src/Neo4jClient.Extension.Attributes/Neo4jClient.Extension.Attributes.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=${{ steps.nuget-version.outputs.version }} \
+          /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+          /p:RepositoryBranch=${{ github.ref_name }} \
+          /p:RepositoryCommit=${{ github.sha }}
+
         dotnet pack src/Neo4jClient.Extension/Neo4jClient.Extension.csproj \
           --configuration Release \
           --no-build \

@@ -59,6 +59,15 @@ jobs:
 
     - name: Pack NuGet packages
       run: |
+        dotnet pack src/Neo4jClient.Extension.Attributes/Neo4jClient.Extension.Attributes.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }} \
+          /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+          /p:RepositoryBranch=${{ github.ref_name }} \
+          /p:RepositoryCommit=${{ github.sha }}
+
         dotnet pack src/Neo4jClient.Extension/Neo4jClient.Extension.csproj \
           --configuration Release \
           --no-build \
@@ -81,9 +90,10 @@ jobs:
         body: |
           ## Release ${{ steps.gitversion.outputs.semVer }}
 
-          ### NuGet Package
+          ### NuGet Packages
           ```bash
           dotnet add package Neo4jClient.Extension --version ${{ steps.gitversion.outputs.semVer }}
+          dotnet add package Neo4jClient.Extension.Attributes --version ${{ steps.gitversion.outputs.semVer }}
           ```
 
           ### Changes
