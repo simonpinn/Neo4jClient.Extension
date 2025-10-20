@@ -1,10 +1,12 @@
-name: CI
+name: CI-CD
 
 on:
   push:
-    branches: [ '**' ]
-  pull_request:
-    branches: [ master, develop, 'release/**', 'hotfix/**' ]
+    branches:
+      - master
+      - develop
+      - 'release/**'
+      - 'hotfix/**'
 
 env:
   DOTNET_VERSION: '9.0.x'
@@ -12,8 +14,8 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  build-test-pack-publish:
+    name: Build, Test, Pack & Publish
     runs-on: ubuntu-latest
 
     services:
@@ -59,7 +61,9 @@ jobs:
       run: |
         echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
         echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+        echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
         echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
+        echo "BranchName: ${{ steps.gitversion.outputs.branchName }}"
 
     - name: Restore dependencies
       run: dotnet restore Neo4jClient.Extension.sln
@@ -86,7 +90,40 @@ jobs:
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: Test Results
+        name: Test Results (CI-CD)
         path: '**/*.trx'
         reporter: dotnet-trx
         fail-on-error: true
+
+    - name: Pack NuGet packages
+      run: |
+        dotnet pack src/Neo4jClient.Extension/Neo4jClient.Extension.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts \
+          /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} \
+          /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+          /p:RepositoryBranch=${{ github.ref_name }} \
+          /p:RepositoryCommit=${{ github.sha }}
+
+    - name: List artifacts
+      run: ls -la ./artifacts/
+
+    - name: Upload NuGet packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages-${{ steps.gitversion.outputs.nuGetVersionV2 }}
+        path: ./artifacts/*.nupkg
+        retention-days: 30
+
+    - name: Publish to NuGet.org (master only)
+      if: github.ref == 'refs/heads/master'
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Publish to GitHub Packages (all branches)
+      if: github.ref != 'refs/heads/master'
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

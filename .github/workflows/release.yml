@@ -63,7 +63,7 @@ jobs:
           --configuration Release \
           --no-build \
           --output ./artifacts \
-          /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }} \
+          /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }} \
           /p:RepositoryUrl=https://github.com/${{ github.repository }} \
           /p:RepositoryBranch=${{ github.ref_name }} \
           /p:RepositoryCommit=${{ github.sha }}
